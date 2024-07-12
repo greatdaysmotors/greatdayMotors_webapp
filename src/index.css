@@ -1,0 +1,55 @@
+@import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#root {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  font-size: 10px;
+  font-family: "Raleway", sans-serif;
+  color: #333333;
+}
+
+* {
+  font-size: 1.4rem;
+  box-sizing: border-box;
+}
+
+.ant-form-item {
+  margin-bottom: 8px;
+}
+
+.scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll-container {
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+
+.ant-space-compact {
+  width: 100%;
+}
+
+
+:where(.css-dev-only-do-not-override-5gl92k).ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled){
+  background-color: #2F2FC8;
+  color: white;
+}
+
+.custom-modal .ant-modal-content {
+  height: 50rem; 
+}
+
+.custom-modal .ant-modal-body {
+  height: calc(50rem - 55px - 53px); 
+  overflow-y: auto;
+}
+
