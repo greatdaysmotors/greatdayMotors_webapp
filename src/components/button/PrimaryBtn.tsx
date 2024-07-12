@@ -20,7 +20,7 @@ const PrimaryBtn: React.FC<ButtonProps> = ({
   const buttonContent = (
     <button
       onClick={onClick}
-      className={`py-[1.4rem] text-[1.4rem] lg:text-[1.6rem] rounded-[1rem] w-full ${className}`}
+      className={`py-[1.4rem] text-[1.4rem] lg:text-[1.6rem] rounded-[1rem]  ${className}`}
       disabled={disabled}
     >
       {children}

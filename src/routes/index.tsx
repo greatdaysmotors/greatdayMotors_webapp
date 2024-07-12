@@ -16,6 +16,9 @@ const AboutUs = lazy(() => import("@pages/about"));
 const ContactUs = lazy(() => import("@pages/contact"));
 const Logistics = lazy(() => import("@pages/logistics"));
 const Bookings = lazy(() => import("@pages/bookings"));
+const BookTicket = lazy(() => import("@pages/bookTicket"));
+const HireService = lazy(() => import("@pages/hireService"));
+const ResheduleTicket = lazy(() => import("@pages/resheduleTicket"));
 
 const AppRouter = () => {
   return (
@@ -35,6 +38,9 @@ const AppRouter = () => {
         <Route path="/contact-us" element={<ContactUs />} />
         <Route path="/logistics" element={<Logistics />} />
         <Route path="/bookings" element={<Bookings />} />
+        <Route path="/book-ticket" element={<BookTicket />} />
+        <Route path="/hire-service" element={<HireService />} />
+        <Route path="/reshedule-ticket" element={<ResheduleTicket />} />
 
         {/* 404 page */}
         <Route path="*" element={<NotFound />} />
