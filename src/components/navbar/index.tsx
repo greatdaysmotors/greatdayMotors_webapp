@@ -2,6 +2,7 @@ import PrimaryBtn from "@components/button/PrimaryBtn";
 import { useState } from "react";
 import { IoMdClose, IoMdMenu } from "react-icons/io";
 import { Link, useLocation } from "react-router-dom";
+import logo from "../../../public/svgs/gd_logo.svg";
 
 interface NavigationTypes {
   id: number;
@@ -47,7 +48,7 @@ const NavBar = () => {
     <div className="flex justify-between items-center w-full px-[2.4rem] lg:px-[4.4rem] py-[1rem] h-[5rem] md:h-[7.2rem] lg:h-[8rem] shadow-sm">
       <Link to="/" className="flex gap-[0.4rem] items-center">
         <img
-          src="../../../public/svgs/gd_logo.svg"
+          src={logo}
           alt="logo"
           className="w-[3.2rem] h-[3rem] md:w-[4.2rem] md:h-[4rem]"
         />
