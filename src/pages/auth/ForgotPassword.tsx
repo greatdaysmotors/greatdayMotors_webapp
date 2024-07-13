@@ -4,6 +4,7 @@ import FormItem from "antd/es/form/FormItem";
 import { OTPProps } from "antd/es/input/OTP";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import logo from "../../../public/svgs/gd_logo.svg";
 
 const ForgotPassword = () => {
   const nav = useNavigate();
@@ -35,7 +36,7 @@ const ForgotPassword = () => {
         <div className="lg:w-[50%] flex lg:justify-center lg:items-center px-[2.4rem] overflow-scroll scroll-container">
           <div className=" flex flex-col justify-center items-center w-full md:w-[45rem] h-screen">
             <Link to="/">
-              <img src="../../../public/svgs/gd_logo.svg" alt="logo" />
+              <img src={logo} alt="logo" />
             </Link>
             <div className="w-[32rem] flex flex-col gap-[1.6rem]">
               <h2 className="text-[2rem] lg:text-[3.2rem] font-[700] leading-[2.6rem] mt-[2rem] text-center text-brandBlack">
@@ -75,7 +76,7 @@ const ForgotPassword = () => {
         <div className="lg:w-[50%] flex lg:justify-center lg:items-center px-[2.4rem] overflow-scroll scroll-container">
           <div className=" flex flex-col justify-center items-center w-full md:w-[45rem] h-screen">
             <Link to="/">
-              <img src="../../../public/svgs/gd_logo.svg" alt="logo" />
+              <img src={logo} alt="logo" />
             </Link>
             <div className="flex flex-col gap-[16px]">
               <h2 className="text-[2rem] lg:text-[3.2rem] font-[700] leading-[2.6rem] mt-[2rem] text-center text-brandBlack">

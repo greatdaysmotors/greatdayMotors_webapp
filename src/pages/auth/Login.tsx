@@ -2,6 +2,7 @@ import PrimaryBtn from "@components/button/PrimaryBtn";
 import { Checkbox, Flex, Form, Input } from "antd";
 import FormItem from "antd/es/form/FormItem";
 import { Link } from "react-router-dom";
+import logo from "../../../public/svgs/gd_logo.svg";
 
 const Login = () => {
   const AccountLogin = () => {
@@ -12,7 +13,7 @@ const Login = () => {
       <div className="lg:w-[50%] flex lg:justify-center lg:items-center px-[2.4rem] overflow-scroll scroll-container">
         <div className=" flex flex-col justify-center items-center w-full md:w-[45rem] h-screen">
           <Link to="/">
-            <img src="../../../public/svgs/gd_logo.svg" alt="logo" />
+            <img src={logo} alt="logo" />
           </Link>
           <div className="w-[28rem]">
             <h2 className="text-[2rem] lg:text-[3.2rem] font-[700] leading-[2.6rem] mt-[2rem] text-center text-brandBlack">

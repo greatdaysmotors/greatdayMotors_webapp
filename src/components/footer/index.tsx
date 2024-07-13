@@ -2,6 +2,7 @@ import { AiOutlineYoutube } from "react-icons/ai";
 import { FaXTwitter } from "react-icons/fa6";
 import { FiFacebook, FiLinkedin } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import logo from "../../../public/svgs/gd_logo.svg";
 
 const Footer = () => {
   return (
@@ -10,7 +11,7 @@ const Footer = () => {
         <div className="md:w-[40%] lg:w-[50%]">
           <Link to="/" className="flex gap-[0.4rem] items-center">
             <img
-              src="../../../public/svgs/gd_logo.svg"
+              src={logo}
               alt="logo"
               className="w-[3.2rem] h-[3rem] md:w-[4.2rem] md:h-[4rem]"
             />
