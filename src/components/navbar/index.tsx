@@ -1,6 +1,11 @@
-import PrimaryBtn from "@components/button/PrimaryBtn";
+// import PrimaryBtn from "@components/button/PrimaryBtn";
 import { useState } from "react";
-import { IoMdClose, IoMdMenu } from "react-icons/io";
+import {
+  IoIosArrowDown,
+  IoIosArrowUp,
+  IoMdClose,
+  IoMdMenu,
+} from "react-icons/io";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../../../public/svgs/gd_logo.svg";
 
@@ -42,6 +47,12 @@ const NavBar = () => {
 
   const toggleMenu = () => {
     setOpen((prev) => !prev);
+  };
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
   };
 
   return (
@@ -90,7 +101,7 @@ const NavBar = () => {
           open
             ? "opacity-100 transition-all duration-500 ease-in-out"
             : "max-h-0 opacity-0 transition-all duration-500 ease-in-out"
-        } h-[43rem] pt-28 overflow-hidden flex flex-col text-center lg:hidden bg-white gap-4 absolute top-0 left-0 z-50 w-full p-6 mx-auto `}
+        } shadow-sm pt-28 overflow-hidden flex flex-col text-center lg:hidden bg-white gap-4 absolute top-0 left-0 z-50 w-full p-6 mx-auto `}
       >
         <ul className="flex flex-col gap-[1.6rem] lg:gap-[4.8rem] items-center">
           {navlinks.map((navlink) => (
@@ -105,7 +116,8 @@ const NavBar = () => {
             </Link>
           ))}
         </ul>
-        <div className="flex flex-col gap-[1.6rem]">
+        {/* not logged in */}
+        {/* <div className="flex flex-col gap-[1.6rem]">
           <Link to="/signup">
             <PrimaryBtn className="bg-primaryColor w-[25rem] mx-auto  h-[38px] lg:h-[48px] flex justify-center items-center text-[#fff]">
               Sign Up
@@ -116,10 +128,55 @@ const NavBar = () => {
               Login
             </PrimaryBtn>
           </Link>
+        </div> */}
+
+        {/* logged in user */}
+        <div
+          onClick={toggleDropdown}
+          className="flex items-center justify-center md:hidden gap-[1.6rem] my-[1rem]"
+        >
+          <div
+            className="w-[4rem] h-[4rem] rounded-full"
+            style={{
+              backgroundImage:
+                "url('https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          ></div>
+
+          <div className="flex items-center gap-[1rem] cursor-pointer">
+            <h3 className="text-[1.8rem] font-[600]">Timber Daniels</h3>
+            {isOpen ? <IoIosArrowUp size={20} /> : <IoIosArrowDown size={20} />}
+          </div>
         </div>
+
+        {isOpen && (
+          <ul className="flex flex-col gap-[1.6rem] items-center mb-10">
+            <Link to="/profile">
+              {" "}
+              <li className="text-[1.8rem] font-[500]">Profile</li>
+            </Link>
+            <Link to="/change-password">
+              {" "}
+              <li className="text-[1.8rem] font-[500]">Change Password</li>
+            </Link>
+            <Link to="/bookings">
+              <li className="text-[1.8rem] font-[500]">Booking History</li>
+            </Link>
+            <Link to="/delete-account">
+              {" "}
+              <li className="text-[1.8rem] font-[500]">Delete Account</li>
+            </Link>
+            <Link to="/log-out">
+              <li className="text-[1.8rem] font-[500] text-red-600">Logout</li>
+            </Link>
+          </ul>
+        )}
       </div>
 
-      <div className="hidden md:flex md:items-center md:gap-[1.6rem]">
+      {/* not logged in */}
+      {/* <div className="hidden md:flex md:items-center md:gap-[1.6rem]">
         <Link to="/signup">
           <PrimaryBtn className="bg-primaryColor w-[10rem] md:w-[14rem] h-[38px] lg:h-[48px] flex justify-center items-center text-[#fff]">
             Sign Up
@@ -130,7 +187,25 @@ const NavBar = () => {
             Login
           </PrimaryBtn>
         </Link>
-      </div>
+      </div> */}
+
+      {/* logged in user */}
+      <Link
+        to="/profile"
+        className="hidden md:flex md:items-center md:gap-[1.6rem]"
+      >
+        <div
+          className="w-[50px] h-[50px] rounded-full"
+          style={{
+            backgroundImage:
+              "url('https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        ></div>
+
+        <h3 className="text-[1.8rem] font-[600]">Timber Daniels</h3>
+      </Link>
     </div>
   );
 };
