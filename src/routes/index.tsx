@@ -19,6 +19,10 @@ const Bookings = lazy(() => import("@pages/bookings"));
 const BookTicket = lazy(() => import("@pages/bookTicket"));
 const HireService = lazy(() => import("@pages/hireService"));
 const ResheduleTicket = lazy(() => import("@pages/resheduleTicket"));
+const Profile = lazy(() => import("@pages/profile"));
+const ChangePassword = lazy(() => import("@pages/changePassword"));
+const DeleteAccount = lazy(() => import("@pages/deleteAccount"));
+const LogOut = lazy(() => import("@pages/logout"));
 
 const AppRouter = () => {
   return (
@@ -28,6 +32,7 @@ const AppRouter = () => {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/register" element={<CreateAccount />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/verification" element={<VerifyAccount />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
@@ -41,6 +46,9 @@ const AppRouter = () => {
         <Route path="/book-ticket" element={<BookTicket />} />
         <Route path="/hire-service" element={<HireService />} />
         <Route path="/reshedule-ticket" element={<ResheduleTicket />} />
+        <Route path="/change-password" element={<ChangePassword />} />
+        <Route path="/delete-account" element={<DeleteAccount />} />
+        <Route path="/log-out" element={<LogOut />} />
 
         {/* 404 page */}
         <Route path="*" element={<NotFound />} />

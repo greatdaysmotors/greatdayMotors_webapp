@@ -2,20 +2,20 @@ import React, { useEffect } from "react";
 import MainLayout from "@layouts/MainLayout";
 import Container from "@layouts/Container";
 import bg from "../../../public/svgs/bgimagetrip.svg";
-import useStore from "../../store";
-import Profile from "@components/Profile";
+import useStore from "../../store"; // Adjust import as per your actual store implementation
+import ProfilePage from "@components/Profile";
 import ChangePassword from "@components/ChangePassword";
 import DeleteAccount from "@components/DeleteAccount";
 import BookingHistory from "@components/BookingHistory";
 import SidebarMenu from "@components/sidebar";
 
-const Bookings: React.FC = () => {
-  const { selectedMenu, setSelectedMenu } = useStore();
+const Profile: React.FC = () => {
+  const { selectedMenu, setSelectedMenu } = useStore(); // Ensure useStore returns the correct types
 
   const renderContent = () => {
     switch (selectedMenu) {
       case "Profile":
-        return <Profile />;
+        return <ProfilePage />;
       case "ChangePassword":
         return <ChangePassword />;
       case "BookingHistory":
@@ -25,12 +25,12 @@ const Bookings: React.FC = () => {
       case "Logout":
         return "Logout";
       default:
-        return <BookingHistory />;
+        return <ProfilePage />;
     }
   };
 
   useEffect(() => {
-    setSelectedMenu("BookingHistory");
+    setSelectedMenu("Profile");
   }, [setSelectedMenu]);
 
   return (
@@ -57,4 +57,4 @@ const Bookings: React.FC = () => {
   );
 };
 
-export default Bookings;
+export default Profile;
