@@ -1,17 +1,83 @@
-import PrimaryBtn from "@components/button/PrimaryBtn";
-import { Checkbox, Flex, Form, Input } from "antd";
+import { Button, Checkbox, Form, Input } from "antd";
 import FormItem from "antd/es/form/FormItem";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../../public/svgs/gd_logo.svg";
+import { BASE_URL } from "@api/index";
+import { useMutation } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { CheckboxChangeEvent } from "antd/es/checkbox";
 
 const Login = () => {
-  const AccountLogin = () => {
-    alert("You are logging in!");
+  const navigate = useNavigate();
+  const [form] = Form.useForm();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [rememberMe, setRememberMe] = useState(false);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("authToken");
+    if (storedToken) {
+      // Auto-login if token exists
+      navigate("/");
+    }
+  }, [navigate]);
+
+  const { mutate, isError, isPending, isSuccess } = useMutation({
+    mutationFn: async (formData: FormData) => {
+      console.log("formData before sending:", formData);
+      const response = await fetch(`${BASE_URL}/v1/auth/passenger/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to log in!");
+      }
+
+      return response.json();
+    },
+    onSuccess: (data) => {
+      const { token, userDetails } = data;
+
+      if (rememberMe) {
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("userDetails", JSON.stringify(userDetails));
+      } else {
+        sessionStorage.setItem("authToken", token);
+        sessionStorage.setItem("userDetails", JSON.stringify(userDetails));
+      }
+
+      setSuccessMessage("Login successful!");
+
+      form.resetFields();
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+    },
+    onError: (error) => {
+      setErrorMessage(error.message);
+    },
+  });
+
+  const handleFinish = (values: FormData) => {
+    console.log("Form Data:", values);
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    mutate(values);
   };
+
+  const handleRememberMeChange = (e: CheckboxChangeEvent) => {
+    setRememberMe(e.target.checked);
+  };
+
   return (
     <div className="flex w-full h-screen justify-center">
       <div className="lg:w-[50%] flex lg:justify-center lg:items-center px-[2.4rem] overflow-scroll scroll-container">
-        <div className=" flex flex-col justify-center items-center w-full md:w-[45rem] h-screen">
+        <div className="flex flex-col justify-center items-center w-full md:w-[45rem] h-screen">
           <Link to="/">
             <img src={logo} alt="logo" />
           </Link>
@@ -21,8 +87,9 @@ const Login = () => {
             </h2>
           </div>
           <Form
+            form={form}
             layout="vertical"
-            onFinish={AccountLogin}
+            onFinish={handleFinish}
             className="w-full mt-[2rem]"
           >
             <FormItem
@@ -48,9 +115,11 @@ const Login = () => {
               <Input.Password className="p-3 rounded-[1rem]" />
             </Form.Item>
 
-            <Flex className="justify-between">
+            <div className="flex justify-between">
               <Form.Item>
-                <Checkbox>Remember me</Checkbox>
+                <Checkbox onChange={handleRememberMeChange}>
+                  Remember me
+                </Checkbox>
               </Form.Item>
 
               <Form.Item className="flex justify-end">
@@ -61,12 +130,27 @@ const Login = () => {
                   Forgot Password?
                 </Link>
               </Form.Item>
-            </Flex>
+            </div>
+
+            {isError && errorMessage && (
+              <p className="text-center text-brandErrorColor">{errorMessage}</p>
+            )}
+
+            {isSuccess && successMessage && (
+              <p className="text-center text-brandSuccessColor">
+                {successMessage}
+              </p>
+            )}
 
             <Form.Item>
-              <PrimaryBtn className="bg-primaryColor text-white  duration-500 mt-[26px] lg:mt-[34px]">
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="bg-primaryColor text-white w-full rounded-[1rem] duration-500 mt-[26px] lg:mt-[34px]"
+                loading={isPending}
+              >
                 Login
-              </PrimaryBtn>
+              </Button>
             </Form.Item>
           </Form>
 

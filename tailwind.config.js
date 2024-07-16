@@ -12,7 +12,7 @@ export default {
         textDeepGray: "#666666",
         successColor: "#0A8917",
         brandGray: "#999999",
-        brandErrorColor: "#EC3B3B"
+        brandErrorColor: "#EC3B3B",
       },
     },
   },

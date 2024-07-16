@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import logo from "../../../public/svgs/gd_logo.svg";
 
 const SignUp = () => {
+  
   return (
     <div className="flex w-full h-screen justify-center">
       <div className="lg:w-[50%] flex lg:justify-center lg:items-center px-[2.4rem]">

@@ -1,4 +1,4 @@
-// import PrimaryBtn from "@components/button/PrimaryBtn";
+import PrimaryBtn from "@components/button/PrimaryBtn";
 import { useState } from "react";
 import {
   IoIosArrowDown,
@@ -8,12 +8,7 @@ import {
 } from "react-icons/io";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../../../public/svgs/gd_logo.svg";
-
-interface NavigationTypes {
-  id: number;
-  title: string;
-  link: string;
-}
+import { NavigationTypes } from "../../types/NavigationTypes";
 
 const navlinks: NavigationTypes[] = [
   {
@@ -39,6 +34,11 @@ const navlinks: NavigationTypes[] = [
 ];
 
 const NavBar = () => {
+  // Retrieve the emailConfirmationToken from local storage
+  const authToken = localStorage.getItem("authToken");
+  const userDetailsString = localStorage.getItem("userDetails");
+  const userDetails = userDetailsString ? JSON.parse(userDetailsString) : null;
+
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
@@ -116,96 +116,94 @@ const NavBar = () => {
             </Link>
           ))}
         </ul>
-        {/* not logged in */}
-        {/* <div className="flex flex-col gap-[1.6rem]">
+
+        {authToken ? (
+          <>
+            {" "}
+            <div
+              onClick={toggleDropdown}
+              className="flex items-center justify-center md:hidden gap-[1.6rem] my-[1rem]"
+            >
+              <img src={logo} alt="logo" className="w-[4rem] h-[4rem]" />
+
+              <div className="flex items-center gap-[1rem] cursor-pointer">
+                <h3 className="text-[1.8rem] font-[600]">
+                  {(userDetails && userDetails?.fullName) || "User fullName"}
+                </h3>
+                {isOpen ? (
+                  <IoIosArrowUp size={20} />
+                ) : (
+                  <IoIosArrowDown size={20} />
+                )}
+              </div>
+            </div>
+            {isOpen && (
+              <ul className="flex flex-col gap-[1.6rem] items-center mb-10">
+                <Link to="/profile">
+                  {" "}
+                  <li className="text-[1.8rem] font-[500]">Profile</li>
+                </Link>
+                <Link to="/change-password">
+                  {" "}
+                  <li className="text-[1.8rem] font-[500]">Change Password</li>
+                </Link>
+                <Link to="/bookings">
+                  <li className="text-[1.8rem] font-[500]">Booking History</li>
+                </Link>
+                <Link to="/delete-account">
+                  {" "}
+                  <li className="text-[1.8rem] font-[500]">Delete Account</li>
+                </Link>
+                <Link to="/log-out">
+                  <li className="text-[1.8rem] font-[500] text-red-600">
+                    Logout
+                  </li>
+                </Link>
+              </ul>
+            )}
+          </>
+        ) : (
+          <div className="flex flex-col gap-[1.6rem]">
+            <Link to="/signup">
+              <PrimaryBtn className="bg-primaryColor w-[25rem] mx-auto  h-[38px] lg:h-[48px] flex justify-center items-center text-[#fff]">
+                Sign Up
+              </PrimaryBtn>
+            </Link>
+            <Link to="/login">
+              <PrimaryBtn className="text-primaryColor w-[25rem] mx-auto border border-primaryColor  h-[38px] lg:h-[48px] flex justify-center items-center">
+                Login
+              </PrimaryBtn>
+            </Link>
+          </div>
+        )}
+      </div>
+
+      {authToken ? (
+        <Link
+          to="/profile"
+          className="hidden md:flex md:items-center md:gap-[1.6rem]"
+        >
+          <img src={logo} alt="logo" className="w-[5rem] h-[5rem]" />
+
+          <h3 className="text-[1.8rem] font-[600]">
+            {" "}
+            {(userDetails && userDetails?.fullName) || "User fullName"}
+          </h3>
+        </Link>
+      ) : (
+        <div className="hidden md:flex md:items-center md:gap-[1.6rem]">
           <Link to="/signup">
-            <PrimaryBtn className="bg-primaryColor w-[25rem] mx-auto  h-[38px] lg:h-[48px] flex justify-center items-center text-[#fff]">
+            <PrimaryBtn className="bg-primaryColor w-[10rem] md:w-[14rem] h-[38px] lg:h-[48px] flex justify-center items-center text-[#fff]">
               Sign Up
             </PrimaryBtn>
           </Link>
           <Link to="/login">
-            <PrimaryBtn className="text-primaryColor w-[25rem] mx-auto border border-primaryColor  h-[38px] lg:h-[48px] flex justify-center items-center">
+            <PrimaryBtn className="text-primaryColor border border-primaryColor w-[10rem] md:w-[14rem] h-[38px] lg:h-[48px] flex justify-center items-center">
               Login
             </PrimaryBtn>
           </Link>
-        </div> */}
-
-        {/* logged in user */}
-        <div
-          onClick={toggleDropdown}
-          className="flex items-center justify-center md:hidden gap-[1.6rem] my-[1rem]"
-        >
-          <div
-            className="w-[4rem] h-[4rem] rounded-full"
-            style={{
-              backgroundImage:
-                "url('https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          ></div>
-
-          <div className="flex items-center gap-[1rem] cursor-pointer">
-            <h3 className="text-[1.8rem] font-[600]">Timber Daniels</h3>
-            {isOpen ? <IoIosArrowUp size={20} /> : <IoIosArrowDown size={20} />}
-          </div>
         </div>
-
-        {isOpen && (
-          <ul className="flex flex-col gap-[1.6rem] items-center mb-10">
-            <Link to="/profile">
-              {" "}
-              <li className="text-[1.8rem] font-[500]">Profile</li>
-            </Link>
-            <Link to="/change-password">
-              {" "}
-              <li className="text-[1.8rem] font-[500]">Change Password</li>
-            </Link>
-            <Link to="/bookings">
-              <li className="text-[1.8rem] font-[500]">Booking History</li>
-            </Link>
-            <Link to="/delete-account">
-              {" "}
-              <li className="text-[1.8rem] font-[500]">Delete Account</li>
-            </Link>
-            <Link to="/log-out">
-              <li className="text-[1.8rem] font-[500] text-red-600">Logout</li>
-            </Link>
-          </ul>
-        )}
-      </div>
-
-      {/* not logged in */}
-      {/* <div className="hidden md:flex md:items-center md:gap-[1.6rem]">
-        <Link to="/signup">
-          <PrimaryBtn className="bg-primaryColor w-[10rem] md:w-[14rem] h-[38px] lg:h-[48px] flex justify-center items-center text-[#fff]">
-            Sign Up
-          </PrimaryBtn>
-        </Link>
-        <Link to="/login">
-          <PrimaryBtn className="text-primaryColor border border-primaryColor w-[10rem] md:w-[14rem] h-[38px] lg:h-[48px] flex justify-center items-center">
-            Login
-          </PrimaryBtn>
-        </Link>
-      </div> */}
-
-      {/* logged in user */}
-      <Link
-        to="/profile"
-        className="hidden md:flex md:items-center md:gap-[1.6rem]"
-      >
-        <div
-          className="w-[50px] h-[50px] rounded-full"
-          style={{
-            backgroundImage:
-              "url('https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        ></div>
-
-        <h3 className="text-[1.8rem] font-[600]">Timber Daniels</h3>
-      </Link>
+      )}
     </div>
   );
 };

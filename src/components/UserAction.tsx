@@ -6,8 +6,9 @@ interface ModalProps {
   message?: string;
   primaryActionLabel?: string;
   secondaryActionLabel?: string;
-  onPrimaryAction: () => void;
-  onSecondaryAction: () => void;
+  onPrimaryAction?: () => void;
+  onSecondaryAction?: () => void;
+  loading?: boolean;
 }
 
 const UserAction: React.FC<ModalProps> = ({
@@ -17,6 +18,7 @@ const UserAction: React.FC<ModalProps> = ({
   secondaryActionLabel = "Cancel",
   onPrimaryAction,
   onSecondaryAction,
+  loading,
 }) => {
   return (
     <div className="flex flex-col justify-center items-center gap-[1.6rem]">
@@ -24,11 +26,13 @@ const UserAction: React.FC<ModalProps> = ({
       <p className="text-[1.6rem] lg:text-[2rem] font-[500]">{message}</p>
       <div className="flex gap-[0.8rem] mt-[0.7rem] justify-center md:justify-end w-full">
         <Button
+          loading={loading}
           className="w-[12.5rem] h-[3.2rem] text-[1.8rem] font-[400] text-[#fff] bg-brandErrorColor rounded-[1rem]"
           onClick={onPrimaryAction}
         >
           {primaryActionLabel}
         </Button>
+
         <Button
           className="w-[12.5rem] h-[3.2rem] text-[1.8rem] font-[400] rounded-[1rem]"
           onClick={onSecondaryAction}

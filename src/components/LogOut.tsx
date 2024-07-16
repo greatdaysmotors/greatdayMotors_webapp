@@ -1,17 +1,27 @@
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import UserAction from "./UserAction";
 
 const LogOut: React.FC = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
   const handleLogout = () => {
-    // Your logout logic here
-    console.log("Log out successfuly!");
+    setLoading(true);
+    localStorage.removeItem("authToken");
+    setTimeout(() => {
+      setLoading(false);
+      navigate("/");
+    }, 1500);
   };
 
   const handleCancel = () => {
-    // Your cancel logic here
-    console.log("Delete action cancelled");
+    navigate("/");
   };
+
   return (
     <UserAction
+      loading={loading}
       title="Logout"
       message="Are you sure you want to log out of your account? Please be aware that
         logging out will terminate your current session and you will be required
