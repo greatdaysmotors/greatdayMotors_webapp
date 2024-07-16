@@ -30,12 +30,16 @@ const AppRouter = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
+
+        {/* auth screens */}
         <Route path="/register" element={<CreateAccount />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/profile" element={<Profile />} />
         <Route path="/verification" element={<VerifyAccount />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/forgot-password/:uuid" element={<ResetPassword />} />
+        {/* auth screens */}
+
+        <Route path="/profile" element={<Profile />} />
         <Route path="/oneway-trip" element={<TripSearch />} />
         <Route path="/round-trip" element={<RoundTripSearch />} />
         <Route path="/booking-status" element={<BookingStatus />} />
