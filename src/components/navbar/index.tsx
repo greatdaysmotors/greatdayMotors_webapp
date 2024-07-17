@@ -35,8 +35,11 @@ const navlinks: NavigationTypes[] = [
 
 const NavBar = () => {
   // Retrieve the emailConfirmationToken from local storage
-  const authToken = localStorage.getItem("authToken");
-  const userDetailsString = localStorage.getItem("userDetails");
+  const authToken =
+    localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
+  const userDetailsString =
+    localStorage.getItem("userDetails") ||
+    sessionStorage.getItem("userDetails");
   const userDetails = userDetailsString ? JSON.parse(userDetailsString) : null;
 
   const location = useLocation();

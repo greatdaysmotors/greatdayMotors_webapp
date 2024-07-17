@@ -9,6 +9,9 @@ const LogOut: React.FC = () => {
   const handleLogout = () => {
     setLoading(true);
     localStorage.removeItem("authToken");
+    sessionStorage.removeItem("authToken");
+    localStorage.removeItem("userDetails");
+    sessionStorage.removeItem("userDetails");
     setTimeout(() => {
       setLoading(false);
       navigate("/");
