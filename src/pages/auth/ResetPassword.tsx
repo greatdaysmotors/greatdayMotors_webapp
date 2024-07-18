@@ -10,9 +10,9 @@ import { BASE_URL } from "@api/index";
 const ResetPassword = () => {
   const { uuid } = useParams<{ uuid: string }>();
   const [reset, setReset] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [form] = Form.useForm();
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const { mutate, isPending, isError } = useMutation({
     mutationFn: async (data: { resetToken: string; newPassword: string }) => {
@@ -39,7 +39,7 @@ const ResetPassword = () => {
     },
   });
 
-  const onFinish = (values: {
+  const onFinish = async (values: {
     newPassword: string;
     confirmNewPassword: string;
   }) => {
@@ -48,7 +48,11 @@ const ResetPassword = () => {
       return;
     }
 
-    mutate({ resetToken: uuid!, newPassword: values.newPassword });
+    try {
+      await mutate({ resetToken: uuid!, newPassword: values.newPassword });
+    } catch (error) {
+      // onError will handle displaying the error message
+    }
   };
 
   return (
@@ -87,11 +91,24 @@ const ResetPassword = () => {
                   <span className="text-[1.6rem]">Confirm New Password</span>
                 }
                 name="confirmNewPassword"
+                dependencies={["newPassword"]}
                 rules={[
                   {
                     required: true,
                     message: "Please confirm your new password!",
                   },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue("newPassword") === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(
+                        new Error(
+                          "The two passwords that you entered do not match!"
+                        )
+                      );
+                    },
+                  }),
                 ]}
               >
                 <Input.Password className="p-3 rounded-[1rem]" />
@@ -107,8 +124,9 @@ const ResetPassword = () => {
                 <Button
                   type="primary"
                   htmlType="submit"
-                  className="bg-primaryColor text-white w-full rounded-[1rem] duration-500 mt-[26px] lg:mt-[34px]"
+                  className="bg-primaryColor py-[2rem] text-white w-full rounded-[1rem] duration-500 mt-[2rem]"
                   loading={isPending}
+                  disabled={isPending}
                 >
                   Reset Password
                 </Button>

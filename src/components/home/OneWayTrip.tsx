@@ -63,7 +63,7 @@ const OneWayTrip: React.FC = () => {
   // GET ALL TERMINALS FROM DATABASE
   interface Terminal {
     terminalName: string;
-    _id: string;
+    _id: string; 
     // other properties...
   }
 
@@ -78,11 +78,11 @@ const OneWayTrip: React.FC = () => {
   const { data, error, isLoading } = useQuery({
     queryKey: ["fetchAllTerminals", userToken],
     queryFn: () => fetchTerminals(userToken),
-    enabled: !!userToken, // Only run the query if userToken is available
+    enabled: !!userToken,
   });
 
   useEffect(() => {
-    const theUserToken = sessionStorage.getItem("authToken");
+    const theUserToken = sessionStorage.getItem("authToken")?sessionStorage.getItem("authToken"):localStorage.getItem("authToken")
     if (theUserToken) {
       console.log(theUserToken, "from uncle");
       setUserToken(theUserToken);
@@ -132,9 +132,14 @@ const OneWayTrip: React.FC = () => {
     return <div>There was an error: {(error as Error).message}</div>;
   }
 
-  if (isLoading) return <Spin />;
+  if (isLoading) return <Spin />
 
-  // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+ 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ 
+const HandleTripSearch =()=>{}
 
   return (
     <div className="flex flex-col gap-[1.6rem] w-full">
@@ -207,7 +212,7 @@ const OneWayTrip: React.FC = () => {
 
       <Link to="/oneway-trip">
         <Button
-          // onClick={HandleTripSearch}
+          onClick={HandleTripSearch}
           type="primary"
           htmlType="submit"
           className="w-full h-[4.8rem] mt-[2.4rem] rounded-[1rem]"

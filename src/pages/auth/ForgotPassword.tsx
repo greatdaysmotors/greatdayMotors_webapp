@@ -231,7 +231,7 @@ const ForgotPassword = () => {
               <Button
                 type="primary"
                 htmlType="submit"
-                className="bg-primaryColor text-white w-full rounded-[1rem] duration-500 mt-[26px] lg:mt-[34px]"
+               className="bg-primaryColor py-[2rem] text-white w-full rounded-[1rem] duration-500 mt-[2rem]"
                 loading={isPending}
               >
                 Send

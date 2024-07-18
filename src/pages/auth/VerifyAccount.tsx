@@ -142,7 +142,7 @@ const VerifyAccount = () => {
                   loading={isPending}
                   type="primary"
                   htmlType="submit"
-                  className="bg-primaryColor text-white w-full rounded-[1rem] duration-500 mt-[26px] lg:mt-[34px]"
+                  className="bg-primaryColor py-[2rem] text-white w-full rounded-[1rem] duration-500 mt-[2rem]"
                 >
                   Verify OTP
                 </Button>
