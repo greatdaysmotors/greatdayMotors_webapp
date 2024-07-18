@@ -1,11 +1,30 @@
 import { Button } from "antd";
-import { useState } from "react";
+import { useEffect,useState } from "react";
 import { Link } from "react-router-dom";
 import QuantityInput from "./QtyInput";
 import SelectComponent from "@components/select";
-import DatePicker from "@components/datepicker";
+import { useQuery } from "@tanstack/react-query";
+import { Spin } from "antd";
+import { BASE_URL } from "@api/index";
+// import moment from 'moment';
+import { DatePicker } from "antd";
+import dayjs from "dayjs";
 
-const RoundTrip = () => {
+
+const RoundTrip: React.FC  = () => {
+
+  function disabledDate(current: any) {
+    // Disable dates before today or after 1 month from today
+    const today = dayjs();
+    const oneMonthFromToday = today.add(27, "day").endOf("day");
+
+    return (
+      current && (current < today.startOf("day") || current > oneMonthFromToday)
+    );
+  }
+
+
+
   const [quantity1, setQuantity1] = useState<number>(1);
   const [quantity2, setQuantity2] = useState<number>(1);
 
@@ -42,17 +61,101 @@ const RoundTrip = () => {
     setSelectedDate2(date);
   };
 
-  const options = [
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-    { value: "option3", label: "Option 3" },
-  ];
 
-  const options2 = [
-    { value: "option4", label: "Option 4" },
-    { value: "option5", label: "Option 5" },
-    { value: "option6", label: "Option 6" },
-  ];
+
+
+
+
+
+  // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+  // GET ALL TERMINALS FROM DATABASE
+  interface Terminal {
+    terminalName: string;
+    _id: string; 
+    // other properties...
+  }
+
+  const [userToken, setUserToken] = useState<string | null>(null);
+  const [options, setOptions] = useState<{ value: string; label: string }[]>(
+    []
+  );
+  const [options2, setOptions2] = useState<{ value: string; label: string }[]>(
+    []
+  );
+
+  const { data, error, isLoading } = useQuery({
+    queryKey: ["fetchAllTerminals", userToken],
+    queryFn: () => fetchTerminals(userToken),
+    enabled: !!userToken,
+  });
+
+  useEffect(() => {
+    const theUserToken = sessionStorage.getItem("authToken")?sessionStorage.getItem("authToken"):localStorage.getItem("authToken")
+    if (theUserToken) {
+      console.log(theUserToken, "from uncle");
+      setUserToken(theUserToken);
+    } else {
+      console.error("No auth token found in sessionStorage.");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (data) {
+      const formatedTerminalList = data.result as Terminal[];
+      const newOptions = formatedTerminalList.map((terminal) => {
+        console.log(terminal.terminalName);
+        return { value: terminal._id, label: terminal.terminalName };
+      });
+      setOptions(newOptions);
+    }
+    if (data) {
+      const formatedTerminalList = data.result as Terminal[];
+      const newOptions2 = formatedTerminalList.map((terminal) => {
+        console.log(terminal.terminalName);
+        return { value: terminal._id, label: terminal.terminalName };
+      });
+      setOptions2(newOptions2);
+    }
+  }, [data]);
+
+  const fetchTerminals = async (token: string | null) => {
+    const response = await fetch(`${BASE_URL}/v1/staff/list/terminal`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Network response was not ok");
+    }
+
+    return response.json();
+  };
+
+  if (error) {
+    console.error("Error fetching terminals:", error);
+    return <div>There was an error: {(error as Error).message}</div>;
+  }
+
+  if (isLoading) return <Spin />
+
+
+
+ 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ 
+
+
+
+
+
+
+
+
 
   return (
     <div className="flex flex-col gap-[1.6rem] w-full">
@@ -87,9 +190,10 @@ const RoundTrip = () => {
       >
         Departure Date
         <DatePicker
-          selected={selectedDate2}
+          value={selectedDate2}
           onChange={handleDateChange2}
-          placeholderText="Select a date"
+          placeholder="Select a date"
+          disabledDate={disabledDate}
         />
       </label>
 
@@ -99,9 +203,10 @@ const RoundTrip = () => {
       >
         Arrival Date
         <DatePicker
-          selected={selectedDate}
+          value={selectedDate}
           onChange={handleDateChange}
-          placeholderText="Select a date"
+          placeholder="Select a date"
+          disabledDate={disabledDate}
         />
       </label>
 

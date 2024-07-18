@@ -27,7 +27,7 @@ const UserAction: React.FC<ModalProps> = ({
       <div className="flex gap-[0.8rem] mt-[0.7rem] justify-center md:justify-end w-full">
         <Button
           loading={loading}
-          className="w-[12.5rem] h-[3.2rem] text-[1.8rem] font-[400] text-[#fff] bg-brandErrorColor rounded-[1rem]"
+          className="w-[12.5rem]  h-[3.2rem] text-[1.8rem] font-[400] text-[#fff] bg-brandErrorColor rounded-[1rem]"
           onClick={onPrimaryAction}
         >
           {primaryActionLabel}

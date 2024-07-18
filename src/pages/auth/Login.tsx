@@ -133,11 +133,11 @@ const Login = () => {
             </div>
 
             {isError && errorMessage && (
-              <p className="text-center text-brandErrorColor">{errorMessage}</p>
+              <p className="text-center font-[600] text-brandErrorColor">{errorMessage}</p>
             )}
 
             {isSuccess && successMessage && (
-              <p className="text-center text-brandSuccessColor">
+              <p className="text-center font-[600] text-brandSuccessColor">
                 {successMessage}
               </p>
             )}
@@ -146,7 +146,7 @@ const Login = () => {
               <Button
                 type="primary"
                 htmlType="submit"
-                className="bg-primaryColor text-white w-full rounded-[1rem] duration-500 mt-[26px] lg:mt-[34px]"
+                className="bg-primaryColor py-[2rem] text-white w-full rounded-[1rem] duration-500 mt-[2rem]"
                 loading={isPending}
               >
                 Login
