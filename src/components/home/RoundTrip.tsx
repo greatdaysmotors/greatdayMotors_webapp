@@ -1,5 +1,5 @@
 import { Button } from "antd";
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import QuantityInput from "./QtyInput";
 import SelectComponent from "@components/select";
@@ -10,9 +10,7 @@ import { BASE_URL } from "@api/index";
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
 
-
-const RoundTrip: React.FC  = () => {
-
+const RoundTrip: React.FC = () => {
   function disabledDate(current: any) {
     // Disable dates before today or after 1 month from today
     const today = dayjs();
@@ -22,8 +20,6 @@ const RoundTrip: React.FC  = () => {
       current && (current < today.startOf("day") || current > oneMonthFromToday)
     );
   }
-
-
 
   const [quantity1, setQuantity1] = useState<number>(1);
   const [quantity2, setQuantity2] = useState<number>(1);
@@ -61,18 +57,12 @@ const RoundTrip: React.FC  = () => {
     setSelectedDate2(date);
   };
 
-
-
-
-
-
-
   // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
   // GET ALL TERMINALS FROM DATABASE
   interface Terminal {
     terminalName: string;
-    _id: string; 
+    _id: string;
     // other properties...
   }
 
@@ -91,7 +81,9 @@ const RoundTrip: React.FC  = () => {
   });
 
   useEffect(() => {
-    const theUserToken = sessionStorage.getItem("authToken")?sessionStorage.getItem("authToken"):localStorage.getItem("authToken")
+    const theUserToken = sessionStorage.getItem("authToken")
+      ? sessionStorage.getItem("authToken")
+      : localStorage.getItem("authToken");
     if (theUserToken) {
       console.log(theUserToken, "from uncle");
       setUserToken(theUserToken);
@@ -141,21 +133,14 @@ const RoundTrip: React.FC  = () => {
     return <div>There was an error: {(error as Error).message}</div>;
   }
 
-  if (isLoading) return <Spin />
+  if (isLoading)
+    return (
+      <div className="w-full flex justify-center mt-8">
+        <Spin />
+      </div>
+    );
 
-
-
- 
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
- 
-
-
-
-
-
-
-
-
+  // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
   return (
     <div className="flex flex-col gap-[1.6rem] w-full">

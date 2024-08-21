@@ -336,7 +336,7 @@ const RoundTripSearch = () => {
                           carModel={trip.carModel}
                           seatsAvailable={trip.seatsAvailable}
                           departureTime={trip.departureTime}
-                          price={trip.price}
+                          price={10000}
                           onSelectSeat={showModal}
                         />
                       ))}

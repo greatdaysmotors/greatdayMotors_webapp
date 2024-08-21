@@ -19,7 +19,7 @@ const Footer = () => {
               GREATDAY MOTORS
             </h4>
           </Link>
-          <p className="text-[1.2rem] lg:text-[1.6rem] font-[500] mt-[0.8rem] text-[#fff]">
+          <p className="text-[1.2rem] font-[500] mt-[0.8rem] text-[#fff]">
             We are dedicated to providing reliable and efficient transportation
             services across Nigeria. With a robust network of modern terminals
             strategically located in key cities and regions, we ensure that

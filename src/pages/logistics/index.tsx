@@ -8,10 +8,10 @@ const Logistics = () => {
       <Container>
         <div className="flex flex-col w-full md:h-full relative lg:w-[80%] mx-auto">
           <div className="flex flex-col w-full items-center md:w-[47rem] lg:w-[47rem] justify-center absolute top-20 md:top-0 bottom-[50%] md:bottom-[60%] lg:bottom-[60%]">
-            <h1 className="text-[2rem] md:text-[3.2rem] lg:text-[5.6rem] font-[700] ">
+            <h1 className="text-[2rem] md:text-[3rem] lg:text-[4rem] font-[700] ">
               Coming Soon
             </h1>
-            <p className="text-[1.6rem] md:text-[2rem] text-center md:px-10 lg:px-0">
+            <p className="text-[1.6rem] text-center md:px-10 lg:px-0">
               We are currently working on creating our GreatDay Logistics
               website. We Will Be Launching Soon. Stay Tuned.
             </p>

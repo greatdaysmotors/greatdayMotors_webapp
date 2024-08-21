@@ -5,7 +5,6 @@ import { IoIosArrowBack } from "react-icons/io";
 import { IoShieldCheckmarkOutline } from "react-icons/io5";
 import { TbDotsVertical } from "react-icons/tb";
 import { Link } from "react-router-dom";
-import car from "../../../public/pngs/cartrip.png";
 import notfound from "../../../public/pngs/not-found-img.png";
 import bg from "../../../public/svgs/bgimagetrip.svg";
 import steering from "../../../public/pngs/steering.png";
@@ -17,35 +16,58 @@ import { PersonalInfoStep } from "../../components/home/PersonalInfo";
 import { BeneficiaryInfoStep } from "@components/home/BeneficiaryInfo";
 import { ReviewDetailsStep } from "@components/home/ReviewDetail";
 import { PaymentStep } from "@components/home/PaymentStep";
+import useStore from "../../store";
+import { TripData } from "../../types/Trip";
+import { Seat } from "../../types/Seat";
 
-const tripData = [
-  {
-    imageSrc: car,
-    altText: "Car image",
-    route: "Uyo Terminal ==> Oshodi Terminal",
-    carModel: "Toyota Sienna",
-    seatsAvailable: 5,
-    departureTime: "06:00am",
-    price: "₦18,200",
-  },
-  {
-    imageSrc: car,
-    altText: "Car image",
-    route: "Uyo Terminal ==> Oshodi Terminal",
-    carModel: "Toyota Sienna",
-    seatsAvailable: 5,
-    departureTime: "06:00am",
-    price: "₦18,200",
-  },
+const initialSeats = [
+  { id: 1, color: "#666666", clickable: true },
+  { id: 2, color: "#E6E6E6", clickable: false },
+  { id: 3, color: "#E6E6E6", clickable: false },
+  { id: 4, color: "#666666", clickable: true },
+  { id: 5, color: "#666666", clickable: true },
+  { id: 6, color: "#666666", clickable: true },
+  { id: 7, color: "#666666", clickable: true },
+  { id: 8, color: "#666666", clickable: true },
+  { id: 9, color: "#666666", clickable: true },
+  { id: 10, color: "#666666", clickable: true },
+  { id: 11, color: "#666666", clickable: true },
+  { id: 12, color: "#666666", clickable: true },
 ];
 
 const TripSearch = () => {
+  const trips = useStore((state) => state.trips);
+  console.log("trips", trips);
+
+  const oneWayTripPayload = useStore((state) => state.oneWayTripPayload);
+  console.log("oneWayTripPayload", oneWayTripPayload);
+
+  const setTripDetails = useStore((state) => state.setTripDetails);
+
+  const tripDetails = useStore((state) => state.tripDetails);
+  console.log("tripDetails", tripDetails);
+
+  const numberOfChildren = tripDetails.travellingWithAChild || 0;
+  console.log("numberOfChildren", numberOfChildren);
+
+  const numberOfAdults = (oneWayTripPayload && oneWayTripPayload.adult) || 0;
+  console.log("numberOfAdults", numberOfAdults);
+
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [details, setDetails] = useState(false);
+  const [aTrip, setATrip] = useState<TripData | null>(null);
 
-  const showModal = () => {
+  const [seats, setSeats] = useState<Seat[]>(initialSeats);
+  const [selectedSeats, setSelectedSeats] = useState<number[]>([]);
+
+  const showModal = (trip: TripData) => {
     setOpen(true);
+    setATrip(trip);
+    setTripDetails({
+      ...tripDetails,
+      availableTrip: trip._id,
+    });
   };
 
   const handleOk = () => {
@@ -61,23 +83,16 @@ const TripSearch = () => {
     setOpen(false);
   };
 
-  const initialSeats = [
-    { id: 1, color: "#666666", clickable: true },
-    { id: 2, color: "#E6E6E6", clickable: false },
-    { id: 3, color: "#E6E6E6", clickable: false },
-    { id: 4, color: "#666666", clickable: true },
-    { id: 5, color: "#666666", clickable: true },
-    { id: 6, color: "#666666", clickable: true },
-    { id: 7, color: "#666666", clickable: true },
-    { id: 8, color: "#666666", clickable: true },
-    { id: 9, color: "#666666", clickable: true },
-    { id: 10, color: "#666666", clickable: true },
-    { id: 11, color: "#666666", clickable: true },
-    { id: 12, color: "#666666", clickable: true },
-  ];
-
-  const [seats, setSeats] = useState(initialSeats);
-  const [selectedSeats, setSelectedSeats] = useState<number[]>([]);
+  useEffect(() => {
+    if (aTrip && aTrip.seatsAndStatus) {
+      const mappedSeats = aTrip.seatsAndStatus.map((seat) => ({
+        id: seat.seatNumber,
+        color: seat.seatStatus === "available" ? "#666666" : "#E6E6E6",
+        clickable: seat.seatStatus === "available",
+      }));
+      setSeats(mappedSeats);
+    }
+  }, [aTrip]);
 
   useEffect(() => {
     const selectedSeat = seats
@@ -89,7 +104,7 @@ const TripSearch = () => {
   const handleSeatClick = (id: number) => {
     setSeats((prevSeats) =>
       prevSeats.map((seat) =>
-        seat.id === id
+        seat.id === id && seat.clickable
           ? { ...seat, color: seat.color === "#2F2FC8" ? "#666666" : "#2F2FC8" }
           : seat
       )
@@ -160,8 +175,13 @@ const TripSearch = () => {
   };
 
   useEffect(() => {
-    console.log("Selected seats:", selectedSeats);
+    setTripDetails({
+      ...tripDetails,
+      departureSeatNumbers: selectedSeats,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSeats]);
+
   return (
     <MainLayout>
       <div className=" bg-[#e6e6e6] pb-16 relative">
@@ -179,20 +199,20 @@ const TripSearch = () => {
         >
           <Link
             to="/"
-            className="flex items-center text-[#fff] text-[1.2rem] md:text-[1.8rem] py-4"
+            className="flex items-center text-[#fff] text-[1.2rem] mt-5 md:text-[1.8rem] py-4 "
           >
             <IoIosArrowBack />
             Back
           </Link>
 
-          {tripData && tripData.length > 0 ? (
+          {trips && trips.length > 0 ? (
             <div className="bg-[#fff] px-[1.5rem] md:px-[3rem] lg:px-[4rem] pt-[0.5rem] md:pt-[2rem]  pb-10 md:py-28 rounded-[1rem] ">
               <div className="mt-[1rem] flex justify-between gap-[0.8rem] bg-[#fff] lg:mt-[4rem]">
                 <div className="flex flex-col gap-[0.8rem]">
                   <div className="flex gap-[0.8rem] items-center lg:mt-[rem]">
                     <CiLocationOn size={28} color="#2F2FC8" />
                     <p className="text-[1.4rem] md:text-[1.8rem] lg:text-[2rem] font-[700] text-[#000]">
-                      Akwa Ibom, Uyo Terminal
+                      {oneWayTripPayload && oneWayTripPayload?.from}
                     </p>
                   </div>
                   <div className="flex-col">
@@ -201,22 +221,24 @@ const TripSearch = () => {
                   <div className="flex gap-[0.8rem] items-center">
                     <IoShieldCheckmarkOutline color="#0A8917" size={24} />
                     <p className="text-[1.4rem] md:text-[1.8rem] lg:text-[2rem] font-[700] text-[#000]">
-                      Oshodi, Lagos Terminal
+                      {oneWayTripPayload && oneWayTripPayload?.to}
                     </p>
                   </div>
                 </div>
                 <div className="flex flex-col gap-1 mt-2">
                   <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[1.8rem] font-[500] text-right">
-                    One-way Trip
+                    {oneWayTripPayload &&
+                      oneWayTripPayload?.tripType === "One-way Trip" &&
+                      "One-way Trip"}
                   </p>
                   <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[1.8rem] font-[500] text-right">
-                    1 Adult
+                    {oneWayTripPayload && oneWayTripPayload?.adult} Adult
                   </p>
                   <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[1.8rem] font-[500] text-right">
-                    1 Child
+                    {oneWayTripPayload && oneWayTripPayload?.child} Child
                   </p>
                   <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[1.8rem] font-[500] text-right">
-                    30/04/24
+                    {oneWayTripPayload && oneWayTripPayload?.date}
                   </p>
                 </div>
               </div>
@@ -326,18 +348,16 @@ const TripSearch = () => {
                     Select Trip
                   </h4>
                   <div className="flex flex-col gap-[1.6rem] lg:gap-[3.2rem]">
-                    {tripData &&
-                      tripData.map((trip, index) => (
+                    {trips &&
+                      trips.map((trip, index) => (
                         <SelectTrip
                           key={index}
-                          imageSrc={trip.imageSrc}
-                          altText={trip.altText}
-                          route={trip.route}
-                          carModel={trip.carModel}
-                          seatsAvailable={trip.seatsAvailable}
-                          departureTime={trip.departureTime}
-                          price={trip.price}
-                          onSelectSeat={showModal}
+                          route={`${trip?.from?.terminalName} ==> ${trip?.to?.terminalName}`}
+                          carModel={trip?.vehicle?.vehicleName}
+                          seatsAvailable={trip?.seatsAvailable}
+                          departureTime={trip?.departureDateTime}
+                          price={trip?.tripCost}
+                          onSelectSeat={() => showModal(trip)}
                         />
                       ))}
                   </div>
@@ -375,15 +395,21 @@ const TripSearch = () => {
             <div className="flex items-center w-full justify-between md:mt-[4rem]">
               <div className="flex items-center gap-2">
                 <div className="w-[1rem] h-[1rem] lg:w-[1.5rem] lg:h-[1.5rem] rounded-full bg-textGray"></div>
-                <p className="text-[1.2rem] md:text-[1.4rem] lg:text-[1.6rem]">Booked Seat</p>
+                <p className="text-[1.2rem] md:text-[1.4rem] lg:text-[1.6rem]">
+                  Booked Seat
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-[1rem] h-[1rem] lg:w-[1.5rem] lg:h-[1.5rem] rounded-full bg-primaryColor"></div>
-                <p className="text-[1.2rem] md:text-[1.4rem] lg:text-[1.6rem]">Selected Seat</p>
+                <p className="text-[1.2rem] md:text-[1.4rem] lg:text-[1.6rem]">
+                  Selected Seat
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-[1rem] h-[1rem] lg:w-[1.5rem] lg:h-[1.5rem] rounded-full bg-textDeepGray"></div>
-                <p className="text-[1.2rem] md:text-[1.4rem] lg:text-[1.6rem]">Available Seat</p>
+                <p className="text-[1.2rem] md:text-[1.4rem] lg:text-[1.6rem]">
+                  Available Seat
+                </p>
               </div>
             </div>
             <div className="flex flex-col items-center justify-between mt-[2.4rem]">

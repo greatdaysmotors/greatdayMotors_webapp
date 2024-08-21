@@ -83,7 +83,7 @@ export const PersonalInfoStep: React.FC<InfoStepProps> = ({
           </div>
         </div>
 
-        <div className="w-full flex flex-col gap-2">
+        <div className="w-full flex flex-col gap-2 mt-8 lg:mt-0">
           <h2 className="text-[1.4rem] md:text-[1.8rem] lg:text-[2.2rem] font-[700]">
             Next-of-Kin Information
           </h2>
@@ -138,14 +138,14 @@ export const PersonalInfoStep: React.FC<InfoStepProps> = ({
         </div>
       </div>
 
-      <p className="text-[1.4rem] md:text-[1.8rem] md:mt-4  text-[#999999]">
+      <p className="text-[1.4rem] md:text-[1.8rem] mt-4  text-[#999999]">
         N/B: Please tick the box if you want your next-of-kin to get
         notification about the trip
       </p>
 
       <div className="flex  mt-3 gap-2 ">
         <Input type="checkbox" className="rounded-[1rem] border w-[2rem]" />
-        <span className="text-[1.6rem] md:text-[1.8rem]  leading-[1.5rem] w-full">
+        <span className="text-[1.4rem] md:text-[1.8rem]  leading-[1.5rem] w-full">
           I want my next-of-kin to recieve an email about the trip.
         </span>
       </div>

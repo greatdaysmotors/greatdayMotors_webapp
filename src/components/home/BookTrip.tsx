@@ -5,6 +5,7 @@ import OneWayTrip from "./OneWayTrip";
 import RoundTrip from "./RoundTrip";
 import { RadioChangeEvent } from "antd/lib/radio";
 import { useState } from "react";
+// import useStore from "../../store";
 
 interface BookTripProps {
   className?: string;
@@ -16,6 +17,15 @@ const BookTrip: React.FC<BookTripProps> = ({ className }) => {
   const handleTabChange = (e: RadioChangeEvent) => {
     setSelectedTab(e.target.value);
   };
+
+  // const { selectedTripType, setSelectedTripType } = useStore((state) => ({
+  //   selectedTripType: state.selectedTripType,
+  //   setSelectedTripType: state.setSelectedTripType,
+  // }));
+
+  // const handleTripTabChange = (key: string) => {
+  //   setSelectedTripType(key);
+  // };
 
   return (
     <div
@@ -42,7 +52,12 @@ const BookTrip: React.FC<BookTripProps> = ({ className }) => {
       <hr />
       <hr />
       {selectedTab === "bookTrip" ? (
-        <Tabs defaultActiveKey="1" tabPosition={"top"}>
+        <Tabs
+          // activeKey={selectedTripType}
+          // onChange={handleTripTabChange}
+          defaultActiveKey="1"
+          tabPosition={"top"}
+        >
           <Tabs.TabPane
             tab={<span className="lg:text-[1.8rem]">One-Way Trip</span>}
             key="1"
