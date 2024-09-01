@@ -1,29 +1,51 @@
-import { useState } from "react";
-import { AiOutlineCamera, AiOutlineUser } from "react-icons/ai";
+import { useEffect, useState } from "react";
+import { AiOutlineCamera } from "react-icons/ai";
 import { CiMail } from "react-icons/ci";
 import { FiEdit, FiUser } from "react-icons/fi";
 import { MdOutlinePhoneInTalk } from "react-icons/md";
 import UserDetail from "./UserDetail";
-import { UserDetails } from "../types/UserDetails";
+import { profile, UserDetails } from "../types/UserDetails";
 import logo from "../../public/svgs/gd_logo.svg";
+// import { BASE_URL } from "@api/index";
+// import { useQuery } from "@tanstack/react-query";
+import { Spin } from "antd";
+import { useUserProfile } from "@hooks/useUserProfile";
+import useAuthToken from "@hooks/useAuthToken";
 
 const Profile = () => {
-  const [details, setDetails] = useState<UserDetails>({
-    name1: "Pelz Ade",
-    email1: "greatdaymotor@gmail.com",
-    gender1: "Male",
-    phone1: "08126899573",
-    name2: "Enter name",
-    email2: "Enter email",
-    gender2: "Select a gender",
-    phone2: "Enter phone number",
-    name3: "Enter name",
-    email3: "Enter email",
-    gender3: "Select a gender",
-    phone3: "Enter phone number",
-  });
+  const userToken = useAuthToken();
+  const { data, error, isLoading } = useUserProfile(userToken);
 
-  const genderOptions = ["Male", "Female"];
+  // const [the_profile, set_the_profile]= useState<profile>(
+  //   {
+  //     createdAt: "",
+  //     email: "",
+  //     emailVerified: false,
+  //     fullName:"",
+  //     gender: "",
+  //     isDeleted: false,
+  //     isOnline: false,
+  //     nokEmail: "",
+  //     nokFullName: "",
+  //     nokPhoneNumber: "",
+  //     phoneNumber: "",
+  //     photoURL: "",
+  //     registerStatus: "",
+  //     status: "",
+  //     updatedAt: "",
+  //     __v: 0,
+  //     _id: "",
+  //   }
+  // )
+
+  const [details, setDetails] = useState<UserDetails>({
+    name1: "",
+    email1: "",
+    phone1: "",
+    name2: "",
+    email2: "",
+    phone2: "",
+  });
 
   const handleDetailChange = (key: string, newDetail: string) => {
     setDetails((prevDetails) => ({
@@ -45,6 +67,34 @@ const Profile = () => {
       reader.readAsDataURL(file);
     }
   };
+
+  useEffect(() => {
+    if (data) {
+      const profile_object: profile = data.userProfile;
+      console.log(profile_object);
+      console.log(profile_object.fullName);
+      setDetails({
+        name1: profile_object.fullName,
+        email1: profile_object.email,
+        phone1: profile_object.phoneNumber,
+        name2: profile_object.nokFullName,
+        email2: profile_object.nokEmail,
+        phone2: profile_object.nokPhoneNumber,
+      });
+    }
+  }, [data]);
+
+  if (error) {
+    console.error("Error fetching terminals:", error);
+    return <div>There was an error: {(error as Error).message}</div>;
+  }
+
+  if (isLoading)
+    return (
+      <div className="w-full flex justify-center mt-8">
+        <Spin />
+      </div>
+    );
 
   return (
     <div>
@@ -75,17 +125,13 @@ const Profile = () => {
         {[
           {
             title: "Personal Information",
-            keys: ["name1", "email1", "gender1", "phone1"],
+            keys: ["name1", "email1", "phone1"],
           },
           {
             title: "Next-of-Kin Information",
-            keys: ["name2", "email2", "gender2", "phone2"],
+            keys: ["name2", "email2", "phone2"],
           },
-          {
-            title: "Beneficiary Information",
-            keys: ["name3", "email3", "gender3", "phone3"],
-          },
-        ].map((section, index) => (
+        ].map((section) => (
           <div
             key={section.title}
             className="flex flex-col gap-[0.8rem] w-full"
@@ -93,25 +139,27 @@ const Profile = () => {
             <p className="text-[1.4rem] font-[700]">{section.title}</p>
             {section.keys.map((key) => (
               <UserDetail
+                section={section.title}
                 key={key}
+                name_v2={
+                  key.includes("name")
+                    ? "Name"
+                    : key.includes("email")
+                    ? "Email"
+                    : "Phone"
+                }
                 name={
                   key.includes("name")
                     ? "Name"
                     : key.includes("email")
                     ? "Email"
-                    : key.includes("gender")
-                    ? "Gender"
                     : "Phone Number"
                 }
                 inputLabel={
                   key.includes("name")
                     ? "Name"
                     : key.includes("email")
-                    ? index === 0
-                      ? "Email"
-                      : "Email"
-                    : key.includes("gender")
-                    ? "Gender"
+                    ? "Email"
                     : "Phone Number"
                 }
                 detail={details[key as keyof UserDetails]}
@@ -119,30 +167,20 @@ const Profile = () => {
                   key.includes("name")
                     ? "Name"
                     : key.includes("email")
-                    ? index === 0
-                      ? "Email"
-                      : "Email"
-                    : key.includes("gender")
-                    ? "Gender"
+                    ? "Email"
                     : "Phone Number"
                 }
                 Icon={
                   key.includes("phone")
                     ? MdOutlinePhoneInTalk
-                    : key.includes("gender")
-                    ? AiOutlineUser
                     : key.includes("email")
                     ? CiMail
                     : FiUser
                 }
-                EditIcon={key.includes("email") && index === 0 ? null : FiEdit}
-                onDetailChange={
-                  key.includes("email") && index === 0
-                    ? undefined
-                    : (newDetail) => handleDetailChange(key, newDetail)
-                }
-                selectOptions={
-                  key.includes("gender") ? genderOptions : undefined
+                EditIcon={FiEdit}
+                isEditable={key === "email2" || !key.includes("email")}
+                onDetailChange={(newDetail) =>
+                  handleDetailChange(key, newDetail)
                 }
               />
             ))}

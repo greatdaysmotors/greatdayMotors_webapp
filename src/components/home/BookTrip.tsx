@@ -5,12 +5,20 @@ import OneWayTrip from "./OneWayTrip";
 import RoundTrip from "./RoundTrip";
 import { RadioChangeEvent } from "antd/lib/radio";
 import { useState } from "react";
+import { storeState } from "../../types/Trip";
+import { use_round_trip } from "../../store/round_trip";
+import { Spin } from "antd";
+// import useStore from "../../store";
 
 interface BookTripProps {
   className?: string;
 }
 
 const BookTrip: React.FC<BookTripProps> = ({ className }) => {
+
+  const is_round_trip_tab_active =use_round_trip((state:storeState)=> state.round_trip_active)
+
+
   const [selectedTab, setSelectedTab] = useState<string>("bookTrip");
 
   const handleTabChange = (e: RadioChangeEvent) => {
@@ -42,7 +50,10 @@ const BookTrip: React.FC<BookTripProps> = ({ className }) => {
       <hr />
       <hr />
       {selectedTab === "bookTrip" ? (
-        <Tabs defaultActiveKey="1" tabPosition={"top"}>
+        <Tabs
+          defaultActiveKey="1"
+          tabPosition={"top"}
+        >
           <Tabs.TabPane
             tab={<span className="lg:text-[1.8rem]">One-Way Trip</span>}
             key="1"
@@ -53,7 +64,25 @@ const BookTrip: React.FC<BookTripProps> = ({ className }) => {
             tab={<span className="lg:text-[1.8rem]">Round Trip</span>}
             key="2"
           >
-            <RoundTrip />
+           {
+            is_round_trip_tab_active == true ?<RoundTrip />: 
+            
+            <div
+            style={{
+              display:"flex",
+              width:"100%",
+              marginTop:"20px",
+              justifyContent:"center"
+            }}
+            >
+
+<Spin/>
+            </div>
+           }
+               
+            
+            
+
           </Tabs.TabPane>
         </Tabs>
       ) : (

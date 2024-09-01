@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import MainLayout from "@layouts/MainLayout";
 import Container from "@layouts/Container";
 import bg from "../../../public/svgs/bgimagetrip.svg";
-import useStore from "../../store"; // Adjust import as per your actual store implementation
+import useStore from "../../store"; 
 import ProfilePage from "@components/Profile";
 import ChangePassword from "@components/ChangePassword";
 import DeleteAccount from "@components/DeleteAccount";
@@ -10,8 +10,8 @@ import BookingHistory from "@components/BookingHistory";
 import SidebarMenu from "@components/sidebar";
 
 const Profile: React.FC = () => {
-  const { selectedMenu, setSelectedMenu } = useStore(); // Ensure useStore returns the correct types
-
+  
+  const { selectedMenu, setSelectedMenu } = useStore();
   const renderContent = () => {
     switch (selectedMenu) {
       case "Profile":

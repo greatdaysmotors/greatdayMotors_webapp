@@ -29,7 +29,7 @@ const Select: React.FC<SelectProps> = ({
       <option value="" disabled>
         {placeholder}
       </option>
-      {options.map((option) => (
+      {options && options?.map((option) => (
         <option key={option.value} value={option.value}>
           {option.label}
         </option>

@@ -102,9 +102,9 @@ const NavBar = () => {
       <div
         className={`${
           open
-            ? "opacity-100 transition-all duration-500 ease-in-out"
-            : "max-h-0 opacity-0 transition-all duration-500 ease-in-out"
-        } shadow-sm pt-28 overflow-hidden flex flex-col text-center lg:hidden bg-white gap-4 absolute top-0 left-0 z-50 w-full p-6 mx-auto `}
+            ? "top-0 opacity-100 transition-all duration-500 ease-in-out "
+            : "max-h-0 opacity-0 transition-all duration-500 ease-in-out top-30"
+        } shadow-sm pt-28 overflow-hidden flex flex-col text-center lg:hidden bg-white gap-4 absolute  left-0 z-50 w-full p-6 mx-auto `}
       >
         <ul className="flex flex-col gap-[1.6rem] lg:gap-[4.8rem] items-center">
           {navlinks.map((navlink) => (

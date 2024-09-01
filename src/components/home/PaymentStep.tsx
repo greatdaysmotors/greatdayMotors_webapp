@@ -13,7 +13,7 @@ interface InfoStepProps {
 
 export const PaymentStep: React.FC<InfoStepProps> = ({
   handleStepCompletion,
-  currentStep,
+  // currentStep,
   openPayment,
   setOpenPayment,
 }) => {
@@ -47,8 +47,16 @@ export const PaymentStep: React.FC<InfoStepProps> = ({
         onCancel={handleCancel}
         footer={[
           <div className="mt-4 flex flex-col gap-[1rem]  justify-center w-[80%] mx-auto items-center py-36">
-            <IoIosCheckmarkCircleOutline size={80} color="#0A8917" className="flex lg:hidden" />
-            <IoIosCheckmarkCircleOutline size={120} color="#0A8917" className="hidden lg:flex" />
+            <IoIosCheckmarkCircleOutline
+              size={80}
+              color="#0A8917"
+              className="flex lg:hidden"
+            />
+            <IoIosCheckmarkCircleOutline
+              size={120}
+              color="#0A8917"
+              className="hidden lg:flex"
+            />
             <h4 className="text-[1.8rem] md:text-[2rem] font-[700] text-center lg:w-[30rem]">
               Your booking reservation is Successful
             </h4>
@@ -60,16 +68,14 @@ export const PaymentStep: React.FC<InfoStepProps> = ({
             <h4 className="text-[1.6rem] md:text-[1.8rem] font-[700] text-center">
               Ref ID:qw1236-12
             </h4>
-            {currentStep <= 4 && (
-              <Button
-                key="submit"
-                type="primary"
-                onClick={HandlePayment}
-                className={`px-10 mt-4 py-8 bg-primaryColor text-white rounded-[1rem] w-full`}
-              >
-                View Trip Details
-              </Button>
-            )}
+            <Button
+              key="submit"
+              type="primary"
+              onClick={HandlePayment}
+              className={`px-10 mt-4 py-8 bg-primaryColor text-white rounded-[1rem] w-full`}
+            >
+              View Trip Details
+            </Button>
           </div>,
         ]}
       >

@@ -1,6 +1,6 @@
 import { Button, Checkbox, Form, Input } from "antd";
 import FormItem from "antd/es/form/FormItem";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../../public/svgs/gd_logo.svg";
 import { BASE_URL } from "@api/index";
 import { useMutation } from "@tanstack/react-query";
@@ -9,6 +9,7 @@ import { CheckboxChangeEvent } from "antd/es/checkbox";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [form] = Form.useForm();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -24,7 +25,7 @@ const Login = () => {
 
   const { mutate, isError, isPending, isSuccess } = useMutation({
     mutationFn: async (formData: FormData) => {
-      console.log("formData before sending:", formData);
+      // console.log("formData before sending:", formData);
       const response = await fetch(`${BASE_URL}/v1/auth/passenger/login`, {
         method: "POST",
         headers: {
@@ -54,8 +55,10 @@ const Login = () => {
       setSuccessMessage("Login successful!");
 
       form.resetFields();
+      // Redirect to the original destination or to the homepage
+      const redirectTo = location.state?.from?.pathname || "/";
       setTimeout(() => {
-        navigate("/");
+        navigate(redirectTo);
       }, 2000);
     },
     onError: (error) => {
@@ -64,7 +67,7 @@ const Login = () => {
   });
 
   const handleFinish = (values: FormData) => {
-    console.log("Form Data:", values);
+    // console.log("Form Data:", values);
     setErrorMessage(null);
     setSuccessMessage(null);
     mutate(values);
@@ -133,7 +136,9 @@ const Login = () => {
             </div>
 
             {isError && errorMessage && (
-              <p className="text-center font-[600] text-brandErrorColor">{errorMessage}</p>
+              <p className="text-center font-[600] text-brandErrorColor">
+                {errorMessage}
+              </p>
             )}
 
             {isSuccess && successMessage && (

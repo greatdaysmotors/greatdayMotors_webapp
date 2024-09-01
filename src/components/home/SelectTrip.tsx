@@ -1,5 +1,11 @@
 import React from "react";
-import car from "../../../public/pngs/cartrip.png";
+import car from "../../../public/svgs/siennacar.svg";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 type SelectTripProps = {
   imageSrc?: string;
@@ -7,14 +13,12 @@ type SelectTripProps = {
   route: string;
   carModel: string;
   seatsAvailable: number;
-  departureTime: string;
-  price: string;
+  departureTime: string | Date;
+  price: number;
   onSelectSeat: () => void;
 };
 
 const SelectTrip: React.FC<SelectTripProps> = ({
-  imageSrc = car,
-  altText = "car image",
   route,
   carModel,
   seatsAvailable,
@@ -22,6 +26,8 @@ const SelectTrip: React.FC<SelectTripProps> = ({
   price,
   onSelectSeat,
 }) => {
+  const formattedPrice = `₦${price?.toLocaleString()}`;
+  const formattedTime = dayjs(departureTime).utc().format("h:mm a");
   return (
     <div
       style={{
@@ -31,8 +37,8 @@ const SelectTrip: React.FC<SelectTripProps> = ({
     >
       <div className="w-[40%] flex justify-center">
         <img
-          src={imageSrc}
-          alt={altText}
+          src={car}
+          alt={"car image"}
           className="md:w-[10rem] lg:w-[16rem] h-auto w-auto "
         />
       </div>
@@ -40,19 +46,19 @@ const SelectTrip: React.FC<SelectTripProps> = ({
         <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[2rem] font-[700]">
           {route}
         </p>
-        <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[2rem]  font-[500]">
+        <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[2rem] capitalize  font-[500]">
           {carModel}
         </p>
         <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[2rem]  font-[500]">
           {seatsAvailable} Seats Available
         </p>
         <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[2rem]  font-[500]">
-          {departureTime}
+          {formattedTime}
         </p>
       </div>
       <div className="w-[11.5rem] lg:w-[14rem] flex flex-col justify-start items-start gap-[0.8rem]">
         <h6 className="text-[1.4rem] md:text-[1.6rem] lg:text-[1.8rem]  font-[700]">
-          {price}
+          {formattedPrice}
         </h6>
         <button
           onClick={onSelectSeat}
