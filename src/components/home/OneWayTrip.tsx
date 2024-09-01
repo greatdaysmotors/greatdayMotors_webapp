@@ -10,8 +10,9 @@ import { DatePicker } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 import { formatDate } from "@utils/formatDate";
 import useStore from "../../store";
-import { TripData } from "../../types/Trip";
+import { storeState, TripData } from "../../types/Trip";
 import toast from "react-hot-toast";
+import { use_round_trip } from "../../store/round_trip";
 
 interface Terminal {
   terminalName: string;
@@ -19,6 +20,11 @@ interface Terminal {
 }
 
 const OneWayTrip: React.FC = () => {
+  // SETTING IS ROUN TRIP TAB ACTIVE
+  const set_is_round_trip_tab_active = use_round_trip(
+    (state: storeState) => state.set_round_trip_active
+  );
+
   const nav = useNavigate();
 
   const addTrip = useStore((state) => state.addTrip);
@@ -83,7 +89,6 @@ const OneWayTrip: React.FC = () => {
   };
 
   // GET ALL TERMINALS FROM DATABASE
-
   const [userToken, setUserToken] = useState<string | null>(null);
   const [options, setOptions] = useState<{ value: string; label: string }[]>(
     []
@@ -94,8 +99,8 @@ const OneWayTrip: React.FC = () => {
 
   const { data, error, isLoading } = useQuery({
     queryKey: ["fetchAllTerminals", userToken],
-    queryFn: () => fetchTerminals(userToken),
-    enabled: !!userToken,
+    queryFn: () => fetchTerminals(),
+    // enabled: !!userToken,
   });
 
   useEffect(() => {
@@ -110,11 +115,12 @@ const OneWayTrip: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    console.log("data", data);
     if (data) {
-      const formatedTerminalList = data.result as Terminal[];
+      const formatedTerminalList = data.terminals as Terminal[];
 
       // options for the departure dropdown
-      const newOptions = formatedTerminalList.map((terminal) => ({
+      const newOptions = formatedTerminalList?.map((terminal) => ({
         value: terminal._id,
         label: terminal.terminalName,
       }));
@@ -122,21 +128,22 @@ const OneWayTrip: React.FC = () => {
 
       // Filter the arrival options based on the selected departure terminal
       const filteredOptions = formatedTerminalList
-        .filter((terminal) => terminal._id !== selectedOption) // Exclude the selected departure terminal
-        .map((terminal) => ({
+        ?.filter((terminal) => terminal._id !== selectedOption)
+        ?.map((terminal) => ({
           value: terminal._id,
           label: terminal.terminalName,
         }));
       setOptions2(filteredOptions);
+      set_is_round_trip_tab_active(true);
     }
-  }, [data, selectedOption]);
+  }, [data, selectedOption, set_is_round_trip_tab_active]);
 
-  const fetchTerminals = async (token: string | null) => {
-    const response = await fetch(`${BASE_URL}/v1/staff/list/terminal`, {
+  const fetchTerminals = async () => {
+    const response = await fetch(`${BASE_URL}/v1/passenger/terminals`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        // Authorization: `Bearer ${token}`,
       },
     });
 
@@ -169,7 +176,7 @@ const OneWayTrip: React.FC = () => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${userToken}`,
+          // Authorization: `Bearer ${userToken}`,
         },
       });
 
@@ -205,9 +212,20 @@ const OneWayTrip: React.FC = () => {
     };
 
     setTripDetails({
+      fullName: "",
+      email: "",
+      phoneNumber: "",
       departureTerminal: selectedOption,
       arrivalTerminal: selectedOption2,
-      travellingWithAChild: quantity2.toString(),
+      travellingWithAChild: quantity2 > 0,
+      returnTrip: null,
+      returnSeatNumbers: null,
+      departureSeatNumbers: [],
+      nextOfKinName: "",
+      nextOfKinPhoneNumber: "",
+      nextOfKinEmail: "",
+      sendEmailToNextOfKin: false,
+      totalTripCost: 0,
     });
 
     // Save the payload to the store
@@ -218,10 +236,6 @@ const OneWayTrip: React.FC = () => {
     }
   };
 
-  // useEffect(() => {
-
-  // }, [isPending, nav]);
-
   // Compute if the button should be disabled
   const isButtonDisabled = useMemo(() => {
     return !(selectedOption && selectedOption2 && selectedDate);
@@ -229,7 +243,11 @@ const OneWayTrip: React.FC = () => {
 
   if (error) {
     console.error("Error fetching terminals:", error);
-    return <div>There was an error: {(error as Error).message}</div>;
+    return (
+      <div className="text-red-600">
+        {(error as Error).message}: Check your internet connection
+      </div>
+    );
   }
 
   if (isLoading)
@@ -276,6 +294,7 @@ const OneWayTrip: React.FC = () => {
           onChange={handleDateChange}
           placeholder="Select a date"
           disabledDate={disabledDate}
+          format="MM DD, YYYY"
         />
       </label>
 

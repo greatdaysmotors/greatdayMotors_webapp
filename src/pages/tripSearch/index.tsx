@@ -36,22 +36,26 @@ const initialSeats = [
 ];
 
 const TripSearch = () => {
+  const userDetailsString =
+    localStorage.getItem("userDetails") ||
+    sessionStorage.getItem("userDetails");
+  const userDetails = userDetailsString ? JSON.parse(userDetailsString) : null;
+  // console.log("userDetails", userDetails);
+
   const trips = useStore((state) => state.trips);
-  console.log("trips", trips);
+  // console.log("trips", trips);
 
   const oneWayTripPayload = useStore((state) => state.oneWayTripPayload);
-  console.log("oneWayTripPayload", oneWayTripPayload);
+  // console.log("oneWayTripPayload", oneWayTripPayload);
 
   const setTripDetails = useStore((state) => state.setTripDetails);
 
   const tripDetails = useStore((state) => state.tripDetails);
-  console.log("tripDetails", tripDetails);
+  // console.log("tripDetails", tripDetails);
 
-  const numberOfChildren = tripDetails.travellingWithAChild || 0;
-  console.log("numberOfChildren", numberOfChildren);
-
-  const numberOfAdults = (oneWayTripPayload && oneWayTripPayload.adult) || 0;
-  console.log("numberOfAdults", numberOfAdults);
+  const numberOfChildren = Number(tripDetails.travellingWithAChild) || 0;
+  const numberOfAdults = (oneWayTripPayload && oneWayTripPayload.adult) || 1;
+  const numberOfBeneficiaries = numberOfAdults > 1 ? numberOfAdults - 1 : 0;
 
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -62,6 +66,7 @@ const TripSearch = () => {
   const [selectedSeats, setSelectedSeats] = useState<number[]>([]);
 
   const showModal = (trip: TripData) => {
+    // console.log("singletrip", trip);
     setOpen(true);
     setATrip(trip);
     setTripDetails({
@@ -102,13 +107,25 @@ const TripSearch = () => {
   }, [seats]);
 
   const handleSeatClick = (id: number) => {
-    setSeats((prevSeats) =>
-      prevSeats.map((seat) =>
-        seat.id === id && seat.clickable
-          ? { ...seat, color: seat.color === "#2F2FC8" ? "#666666" : "#2F2FC8" }
-          : seat
-      )
-    );
+    const clickedSeat = seats.find((seat) => seat.id === id);
+
+    if (!clickedSeat || !clickedSeat.clickable) return;
+
+    if (clickedSeat.color === "#2F2FC8") {
+      // Deselect the seat
+      setSeats((prevSeats) =>
+        prevSeats.map((seat) =>
+          seat.id === id ? { ...seat, color: "#666666" } : seat
+        )
+      );
+    } else if (selectedSeats.length < numberOfAdults) {
+      // If the seat is not already selected and we haven't reached the limit, select it
+      setSeats((prevSeats) =>
+        prevSeats.map((seat) =>
+          seat.id === id ? { ...seat, color: "#2F2FC8" } : seat
+        )
+      );
+    }
   };
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -134,12 +151,22 @@ const TripSearch = () => {
   };
 
   const renderStep = (step: number) => {
-    switch (step) {
+    // Determine the adjusted step when step 2 is hidden
+    const adjustedStep =
+      numberOfBeneficiaries === 0 && numberOfChildren === 0 && step > 1
+        ? step - 1
+        : step;
+
+    switch (adjustedStep) {
       case 1:
         return (
           <PersonalInfoStep
             currentStep={currentStep}
             handleStepCompletion={handleStepCompletion}
+            numberOfBeneficiaries={numberOfBeneficiaries}
+            numberOfAdults={numberOfAdults}
+            numberOfChildren={numberOfChildren}
+            aTrip={aTrip}
           />
         );
       case 2:
@@ -148,6 +175,10 @@ const TripSearch = () => {
             currentStep={currentStep}
             handleStepCompletion={handleStepCompletion}
             showReviewModal={showReviewModal}
+            numberOfBeneficiaries={numberOfBeneficiaries}
+            numberOfChildren={numberOfChildren}
+            numberOfAdults={numberOfAdults}
+            aTrip={aTrip}
           />
         );
       case 3:
@@ -158,6 +189,8 @@ const TripSearch = () => {
             openReview={openReview}
             setOpenReview={setOpenReview}
             showPaymentModal={showPaymentModal}
+            aTrip={aTrip}
+            numberOfAdults={numberOfAdults}
           />
         );
       case 4:
@@ -246,99 +279,110 @@ const TripSearch = () => {
               {details ? (
                 <div className="flex flex-col gap-[1.6rem]">
                   <h4 className="text-[1.4rem] md:text-[1.8rem] lg:text-[2.2rem] font-[700]">
-                    Dear Mr Daniel,
+                    Dear {userDetails && userDetails.fullName},
                     <br />
                     We just need to know a few more information about you
                   </h4>
                   <div className="flex items-start justify-between md:mt-[3.2rem]">
-                    {[1, 2, 3, 4].map((step: number) => (
-                      <React.Fragment key={step}>
-                        {step !== 1 && (
-                          <div
-                            className={`border-t-2 ${
-                              currentStep === step
-                                ? "border-primaryColor"
-                                : "border-[#999999]"
-                            } border-primaryColor flex-1 mt-[0.8rem] md:mt-[1.6rem]`}
-                          ></div>
-                        )}
-                        <div className="flex flex-col items-center justify-center gap-1 w-[10%]">
-                          {completedSteps.includes(step) ? (
-                            <>
-                              {" "}
-                              <MdCheckCircle
-                                size={20}
-                                color="#2F2FC8"
-                                className="flex md:hidden"
-                              />
-                              <MdCheckCircle
-                                size={45}
-                                color="#2F2FC8"
-                                className="hidden md:flex"
-                              />
-                            </>
-                          ) : (
+                    {[1, 2, 3, 4]
+                      .filter((step) => {
+                        // Exclude step 2 when there are no beneficiaries and no children
+                        if (
+                          numberOfBeneficiaries === 0 &&
+                          numberOfChildren === 0 &&
+                          step === 2
+                        ) {
+                          return false;
+                        }
+                        return true;
+                      })
+                      .map((filteredStep, index) => (
+                        <React.Fragment key={filteredStep}>
+                          {index !== 0 && (
                             <div
-                              className={`w-[2rem] h-[2rem] md:w-[3.6rem] md:h-[3.6rem] rounded-full  border  ${
-                                currentStep === step
-                                  ? "border-primaryColor text-primaryColor "
-                                  : "border-[#999999] text-[#999999]"
-                              } flex justify-center items-center text-[1.2rem] cursor-pointer`}
-                            >
-                              {step}
-                            </div>
+                              className={`border-t-2 ${
+                                currentStep === filteredStep
+                                  ? "border-primaryColor"
+                                  : "border-[#999999]"
+                              } border-primaryColor flex-1 mt-[0.8rem] md:mt-[1.6rem]`}
+                            ></div>
                           )}
-                          <p className="text-[1rem] text-center">
-                            {step === 1 && (
-                              <span
-                                className={`${
-                                  currentStep === 1
-                                    ? "text-primaryColor"
-                                    : "text-[#999999]"
-                                } text-[1rem] md:text-[1.6rem] font-[500]`}
+                          <div className="flex flex-col items-center justify-center gap-1 w-[10%]">
+                            {completedSteps.includes(filteredStep) ? (
+                              <>
+                                <MdCheckCircle
+                                  size={20}
+                                  color="#2F2FC8"
+                                  className="flex md:hidden"
+                                />
+                                <MdCheckCircle
+                                  size={45}
+                                  color="#2F2FC8"
+                                  className="hidden md:flex"
+                                />
+                              </>
+                            ) : (
+                              <div
+                                className={`w-[2rem] h-[2rem] md:w-[3.6rem] md:h-[3.6rem] rounded-full border ${
+                                  currentStep === filteredStep
+                                    ? "border-primaryColor text-primaryColor"
+                                    : "border-[#999999] text-[#999999]"
+                                } flex justify-center items-center text-[1.2rem] cursor-pointer`}
                               >
-                                Personal Information
-                              </span>
+                                {index + 1} {/* Display 1, 2, 3 sequence */}
+                              </div>
                             )}
-                            {step === 2 && (
-                              <span
-                                className={`${
-                                  currentStep === 2
-                                    ? "text-primaryColor"
-                                    : "text-[#999999]"
-                                } text-[1rem] md:text-[1.6rem] font-[500]`}
-                              >
-                                Beneficiary Information
-                              </span>
-                            )}
-                            {step === 3 && (
-                              <span
-                                onClick={showReviewModal}
-                                className={`${
-                                  currentStep === 3
-                                    ? "text-primaryColor"
-                                    : "text-[#999999]"
-                                } text-[1rem] md:text-[1.6rem] font-[500] cursor-pointer`}
-                              >
-                                Review Details
-                              </span>
-                            )}
-                            {step === 4 && (
-                              <span
-                                onClick={showPaymentModal}
-                                className={`${
-                                  currentStep === 4
-                                    ? "text-primaryColor"
-                                    : "text-[#999999]"
-                                } text-[1rem] md:text-[1.6rem] font-[500] cursor-pointer`}
-                              >
-                                Payment
-                              </span>
-                            )}
-                          </p>
-                        </div>
-                      </React.Fragment>
-                    ))}
+                            <p className="text-[1rem] text-center">
+                              {filteredStep === 1 && (
+                                <span
+                                  className={`${
+                                    currentStep === filteredStep
+                                      ? "text-primaryColor"
+                                      : "text-[#999999]"
+                                  } text-[1rem] md:text-[1.6rem] font-[500]`}
+                                >
+                                  Personal Information
+                                </span>
+                              )}
+                              {filteredStep === 2 && (
+                                <span
+                                  className={`${
+                                    currentStep === filteredStep
+                                      ? "text-primaryColor"
+                                      : "text-[#999999]"
+                                  } text-[1rem] md:text-[1.6rem] font-[500]`}
+                                >
+                                  Beneficiary Information
+                                </span>
+                              )}
+                              {filteredStep === 3 && (
+                                <span
+                                  onClick={showReviewModal}
+                                  className={`${
+                                    currentStep === filteredStep
+                                      ? "text-primaryColor"
+                                      : "text-[#999999]"
+                                  } text-[1rem] md:text-[1.6rem] font-[500] cursor-pointer`}
+                                >
+                                  Review Details
+                                </span>
+                              )}
+                              {filteredStep === 4 && (
+                                <span
+                                  onClick={showPaymentModal}
+                                  className={`${
+                                    currentStep === filteredStep
+                                      ? "text-primaryColor"
+                                      : "text-[#999999]"
+                                  } text-[1rem] md:text-[1.6rem] font-[500] cursor-pointer`}
+                                >
+                                  Payment
+                                </span>
+                              )}
+                            </p>
+                          </div>
+                        </React.Fragment>
+                      ))}
                   </div>
                   <div className="mt-4">{renderStep(currentStep)}</div>
                 </div>
@@ -349,17 +393,22 @@ const TripSearch = () => {
                   </h4>
                   <div className="flex flex-col gap-[1.6rem] lg:gap-[3.2rem]">
                     {trips &&
-                      trips.map((trip, index) => (
-                        <SelectTrip
-                          key={index}
-                          route={`${trip?.from?.terminalName} ==> ${trip?.to?.terminalName}`}
-                          carModel={trip?.vehicle?.vehicleName}
-                          seatsAvailable={trip?.seatsAvailable}
-                          departureTime={trip?.departureDateTime}
-                          price={trip?.tripCost}
-                          onSelectSeat={() => showModal(trip)}
-                        />
-                      ))}
+                      trips.map((trip, index) => {
+                        const availableSeatsCount = trip.seatsAndStatus.filter(
+                          (seat) => seat.seatStatus === "available"
+                        ).length;
+                        return (
+                          <SelectTrip
+                            key={index}
+                            route={`${trip?.from?.terminalName} ==> ${trip?.to?.terminalName}`}
+                            carModel={trip?.vehicle?.vehicleName}
+                            seatsAvailable={availableSeatsCount}
+                            departureTime={trip?.departureDateTime}
+                            price={trip?.tripCost}
+                            onSelectSeat={() => showModal(trip)}
+                          />
+                        );
+                      })}
                   </div>
                 </div>
               )}

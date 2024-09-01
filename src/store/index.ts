@@ -1,30 +1,34 @@
 import create from "zustand";
 import { persist } from "zustand/middleware";
 import { TripData } from "../types/Trip";
-interface TripDetails {
+
+export interface Beneficiary {
+  name: string;
+  email: string;
+  phoneNumber: string;
+}
+
+export interface TripDetails {
+  fullName: string;
+  email: string;
+  phoneNumber: string;
   departureTerminal?: string;
   arrivalTerminal?: string;
   availableTrip?: string;
   returnTrip?: string | null; // null or undefined if one-way
   departureSeatNumbers?: number[];
   returnSeatNumbers?: string[] | null; // null or undefined if one-way
-  travellingWithAChild?: string;
+  travellingWithAChild?: boolean;
   child1Name?: string;
   child1Age?: string;
-  child1Gender?: string;
   child2Name?: string;
   child2Age?: string;
-  child2Gender?: string;
   nextOfKinName?: string;
   nextOfKinPhoneNumber?: string;
   nextOfKinEmail?: string;
-  beneficiaries?: {
-    name: string;
-    email: string;
-    phoneNumber: string;
-  }[];
+  beneficiaries?: Beneficiary[]; // Updated to be an array
   sendEmailToNextOfKin?: boolean;
-  totalTripCost?: string;
+  totalTripCost?: number;
 }
 
 interface StoreState {
@@ -80,13 +84,16 @@ const useStore = create<StoreState>()(
       oneWayTripPayload: null,
       setOneWayTripPayload: (payload) => set({ oneWayTripPayload: payload }),
       tripDetails: {
+        fullName: "",
+        email: "",
+        phoneNumber: "",
         departureTerminal: "",
         arrivalTerminal: "",
         availableTrip: "",
         returnTrip: null,
         departureSeatNumbers: [],
-        returnSeatNumbers: null,
-        travellingWithAChild: "",
+        returnSeatNumbers: [],
+        travellingWithAChild: false,
         child1Name: "",
         child1Age: "",
         child1Gender: "",
@@ -96,15 +103,9 @@ const useStore = create<StoreState>()(
         nextOfKinName: "",
         nextOfKinPhoneNumber: "",
         nextOfKinEmail: "",
-        beneficiaries: [
-          {
-            name: "",
-            email: "",
-            phoneNumber: "",
-          },
-        ],
-        sendEmailToNextOfKin: true,
-        totalTripCost: "",
+        beneficiaries: [], // Initialize as an empty array
+        sendEmailToNextOfKin: false,
+        totalTripCost: 0,
       },
       setTripDetails: (details) => set({ tripDetails: details }),
     }),

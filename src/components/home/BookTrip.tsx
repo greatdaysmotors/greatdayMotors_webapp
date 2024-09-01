@@ -5,6 +5,9 @@ import OneWayTrip from "./OneWayTrip";
 import RoundTrip from "./RoundTrip";
 import { RadioChangeEvent } from "antd/lib/radio";
 import { useState } from "react";
+import { storeState } from "../../types/Trip";
+import { use_round_trip } from "../../store/round_trip";
+import { Spin } from "antd";
 // import useStore from "../../store";
 
 interface BookTripProps {
@@ -12,20 +15,15 @@ interface BookTripProps {
 }
 
 const BookTrip: React.FC<BookTripProps> = ({ className }) => {
+
+  const is_round_trip_tab_active =use_round_trip((state:storeState)=> state.round_trip_active)
+
+
   const [selectedTab, setSelectedTab] = useState<string>("bookTrip");
 
   const handleTabChange = (e: RadioChangeEvent) => {
     setSelectedTab(e.target.value);
   };
-
-  // const { selectedTripType, setSelectedTripType } = useStore((state) => ({
-  //   selectedTripType: state.selectedTripType,
-  //   setSelectedTripType: state.setSelectedTripType,
-  // }));
-
-  // const handleTripTabChange = (key: string) => {
-  //   setSelectedTripType(key);
-  // };
 
   return (
     <div
@@ -53,8 +51,6 @@ const BookTrip: React.FC<BookTripProps> = ({ className }) => {
       <hr />
       {selectedTab === "bookTrip" ? (
         <Tabs
-          // activeKey={selectedTripType}
-          // onChange={handleTripTabChange}
           defaultActiveKey="1"
           tabPosition={"top"}
         >
@@ -68,7 +64,25 @@ const BookTrip: React.FC<BookTripProps> = ({ className }) => {
             tab={<span className="lg:text-[1.8rem]">Round Trip</span>}
             key="2"
           >
-            <RoundTrip />
+           {
+            is_round_trip_tab_active == true ?<RoundTrip />: 
+            
+            <div
+            style={{
+              display:"flex",
+              width:"100%",
+              marginTop:"20px",
+              justifyContent:"center"
+            }}
+            >
+
+<Spin/>
+            </div>
+           }
+               
+            
+            
+
           </Tabs.TabPane>
         </Tabs>
       ) : (

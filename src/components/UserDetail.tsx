@@ -1,8 +1,19 @@
-import React, { useState } from "react";
-import { Modal, Select, Button, Input } from "antd";
+import React, { useEffect, useState } from "react";
+import { Modal, Button, Input } from "antd";
 import { UserDetailProps } from "../types/UserDetailProps";
+import { useMutation } from "@tanstack/react-query";
+import { BASE_URL } from "@api/index";
+import {
+  profile_fullName,
+  profile_nokEmail,
+  profile_nokFullName,
+  profile_nokPhoneNumber,
+  profile_phoneNumber,
+} from ".././types/UserDetails";
+
 
 const UserDetail: React.FC<UserDetailProps> = ({
+  section,
   name,
   detail,
   detailEditLabel = "Detail",
@@ -13,8 +24,27 @@ const UserDetail: React.FC<UserDetailProps> = ({
   editIconColor = "#2F2FC8",
   onDetailChange,
   inputLabel,
-  selectOptions,
+  isEditable = true,
 }) => {
+  useEffect(() => {
+    const theUserToken = sessionStorage.getItem("authToken")
+      ? sessionStorage.getItem("authToken")
+      : localStorage.getItem("authToken");
+    if (theUserToken) {
+      console.log(theUserToken, "from uncle");
+      setUserToken(theUserToken);
+    } else {
+      console.error("No auth token found in sessionStorage.");
+    }
+  }, []);
+
+  const userDetailsString =
+    localStorage.getItem("userDetails") ||
+    sessionStorage.getItem("userDetails");
+  const userDetails = userDetailsString ? JSON.parse(userDetailsString) : null;
+
+  const [userToken, setUserToken] = useState<string | null>(null);
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editValue, setEditValue] = useState(detail);
 
@@ -23,16 +53,117 @@ const UserDetail: React.FC<UserDetailProps> = ({
     setIsModalVisible(true);
   };
 
-  const handleOk = () => {
+  const [btn_text, set_btn_text] = useState<string>("save");
+
+  const handleOk = (label: string | undefined) => {
+
+    // form.validateFields().then(() => {
+  
+    // }).catch(() => {
+    //   set_btn_text("Validation failed!");
+    // });
+
     if (onDetailChange) {
+      console.log(label);
+      console.log(section, " section");
+
       onDetailChange(editValue);
+      switch (true) {
+        case label === "Name" && section === "Personal Information":
+          mutate({
+            fullName: editValue,
+          });
+          break;
+
+        case label === "Phone Number" && section === "Personal Information":
+          mutate({
+            phoneNumber: editValue,
+          });
+          break;
+
+        case label === "Name" && section === "Next-of-Kin Information":
+          mutate({
+            nokFullName: editValue,
+          });
+          break;
+
+        case label === "Email" && section === "Next-of-Kin Information":
+          mutate({
+            nokEmail: editValue,
+          });
+          break;
+
+        case label === "Phone Number" && section === "Next-of-Kin Information":
+          mutate({
+            nokPhoneNumber: editValue,
+          });
+          break;
+
+        default:
+          console.log("No matching case found.");
+          break;
+      }
+      set_btn_text("updated succesfully!");
+      if (label === "Name" && section === "Personal Information") {
+        sessionStorage.setItem(
+          "userDetails",
+          JSON.stringify({
+            ...userDetails,
+            fullName: editValue,
+          })
+        );
+      }
+      return;
     }
+ 
+
     setIsModalVisible(false);
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
   };
+
+  // const { mutate, isError, isPending, isSuccess } = useMutation({
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (
+      formData:
+        | profile_fullName
+        | profile_nokEmail
+        | profile_nokFullName
+        | profile_nokPhoneNumber
+        | profile_phoneNumber
+    ) => {
+      console.log("formData before sending:", formData);
+      const response = await fetch(
+        `${BASE_URL}/v1/passenger/passengers/profile`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userToken}`,
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "profile n ot updated");
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      setTimeout(() => {
+        setIsModalVisible(false);
+        set_btn_text("save");
+      }, 2000);
+    },
+    onError: () => {
+      set_btn_text("not successful!");
+    },
+  });
 
   return (
     <div className="flex gap-[1.6rem] w-full">
@@ -43,7 +174,7 @@ const UserDetail: React.FC<UserDetailProps> = ({
           <p className="text-[1.4rem] font-[400] text-textDeepGray">{detail}</p>
         </div>
         <div className="flex items-center">
-          {EditIcon && EditIcon !== null && (
+          {isEditable && EditIcon && EditIcon !== null && (
             <EditIcon
               size={editIconSize}
               color={editIconColor}
@@ -53,51 +184,52 @@ const UserDetail: React.FC<UserDetailProps> = ({
           )}
         </div>
       </div>
-      <Modal
-        centered
-        title={
-          <p className="text-center text-[1.8rem] font-[700]">{`Edit ${detailEditLabel}`}</p>
-        }
-        visible={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={[
-          <Button
-            key="save"
-            type="primary"
-            onClick={handleOk}
-            className="w-full"
-          >
-            Save
-          </Button>,
-        ]}
-        width={400}
-      >
-        <label htmlFor="inputLabel" className="text-[1.6rem] font-[400]">
-          {inputLabel}
-        </label>
-        {selectOptions ? (
-          <Select
-            value={editValue}
-            onChange={(value: string) => setEditValue(value)}
-            placeholder={`Select a ${detailEditLabel.toLowerCase()}`}
-            className="text-textDeepGray w-full"
-          >
-            {selectOptions.map((option) => (
-              <Select.Option key={option} value={option}>
-                {option}
-              </Select.Option>
-            ))}
-          </Select>
-        ) : (
-          <Input
-            value={editValue}
-            onChange={(e) => setEditValue(e.target.value)}
-            placeholder={`Enter ${detailEditLabel.toLowerCase()}`}
-            className="text-textDeepGray"
-          />
-        )}
-      </Modal>
+    
+        <Modal
+          centered
+          title={
+            <p className="text-center text-[1.8rem] font-[700]">{`Edit ${detailEditLabel}`}</p>
+          }
+          visible={isModalVisible}
+          onOk={() => handleOk(inputLabel)}
+          onCancel={handleCancel}
+          footer={[
+            !isPending ? (
+              <Button
+                key="save"
+                type="primary"
+                onClick={() => handleOk(inputLabel)}
+                className="w-full"
+              >
+                {btn_text}
+              </Button>
+            ) : (
+              <Button
+                // disabled
+                type="primary"
+                loading
+                iconPosition="start"
+              >
+                Loading
+              </Button>
+            ),
+          ]}
+          width={400}
+        >
+          <label htmlFor="inputLabel" className="text-[1.6rem] font-[400]">
+            {inputLabel}
+          </label>
+
+        
+            <Input
+              value={editValue}
+              onChange={(e) => setEditValue(e.target.value)}
+              placeholder={`Enter ${detailEditLabel.toLowerCase()}`}
+              className="text-textDeepGray"
+            />
+      
+        </Modal>
+     
     </div>
   );
 };

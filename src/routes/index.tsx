@@ -22,6 +22,8 @@ const ResheduleTicket = lazy(() => import("@pages/resheduleTicket"));
 const Profile = lazy(() => import("@pages/profile"));
 const ChangePassword = lazy(() => import("@pages/changePassword"));
 const DeleteAccount = lazy(() => import("@pages/deleteAccount"));
+const TermsAndConditions = lazy(() => import("@pages/terms"));
+const PrivacyPolicy = lazy(() => import("@pages/privacy"));
 const LogOut = lazy(() => import("@pages/logout"));
 
 const AppRouter = () => {
@@ -52,6 +54,9 @@ const AppRouter = () => {
         <Route path="/reshedule-ticket" element={<ResheduleTicket />} />
         <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/delete-account" element={<DeleteAccount />} />
+        <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+
         <Route path="/log-out" element={<LogOut />} />
 
         {/* 404 page */}

@@ -1,5 +1,5 @@
 import React from "react";
-import car from "../../../public/pngs/cartrip.png";
+import car from "../../../public/svgs/siennacar.svg";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
@@ -46,7 +46,7 @@ const SelectTrip: React.FC<SelectTripProps> = ({
         <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[2rem] font-[700]">
           {route}
         </p>
-        <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[2rem]  font-[500]">
+        <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[2rem] capitalize  font-[500]">
           {carModel}
         </p>
         <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[2rem]  font-[500]">

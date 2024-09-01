@@ -1,6 +1,8 @@
 import { IconType } from "react-icons";
 
 export interface UserDetailProps {
+  name_v2:string;
+  section:string;
   name: string;
   detail: string;
   detailEditLabel?: string;
@@ -11,5 +13,5 @@ export interface UserDetailProps {
   editIconColor?: string;
   inputLabel?: string;
   onDetailChange?: (detail: string) => void;
-  selectOptions?: string[];
+  isEditable?: boolean;
 }

@@ -19,7 +19,7 @@ const Footer = () => {
               GREATDAY MOTORS
             </h4>
           </Link>
-          <p className="text-[1.2rem] font-[500] mt-[0.8rem] text-[#fff]">
+          <p className="text-[1.2rem] lg:text-[1.4rem] font-[500] mt-[0.8rem] text-[#fff]">
             We are dedicated to providing reliable and efficient transportation
             services across Nigeria. With a robust network of modern terminals
             strategically located in key cities and regions, we ensure that
@@ -34,16 +34,16 @@ const Footer = () => {
               Quick Links
             </p>
             <ul className="flex flex-col gap-[0.8rem]">
-              <li className="text-[1.2rem] lg:text-[1.4rem]  font-[500] text-[#fff]">
+              <li className="text-[1.2rem] lg:text-[1.4rem]  font-[500] text-[#fff] cursor-pointer">
                 Book Ticket
               </li>
-              <li className="text-[1.2rem] lg:text-[1.4rem]  font-[500] text-[#fff]">
+              <li className="text-[1.2rem] lg:text-[1.4rem]  font-[500] text-[#fff] cursor-pointer">
                 Hire Service
               </li>
-              <li className="text-[1.2rem] lg:text-[1.4rem]  font-[500] text-[#fff]">
+              <li className="text-[1.2rem] lg:text-[1.4rem]  font-[500] text-[#fff] cursor-pointer">
                 Reshedule Ticket
               </li>
-              <li className="text-[1.2rem] lg:text-[1.4rem]  font-[500] text-[#fff]">
+              <li className="text-[1.2rem] lg:text-[1.4rem]  font-[500] text-[#fff] cursor-pointer">
                 Check Booking Status
               </li>
             </ul>
@@ -66,12 +66,24 @@ const Footer = () => {
               Company
             </p>
             <ul className="flex flex-col gap-[0.8rem]">
-              <li className="text-[1.2rem] lg:text-[1.4rem]  font-[500] text-[#fff]">
+              <Link
+                to="/about-us"
+                className="text-[1.2rem] lg:text-[1.4rem]  font-[500] text-[#fff] cursor-pointer"
+              >
                 About Us
-              </li>
-              <li className="text-[1.2rem] lg:text-[1.4rem]  font-[500] text-[#fff]">
+              </Link>
+              <Link
+                to="#"
+                className="text-[1.2rem] lg:text-[1.4rem]  font-[500] text-[#fff] cursor-pointer"
+              >
                 Our Vision
-              </li>
+              </Link>
+              <Link
+                to="/contact-us"
+                className="text-[1.2rem] lg:text-[1.4rem]  font-[500] text-[#fff] cursor-pointer"
+              >
+                Contact Us
+              </Link>
             </ul>
           </div>
           <div className="flex flex-col gap-[0.8rem]">
@@ -97,14 +109,20 @@ const Footer = () => {
       </div>
       <hr />
       <div className="px-[2.4rem] lg:px-[4.4rem] py-[0.8rem] md:py-[1.2rem] flex gap-[22px] justify-end w-full">
-        <div className="flex items-center gap-[0.4rem] md:gap-[0.8rem]">
-          <p className="text-[#fff] text-[1.2rem] lg:text-[1.6rem] font-[500] ">
-            Contact Us
-          </p>
+        <div className="flex items-center justify-between lg:justify-end gap-6  md:gap-[0.8rem] w-full">
+          <Link
+            to="/terms-and-conditions"
+            className="text-[#fff] text-[1.2rem] lg:text-[1.6rem] font-[500] cursor-pointer"
+          >
+            Terms and Conditions
+          </Link>
           <p className="text-[#fff]">|</p>
-          <p className="text-[#fff] text-[1.2rem] lg:text-[1.6rem] font-[500] ">
+          <Link
+            to="/privacy-policy"
+            className="text-[#fff] text-[1.2rem] lg:text-[1.6rem] font-[500] cursor-pointer "
+          >
             Privacy Policy
-          </p>
+          </Link>
         </div>
         <div className="flex items-center gap-[0.4rem] md:gap-[2.4rem]">
           <div className="h-[3.5rem] w-[3.5rem] border-[0.1rem] rounded-full border-[#fff] flex items-center justify-center cursor-pointer">
