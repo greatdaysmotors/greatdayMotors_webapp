@@ -13,7 +13,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Modal, Spin } from "antd";
 import { MdCheckCircle, MdClose } from "react-icons/md";
 import { FaUser } from "react-icons/fa6";
-import { PaymentStep } from "@components/home/PaymentStep";
+
 import { use_round_trip } from "../../store/round_trip";
 import { useQuery } from "@tanstack/react-query";
 import { BASE_URL } from "@api/index";
@@ -26,6 +26,8 @@ import {
 import { Two_way_beneficiary_info } from "@components/home/Two_way_beneficiary_info";
 import { Two_way_personal_info } from "@components/home/Two_way_personal_info";
 import { Two_way_review_details } from "@components/home/Two_way_review_details";
+import { Two_way_PaymentStep } from "@components/home/Two_way_PaymentStep";
+
 
 const RoundTripSearch = () => {
   const navigate = useNavigate();
@@ -163,6 +165,10 @@ const RoundTripSearch = () => {
     set_return_trip_modal_open(false);
   };
 
+
+
+
+
   const [currentStep, setCurrentStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
 
@@ -241,14 +247,22 @@ const RoundTripSearch = () => {
         );
       case 4:
         return (
-          <PaymentStep
-            // currentStep={currentStep}
-            handleStepCompletion={handleStepCompletion}
-            // back_to_view_details={back_to_view_details}
+          <Two_way_PaymentStep
+          currentStep={currentStep}
+          showPaymentModal={showPaymentModal}
+          numberOfBeneficiaries={trip_data.number_of_adults}
+          numberOfChildren={trip_data.number_of_children}
+          numberOfAdults={trip_data.number_of_adults}
+          the_trip_cost={return_trip_cost + departure_trip_cost}
+          departure_trip_cost={departure_trip_cost}
+          return_trip_cost={return_trip_cost}
             openPayment={openPayment}
             setOpenPayment={setOpenPayment}
+           
+            title={null}
           />
         );
+   
       default:
         return null;
     }

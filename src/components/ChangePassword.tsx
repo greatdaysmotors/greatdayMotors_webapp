@@ -1,6 +1,7 @@
 import { BASE_URL } from "@api/index";
 import useAuthToken from "@hooks/useAuthToken";
 import { useMutation } from "@tanstack/react-query";
+import { change_password_axios_type, change_password_type, change_password_type_v2 } from "../types/Trip";
 import { Button, Form, Input} from "antd";
 import axios, { AxiosResponse } from "axios";
 import { useState } from "react";
@@ -23,16 +24,6 @@ const ChangePassword = () => {
 
 
 
-  interface change_password_type{
-    oldPassword:string;
-    newPassword:string;
-    confirmPassword:string
-  }
-  interface change_password_type_v2{
-    oldPassword:string;
-    newPassword:string;
-  
-  }
   
   const [update_button,set_update_button]=useState<string>("Update Password")
   
@@ -41,12 +32,12 @@ const ChangePassword = () => {
   
   
   const { mutate, isError, isPending } = useMutation<
-  AxiosResponse<any> , // Success type
+  AxiosResponse<change_password_axios_type> , // Success type
   Error, // Error type
   change_password_type_v2 // Payload type
   >({
   mutationFn: (payload: change_password_type_v2) =>
-    axios.put<any>(
+    axios.put<change_password_axios_type>(
       `${BASE_URL}/v1/passenger/passengers/profile`,
       payload,
       {

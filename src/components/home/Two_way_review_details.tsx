@@ -1,7 +1,12 @@
 import { BASE_URL } from "@api/index";
 import useAuthToken from "@hooks/useAuthToken";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { round_trip_post_data_type, storeState } from "../../types/Trip";
+import {
+  pay_reference_v2,
+  round_trip_post_data_type,
+  storeState,
+  terminal_v2,
+} from "../../types/Trip";
 import { Alert, Button, Modal, Spin } from "antd";
 import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
@@ -30,7 +35,7 @@ interface InfoStepProps {
 }
 
 interface TicketResponse {
-  ticketId: string;
+  ticketID: string;
   amount: number;
   email: string;
 }
@@ -42,7 +47,6 @@ export const Two_way_review_details: React.FC<InfoStepProps> = ({
   setOpenReview,
   showPaymentModal,
   numberOfChildren,
-  // numberOfBeneficiaries,
   the_trip_cost,
   numberOfAdults,
   departure_trip_cost,
@@ -58,8 +62,8 @@ export const Two_way_review_details: React.FC<InfoStepProps> = ({
   const setTripDetails = use_round_trip(
     (state) => state.set_round_trip_post_data
   );
-  // const setPaymentRef = use_round_trip((state) => state.set_payment_ref_id);
-  // const paymentRef = use_round_trip((state) => state.payment_ref_id);
+  const setPaymentRef = use_round_trip((state) => state.set_payment_ref_id);
+  const paymentRef = use_round_trip((state) => state.payment_ref_id);
 
   useEffect(() => {
     setTripDetails({
@@ -70,43 +74,26 @@ export const Two_way_review_details: React.FC<InfoStepProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // const ticketData = use_round_trip((state) => state.round_trip_post_data);
-
-  // const [loading, setLoading] = useState(false);
-  // const [err, setErr] = useState(false);
-
   const handleOk = () => {
-    console.log("entered yeyeye");
     HandlePayStack();
-
   };
 
-
-  // you can call this function anything
-  const onSuccess = (
-    reference: any
-  ) => {
-    // Implementation for whatever you want to do with reference and after success call.
-    console.log(reference, "paystack refrence");
-
+  const onSuccess = (reference: pay_reference_v2) => {
     confirm_mutate({
-      reference:reference.reference
-    })
-
+      reference: reference.reference,
+    });
+    setPaymentRef({
+      ...paymentRef,
+      ref_id: reference.reference,
+    });
   };
 
-  // you can call this function anything
   const onClose = () => {
-    // implementation for  whatever you want to do when the Paystack dialog closed.
     console.log("closed");
   };
 
-
-
-
-
   const { mutate, isError, isPending } = useMutation<
-    AxiosResponse<TicketResponse> | any, // Success type
+    AxiosResponse<TicketResponse>, // Success type
     Error, // Error type
     round_trip_post_data_type // Payload type
   >({
@@ -122,8 +109,8 @@ export const Two_way_review_details: React.FC<InfoStepProps> = ({
       ),
     onSuccess: (response) => {
       console.log("onSuccess_response_v88", response);
-      const the_value = response.data.ticketID
-      // const the_value = "wewe30045"
+      const the_value = response.data.ticketID;
+      // const the_value = "webooooooo"
       const config = {
         reference: the_value,
         // reference: String(response.data.ticketID),
@@ -131,10 +118,9 @@ export const Two_way_review_details: React.FC<InfoStepProps> = ({
         amount: the_trip_cost * 100, //Amount is in the country's lowest currency. E.g Kobo, so 20000 kobo = N200
         publicKey: "pk_test_7b253d342edfc96c63da319728cacdf4c862a559",
       };
-      
-      const initializePayment = usePaystackPayment(config);
-      initializePayment({onSuccess, onClose})
 
+      const initializePayment = usePaystackPayment(config);
+      initializePayment({ onSuccess, onClose });
     },
     onError: (error) => {
       // setErr(error);
@@ -147,6 +133,7 @@ export const Two_way_review_details: React.FC<InfoStepProps> = ({
       navigate("/login", { state: { from: location.pathname } });
     } else {
       mutate(tripDetails);
+      console.log(tripDetails);
       //  handleStepCompletion();
       // showPaymentModal();
     }
@@ -158,38 +145,6 @@ export const Two_way_review_details: React.FC<InfoStepProps> = ({
 
   // console.log("isError", isError);
   const trip_data = use_round_trip((state: storeState) => state.trip_data);
-
-
-
-
-
-
-
-
-
-  // // you can call this function anything
-  // const handlePaystackSuccessAction = (reference: any) => {
-  //   // Implementation for whatever you want to do with reference and after success call.
-  //   // HandlePayStack()
-  //   console.log(reference.reference,"chink");
-  //   setPaymentRef({
-  //     ...paymentRef,
-  //     ref_id:reference.reference
-  //   })
-  // };
-
-  // you can call this function anything
-  // const handlePaystackCloseAction = () => {
-  //   // implementation for  whatever you want to do when the Paystack dialog closed.
-  //   console.log("closed");
-  // };
-
-  // const componentProps = {
-  //   ...config,
-  //   text: "Pay With Paystack",
-  //   onSuccess: (reference: any) => handlePaystackSuccessAction(reference),
-  //   onClose: handlePaystackCloseAction,
-  // };
 
   const [terminal_a, set_terminal_a] = useState("");
   const [terminal_b, set_terminal_b] = useState("");
@@ -225,9 +180,11 @@ export const Two_way_review_details: React.FC<InfoStepProps> = ({
         const terminal_list = data.terminals;
         console.log(data, "real list be this");
 
-        const departure_terminal_name = terminal_list?.find((item: any) => {
-          return item._id === trip_data.departure_terminal;
-        });
+        const departure_terminal_name = terminal_list?.find(
+          (item: terminal_v2) => {
+            return item._id === trip_data.departure_terminal;
+          }
+        );
         console.log(
           departure_terminal_name?.terminalName,
           departure_terminal_name?.terminalAddress,
@@ -237,9 +194,11 @@ export const Two_way_review_details: React.FC<InfoStepProps> = ({
           `${departure_terminal_name?.terminalName}, ${departure_terminal_name?.terminalAddress}`
         );
 
-        const arrival_terminal_name = terminal_list?.find((item: any) => {
-          return item._id === trip_data.arrival_terminal;
-        });
+        const arrival_terminal_name = terminal_list?.find(
+          (item: terminal_v2) => {
+            return item._id === trip_data.arrival_terminal;
+          }
+        );
         set_terminal_b(
           `${arrival_terminal_name?.terminalName}, ${arrival_terminal_name?.terminalAddress}`
         );
@@ -247,64 +206,32 @@ export const Two_way_review_details: React.FC<InfoStepProps> = ({
     }
   }, [data]);
 
-
-
-
-
-
-
-
-
-interface confirm_payment_type{
-  reference:string
-}
-
-
-
-
+  interface confirm_payment_type {
+    reference: string;
+  }
 
   // const { mutate:confirm_mutate, isError:confirm_error, isPending:confirm_isPending } = useMutation<
-  const { mutate:confirm_mutate,isPending:confirm_isPending } = useMutation<
-    AxiosResponse<any>, // Success type
+  const { mutate: confirm_mutate, isPending: confirm_isPending } = useMutation<
+    AxiosResponse, // Success type
     Error, // Error type
     confirm_payment_type // Payload type
   >({
     mutationFn: (payload: confirm_payment_type) =>
-      axios.post<any>(
-        `${BASE_URL}/v1/paystack/confirm-payment`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-          },
-        }
-      ),
-    onSuccess: (response) => {
-      console.log(response)
+      axios.post(`${BASE_URL}/v1/paystack/confirm-payment`, payload, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      }),
+    onSuccess: () => {
+      // console.log(response)
       handleStepCompletion();
       showPaymentModal();
-
     },
     onError: (error) => {
       // setErr(error);
       console.error("Error confirming ticket:", error);
     },
   });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   return (
     <div>
@@ -324,10 +251,16 @@ interface confirm_payment_type{
                   key="submit"
                   type="primary"
                   className={`px-10 py-8 text-[1.6rem] bg-primaryColor text-white rounded-[1rem] relative`}
-                  disabled={isPending} // Disable button while pending
+                  disabled={isPending || confirm_isPending} // Disable button while pending
                   onClick={handleOk}
                 >
-                  {isPending || confirm_isPending ? <Spin size="small" /> :isError ? "Error while creating ticket":  "Pay with PayStack"}
+                  {isPending || confirm_isPending ? (
+                    <Spin size="small" />
+                  ) : isError ? (
+                    "Error while creating ticket"
+                  ) : (
+                    "Pay with PayStack"
+                  )}
                 </Button>
               </>
             )}
@@ -545,15 +478,6 @@ interface confirm_payment_type{
         <hr className="my-[1.6rem]" />
         <div className="mt-4 flex flex-col justify-start items-start">
           <div className="flex flex-col gap-1">
-            <p className="text-[1.4rem] md:text-[1.6rem] font-[500]">
-              Adult Fare: ₦
-              {(the_trip_cost * numberOfAdults)
-                .toLocaleString()
-                .toLocaleString() || "Nil"}
-            </p>
-            {/* <p className="text-[1.4rem] md:text-[1.6rem] font-[500]">
-              Child Fare: ₦9,100
-            </p> */}
             <p className="text-[1.4rem] md:text-[1.6rem] font-[500]">
               Total Fare: ₦
               {(the_trip_cost * numberOfAdults)

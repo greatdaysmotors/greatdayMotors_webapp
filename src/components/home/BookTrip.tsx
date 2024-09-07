@@ -49,7 +49,6 @@ const BookTrip: React.FC<BookTripProps> = ({ className }) => {
     setBookingStatus: state.setBookingStatus,
   }));
 
-
   console.log("bookingStatus", bookingStatus);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -73,8 +72,8 @@ const BookTrip: React.FC<BookTripProps> = ({ className }) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        alert("Please enter correct Reference ID");
-        throw new Error(errorData.message || "Failed to fetch booking status!");
+        console.log("errorData", errorData);
+        throw new Error(errorData.errorMessage || "Failed to fetch booking status!");
       }
 
       console.log("BookTripstatus", response);
@@ -91,7 +90,7 @@ const BookTrip: React.FC<BookTripProps> = ({ className }) => {
       }
     },
     onError: (error: Error) => {
-      setErrorMessage(error.message); 
+      setErrorMessage(error.message);
       setBookingStatus({ ticket: null });
     },
   });
@@ -101,9 +100,15 @@ const BookTrip: React.FC<BookTripProps> = ({ className }) => {
   };
 
   const handleSearch = () => {
+    if (!userToken) {
+      // If the user is not logged in, navigate to the login page
+      navigate("/login");
+      return;
+    }
     mutate(referenceId);
     setNullTicket(false);
   };
+  
   return (
     <div
       className={`bg-[#fff] w-full rounded-t-[4rem] py-[2.5rem] px-[2.5rem] -mt-[4rem] md:w-[514px] md:mx-auto lg:mt-2 md:py-[4rem] ${className}`}

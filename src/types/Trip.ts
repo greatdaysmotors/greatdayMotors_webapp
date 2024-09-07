@@ -76,8 +76,11 @@ export interface storeState {
 export interface pay_reference{
   ref_id:string
 }
+export interface pay_reference_v2{
+  reference:string
+}
 
-interface   beneficiaries {
+export interface   beneficiaries {
   name: string,
   email: string,
   phoneNumber: string
@@ -180,3 +183,33 @@ export interface TripData_v1 {
   returnTrips:availTrips_returnTrips_type[],
 }
 
+export interface terminal_v2{
+  
+    _id: string,
+    terminalName: string,
+    terminalAddress: string,
+    terminalLGA: string,
+    terminalState: string,
+
+}
+
+export interface delete_account_type{
+   message:string
+}
+
+export interface change_password_type{
+  oldPassword:string;
+  newPassword:string;
+  confirmPassword:string
+}
+
+
+export interface change_password_axios_type{
+  message:string
+}
+
+export interface change_password_type_v2 {
+  oldPassword:string;
+  newPassword:string;
+
+}

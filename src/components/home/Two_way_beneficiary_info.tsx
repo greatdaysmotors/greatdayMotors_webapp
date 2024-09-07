@@ -1,8 +1,8 @@
 import { Button, Input } from "antd";
-import {  storeState } from "../../types/Trip";
+import {  beneficiaries, storeState } from "../../types/Trip";
 import { use_round_trip } from "../../store/round_trip";
 import { useEffect } from "react";
-import { Beneficiary } from "src/store";
+import { Beneficiary } from "../../store/index";
 
 interface InfoStepProps {
   handleStepCompletion: () => void;
@@ -177,7 +177,7 @@ console.log(TripDetails," original data alabi")
 
 
     return (
-      TripDetails.beneficiaries?.map((beneficiary:any, index:number) => (
+      TripDetails.beneficiaries?.map((beneficiary:beneficiaries, index:number) => (
         <div key={index} className="w-full flex flex-col gap-[1.6rem] mt-8">
           <label
             htmlFor={`beneficiary-name-${index}`}
