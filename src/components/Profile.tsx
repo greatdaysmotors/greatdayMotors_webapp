@@ -71,15 +71,15 @@ const Profile = () => {
   useEffect(() => {
     if (data) {
       const profile_object: profile = data.userProfile;
-      console.log(profile_object);
-      console.log(profile_object.fullName);
+      // console.log(profile_object);
+      // console.log(profile_object?.fullName);
       setDetails({
-        name1: profile_object.fullName,
-        email1: profile_object.email,
-        phone1: profile_object.phoneNumber,
-        name2: profile_object.nokFullName,
-        email2: profile_object.nokEmail,
-        phone2: profile_object.nokPhoneNumber,
+        name1: profile_object?.fullName,
+        email1: profile_object?.email,
+        phone1: profile_object?.phoneNumber,
+        name2: profile_object?.nokFullName,
+        email2: profile_object?.nokEmail,
+        phone2: profile_object?.nokPhoneNumber,
       });
     }
   }, [data]);

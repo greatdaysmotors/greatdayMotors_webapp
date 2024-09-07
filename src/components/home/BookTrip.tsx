@@ -1,30 +1,109 @@
 import Input from "@components/input";
-import { Button, Radio, Tabs } from "antd";
-import { Link } from "react-router-dom";
-import OneWayTrip from "./OneWayTrip";
-import RoundTrip from "./RoundTrip";
+import { Button, Radio, Spin, Tabs } from "antd";
 import { RadioChangeEvent } from "antd/lib/radio";
 import { useState } from "react";
-import { storeState } from "../../types/Trip";
+import { useNavigate } from "react-router-dom";
 import { use_round_trip } from "../../store/round_trip";
-import { Spin } from "antd";
-// import useStore from "../../store";
+import { storeState } from "../../types/Trip";
+import OneWayTrip from "./OneWayTrip";
+import RoundTrip from "./RoundTrip";
+// import { useBookingStatus } from "@hooks/useBookingStatus";
+import { BASE_URL } from "@api/index";
+import useAuthToken from "@hooks/useAuthToken";
+import { useMutation, UseMutationResult } from "@tanstack/react-query";
+import useStore from "../../store";
 
+interface Ticket {
+  departureTerminal: {
+    terminalName: string;
+  };
+  arrivalTerminal: {
+    terminalName: string;
+  };
+  totalTripCost: number;
+  availableTrip?: {
+    departureDateTime?: string;
+  };
+  ticketPaymentStatus: string;
+}
+interface BookingStatus {
+  ticket: Ticket | null;
+}
 interface BookTripProps {
   className?: string;
 }
 
 const BookTrip: React.FC<BookTripProps> = ({ className }) => {
+  const navigate = useNavigate();
+  const userToken = useAuthToken();
 
-  const is_round_trip_tab_active =use_round_trip((state:storeState)=> state.round_trip_active)
-
+  const is_round_trip_tab_active = use_round_trip(
+    (state: storeState) => state.round_trip_active
+  );
 
   const [selectedTab, setSelectedTab] = useState<string>("bookTrip");
+  const [referenceId, setReferenceId] = useState<string>("");
+  const [nullTicket, setNullTicket] = useState<boolean>(false);
+  const { bookingStatus, setBookingStatus } = useStore((state) => ({
+    bookingStatus: state.bookingStatus,
+    setBookingStatus: state.setBookingStatus,
+  }));
+
+
+  console.log("bookingStatus", bookingStatus);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Mutation to fetch booking status
+  const {
+    mutate,
+    isPending,
+    isError,
+  }: UseMutationResult<BookingStatus, Error, string> = useMutation({
+    mutationFn: async (referenceId: string) => {
+      const response = await fetch(
+        `${BASE_URL}/v1/passenger/booking-status/${referenceId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userToken}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert("Please enter correct Reference ID");
+        throw new Error(errorData.message || "Failed to fetch booking status!");
+      }
+
+      console.log("BookTripstatus", response);
+
+      return response.json();
+    },
+    onSuccess: (data) => {
+      if (data.ticket === null) {
+        setNullTicket(true);
+      } else {
+        setBookingStatus(data);
+        navigate("/booking-status");
+        setErrorMessage(null);
+      }
+    },
+    onError: (error: Error) => {
+      setErrorMessage(error.message); 
+      setBookingStatus({ ticket: null });
+    },
+  });
 
   const handleTabChange = (e: RadioChangeEvent) => {
     setSelectedTab(e.target.value);
   };
 
+  const handleSearch = () => {
+    mutate(referenceId);
+    setNullTicket(false);
+  };
   return (
     <div
       className={`bg-[#fff] w-full rounded-t-[4rem] py-[2.5rem] px-[2.5rem] -mt-[4rem] md:w-[514px] md:mx-auto lg:mt-2 md:py-[4rem] ${className}`}
@@ -50,10 +129,7 @@ const BookTrip: React.FC<BookTripProps> = ({ className }) => {
       <hr />
       <hr />
       {selectedTab === "bookTrip" ? (
-        <Tabs
-          defaultActiveKey="1"
-          tabPosition={"top"}
-        >
+        <Tabs defaultActiveKey="1" tabPosition={"top"}>
           <Tabs.TabPane
             tab={<span className="lg:text-[1.8rem]">One-Way Trip</span>}
             key="1"
@@ -64,25 +140,20 @@ const BookTrip: React.FC<BookTripProps> = ({ className }) => {
             tab={<span className="lg:text-[1.8rem]">Round Trip</span>}
             key="2"
           >
-           {
-            is_round_trip_tab_active == true ?<RoundTrip />: 
-            
-            <div
-            style={{
-              display:"flex",
-              width:"100%",
-              marginTop:"20px",
-              justifyContent:"center"
-            }}
-            >
-
-<Spin/>
-            </div>
-           }
-               
-            
-            
-
+            {is_round_trip_tab_active == true ? (
+              <RoundTrip />
+            ) : (
+              <div
+                style={{
+                  display: "flex",
+                  width: "100%",
+                  marginTop: "20px",
+                  justifyContent: "center",
+                }}
+              >
+                <Spin />
+              </div>
+            )}
           </Tabs.TabPane>
         </Tabs>
       ) : (
@@ -97,18 +168,43 @@ const BookTrip: React.FC<BookTripProps> = ({ className }) => {
                 type="text"
                 placeholder="Enter your reference ID"
                 className="p-[0.8rem] rounded-[1rem] font-[400] border"
+                value={referenceId}
+                onChange={(e) => setReferenceId(e.target.value)}
               />
             </label>
 
-            <Link to="/booking-status">
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="p-[2rem] font-[400] mt-[2rem] md:mt-[32px] text-[1.6rem] rounded-[10px] w-full"
-              >
-                Search
-              </Button>
-            </Link>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="p-[2rem] font-[400] mt-[2rem] md:mt-[32px] text-[1.6rem] rounded-[10px] w-full"
+              onClick={handleSearch}
+              loading={isPending} // Show loading state while fetching
+            >
+              Search
+            </Button>
+
+            {/* Display error message */}
+            {isError && errorMessage && (
+              <p className="text-center font-[600] text-red-600">
+                {errorMessage}
+              </p>
+            )}
+
+            {/* Display booking status if successful */}
+            {nullTicket && (
+              <div className="mt-4 ">
+                <p className="font-[600] text-red-500">
+                  Please, enter correct reference ID
+                </p>
+              </div>
+            )}
+
+            {/* Loading spinner */}
+            {/* {isPending && (
+              <div className="flex justify-center mt-4">
+                <Spin />
+              </div>
+            )} */}
           </form>
         </Tabs>
       )}

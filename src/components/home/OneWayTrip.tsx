@@ -219,7 +219,7 @@ const OneWayTrip: React.FC = () => {
       arrivalTerminal: selectedOption2,
       travellingWithAChild: quantity2 > 0,
       returnTrip: null,
-      returnSeatNumbers: null,
+      returnSeatNumbers: [],
       departureSeatNumbers: [],
       nextOfKinName: "",
       nextOfKinPhoneNumber: "",

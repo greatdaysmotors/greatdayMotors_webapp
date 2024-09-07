@@ -7,7 +7,6 @@ export interface Beneficiary {
   email: string;
   phoneNumber: string;
 }
-
 export interface TripDetails {
   fullName: string;
   email: string;
@@ -17,7 +16,7 @@ export interface TripDetails {
   availableTrip?: string;
   returnTrip?: string | null; // null or undefined if one-way
   departureSeatNumbers?: number[];
-  returnSeatNumbers?: string[] | null; // null or undefined if one-way
+  returnSeatNumbers?: string[]; // null or undefined if one-way
   travellingWithAChild?: boolean;
   child1Name?: string;
   child1Age?: string;
@@ -48,6 +47,10 @@ interface StoreState {
   setOneWayTripPayload: (payload: StoreState["oneWayTripPayload"]) => void;
   tripDetails: TripDetails; // Add tripDetails to state
   setTripDetails: (details: TripDetails) => void; // Method to update tripDetails
+  ticketUID: string | null; // Add ticketUID to store
+  setTicketUID: (ticketUID: string) => void; // Method to update ticketUID
+  bookingStatus: { ticket: string | null } | null; // Add bookingStatus
+  setBookingStatus: (status: { ticket: string | null }) => void; // Method to set bookingStatus
 }
 
 const useStore = create<StoreState>()(
@@ -108,6 +111,10 @@ const useStore = create<StoreState>()(
         totalTripCost: 0,
       },
       setTripDetails: (details) => set({ tripDetails: details }),
+      ticketUID: null, // Initialize as null
+      setTicketUID: (ticketUID) => set({ ticketUID }), // Method to set ticketUID
+      bookingStatus: null, // Initialize bookingStatus
+      setBookingStatus: (status) => set({ bookingStatus: status }),
     }),
     {
       name: "trip-store", // unique name for the storage key

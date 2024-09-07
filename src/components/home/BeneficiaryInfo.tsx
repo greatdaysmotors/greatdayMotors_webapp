@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button, Input } from "antd";
 import useStore, { Beneficiary } from "../../store";
 import { InfoStepProps } from "../../types/InfoTypes";
@@ -10,7 +10,7 @@ export const BeneficiaryInfoStep: React.FC<InfoStepProps> = ({
   aTrip,
 }) => {
   const tripDetails = useStore((state) => state.tripDetails);
-  console.log("tripDetails", tripDetails);
+  // console.log("tripDetails", tripDetails);
 
   const setTripDetails = useStore((state) => state.setTripDetails);
 
@@ -20,10 +20,19 @@ export const BeneficiaryInfoStep: React.FC<InfoStepProps> = ({
   const numberOfBeneficiaries = numberOfAdults > 1 ? numberOfAdults - 1 : 0;
   const numberOfChildren = Number(tripDetails.travellingWithAChild) || 0;
 
+  const [isValid, setIsValid] = useState(false);
+
   // Synchronize beneficiaries array with numberOfBeneficiaries
   useEffect(() => {
     const currentBeneficiaries = tripDetails.beneficiaries || [];
-    if (currentBeneficiaries.length < numberOfBeneficiaries) {
+
+    if (numberOfBeneficiaries === 0) {
+      // If no beneficiaries, set beneficiaries to an empty array
+      setTripDetails({
+        ...tripDetails,
+        beneficiaries: [],
+      });
+    } else if (currentBeneficiaries.length < numberOfBeneficiaries) {
       const additionalBeneficiaries: Beneficiary[] = Array.from(
         { length: numberOfBeneficiaries - currentBeneficiaries.length },
         () => ({ name: "", email: "", phoneNumber: "" })
@@ -87,8 +96,10 @@ export const BeneficiaryInfoStep: React.FC<InfoStepProps> = ({
   // Handle button click
   const HandleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    handleStepCompletion();
-    showReviewModal();
+    if (isValid) {
+      handleStepCompletion();
+      showReviewModal();
+    }
   };
 
   // Render children input fields
@@ -196,6 +207,47 @@ export const BeneficiaryInfoStep: React.FC<InfoStepProps> = ({
     );
   };
 
+  const checkIfAllFieldsFilled = useCallback(() => {
+    const allBeneficiariesFilled = !!(
+      tripDetails.beneficiaries?.every(
+        (b) =>
+          typeof b.name === "string" &&
+          b.name.trim() !== "" &&
+          typeof b.email === "string" &&
+          b.email.trim() !== "" &&
+          typeof b.phoneNumber === "string" &&
+          b.phoneNumber.trim() !== ""
+      ) ?? false
+    );
+
+    const allChildrenFilled = !!(
+      numberOfChildren === 0 ||
+      (typeof tripDetails.child1Name === "string" &&
+        tripDetails.child1Name.trim() !== "" &&
+        typeof tripDetails.child1Age === "string" &&
+        tripDetails.child1Age.trim() !== "" &&
+        (numberOfChildren > 1
+          ? typeof tripDetails.child2Name === "string" &&
+            tripDetails.child2Name.trim() !== "" &&
+            typeof tripDetails.child2Age === "string" &&
+            tripDetails.child2Age.trim() !== ""
+          : true))
+    );
+
+    setIsValid(allBeneficiariesFilled && allChildrenFilled);
+  }, [
+    tripDetails.beneficiaries,
+    tripDetails.child1Name,
+    tripDetails.child1Age,
+    tripDetails.child2Name,
+    tripDetails.child2Age,
+    numberOfChildren,
+  ]);
+
+  useEffect(() => {
+    checkIfAllFieldsFilled();
+  }, [checkIfAllFieldsFilled]);
+
   return (
     <form>
       <div className="flex flex-col mt-3">
@@ -222,12 +274,12 @@ export const BeneficiaryInfoStep: React.FC<InfoStepProps> = ({
         <div className="mt-4 flex flex-col justify-end items-end">
           {(numberOfChildren > 0 || numberOfBeneficiaries > 0) && (
             <div className="flex flex-col gap-1">
-              {numberOfAdults > 0 && (
+              {/* {numberOfAdults > 0 && (
                 <p className="text-[1.4rem] md:text-[1.8rem] font-[500]">
                   Adult Fare: ₦
                   {aTrip && (aTrip.tripCost * numberOfAdults).toLocaleString()}
                 </p>
-              )}
+              )} */}
 
               <p className="text-[1.4rem] md:text-[1.8rem] font-[500]">
                 Total Fare: ₦
@@ -240,6 +292,7 @@ export const BeneficiaryInfoStep: React.FC<InfoStepProps> = ({
                   type="primary"
                   onClick={HandleClick}
                   className="px-10 py-4 md:py-8 bg-primaryColor text-white rounded-[1rem]"
+                  disabled={!isValid}
                 >
                   Continue
                 </Button>

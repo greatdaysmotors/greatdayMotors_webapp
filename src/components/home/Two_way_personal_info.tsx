@@ -8,12 +8,14 @@ interface InfoStepProps {
   currentStep: number;
   numberOfBeneficiaries: number;
   numberOfAdults: number;
-  numberOfChildren: number;
+  // numberOfChildren: number;
   the_trip_cost: number;
 }
 
 interface personal_info_form_type extends FormData {
-
+name:string,
+email:string,
+phone_number:string,
   next_of_kin_email: string;
 next_of_kin_name: string;
 next_of_kin_phone_number: string;
@@ -46,6 +48,9 @@ const handle_step_one=(values:personal_info_form_type)=>{
 
   setTripDetails({
     ...tripDetails,
+    fullName:values.name,
+    email:values.email,
+    phoneNumber:values.phone_number,
     totalTripCost: the_trip_cost * numberOfAdults,
     nextOfKinName: values.next_of_kin_name,
     nextOfKinPhoneNumber: values.next_of_kin_phone_number,
@@ -298,7 +303,7 @@ const handle_step_one=(values:personal_info_form_type)=>{
 
           {currentStep <= 4 && (
             <Form.Item
-            valuePropName="checked"
+            // valuePropName="checked"
             >
               <Button
                 htmlType="submit"

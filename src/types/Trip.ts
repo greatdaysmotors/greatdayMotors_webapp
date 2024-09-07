@@ -69,6 +69,12 @@ export interface storeState {
   set_round_trip_active: (is_active: boolean)=> void;
   round_trip_post_data:round_trip_post_data_type;
   set_round_trip_post_data:(is_active: round_trip_post_data_type)=> void;
+  payment_ref_id:pay_reference
+  set_payment_ref_id:(data:pay_reference)=>void
+}
+
+export interface pay_reference{
+  ref_id:string
 }
 
 interface   beneficiaries {
@@ -80,6 +86,9 @@ interface   beneficiaries {
 
 
 export interface round_trip_post_data_type{
+  fullName:string,
+  email:string,
+  phoneNumber:string,
   departureTerminal: string,
   arrivalTerminal: string,
   availableTrip:string,
@@ -96,8 +105,8 @@ export interface round_trip_post_data_type{
   nextOfKinName: string | undefined,
   nextOfKinPhoneNumber: string | undefined,
   nextOfKinEmail: string | undefined,
-  bneficiaries: beneficiaries[],
-  sendEmailToNextOfKin: "yes" | "no",
+  beneficiaries: beneficiaries[],
+  sendEmailToNextOfKin: "no" | "yes",
   totalTripCost: number
 }
 

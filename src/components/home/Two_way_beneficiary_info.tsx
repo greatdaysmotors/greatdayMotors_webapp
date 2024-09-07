@@ -2,14 +2,15 @@ import { Button, Input } from "antd";
 import {  storeState } from "../../types/Trip";
 import { use_round_trip } from "../../store/round_trip";
 import { useEffect } from "react";
+import { Beneficiary } from "src/store";
 
 interface InfoStepProps {
   handleStepCompletion: () => void;
   currentStep: number;
   showReviewModal: () => void;
-  numberOfChildren?: number;
-  numberOfBeneficiaries?: number;
-  numberOfAdults?: number;
+  numberOfChildren: number;
+  numberOfBeneficiaries: number;
+  numberOfAdults: number;
 
 }
 
@@ -17,43 +18,135 @@ export const Two_way_beneficiary_info: React.FC<InfoStepProps> = ({
   handleStepCompletion,
   currentStep,
   showReviewModal,
-
+  numberOfChildren,
+  numberOfBeneficiaries,
+  numberOfAdults,
 }) => {
   const TripDetails = use_round_trip(
     (state) => state.round_trip_post_data
+  );
+  const setTripDetails = use_round_trip(
+    (state) => state.set_round_trip_post_data
   );
   useEffect(()=>{
 console.log(TripDetails," original data alabi")
   },[])
 
     // GETTING ROUNDTRIP FORM DATA FROM STORE
-    const tripDetails = use_round_trip((state: storeState) => state.trip_data);
+    // const tripDetails = use_round_trip((state: storeState) => state.trip_data);
     const ticketDetails = use_round_trip((state: storeState) => state.round_trip_post_data);
 
-  const numberOfChildren = tripDetails.number_of_children;
-  const numberOfAdults = tripDetails.number_of_adults;
-  const numberOfBeneficiaries = numberOfAdults > 1 ? numberOfAdults - 1 : 0;
+  // const numberOfChildren = tripDetails.number_of_children;
+  // const numberOfAdults = tripDetails.number_of_adults;
+  // const numberOfBeneficiaries = numberOfAdults > 1 ? numberOfAdults - 1 : 0;
 
  
 
   const HandleClick = () => {
+    
     handleStepCompletion();
     showReviewModal();
+    console.log(TripDetails,"no be lie")
   };
 
+
+
+  // Handler to update children information
+  const handleChildChange = (
+    index: number,
+    field: "Name" | "Age",
+    value: string
+  ) => {
+    switch (index) {
+      case 0:
+        setTripDetails({
+          ...TripDetails,
+          [`child1${field}`]: value,
+        });
+        break;
+      case 1:
+        setTripDetails({
+          ...TripDetails,
+          [`child2${field}`]: value,
+        });
+        break;
+      default:
+        console.error("Invalid child index");
+    }
+  };
+
+
+
+  // Synchronize beneficiaries array with numberOfBeneficiaries
+  useEffect(() => {
+    const currentBeneficiaries = TripDetails.beneficiaries || [];
+    if (currentBeneficiaries.length < numberOfBeneficiaries) {
+      const additionalBeneficiaries: Beneficiary[] = Array.from(
+        { length: numberOfBeneficiaries - currentBeneficiaries.length },
+        () => ({ name: "", email: "", phoneNumber: "" })
+      );
+      setTripDetails({
+        ...TripDetails,
+        beneficiaries: [...currentBeneficiaries, ...additionalBeneficiaries],
+      });
+    } else if (currentBeneficiaries.length > numberOfBeneficiaries) {
+      setTripDetails({
+        ...TripDetails,
+        beneficiaries: currentBeneficiaries.slice(0, numberOfBeneficiaries),
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [numberOfBeneficiaries]);
+
+
+
+
+
+
+
+  const handleBeneficiaryChange = (
+    index: number,
+    field: keyof Beneficiary,
+    value: string
+  ) => {
+    const updatedBeneficiaries = [...(TripDetails.beneficiaries || [])];
+    if (updatedBeneficiaries[index]) {
+      updatedBeneficiaries[index] = {
+        ...updatedBeneficiaries[index],
+        [field]: value,
+      };
+      setTripDetails({
+        ...TripDetails,
+        beneficiaries: updatedBeneficiaries,
+      });
+    }
+  };
+
+
+
+
+
+  // Render children input fields
   const renderChildrenFields = () => {
     const childrenFields = [];
 
     for (let i = 0; i < numberOfChildren; i++) {
+      const name = i === 0 ? TripDetails.child1Name : TripDetails.child2Name;
+      const age = i === 0 ? TripDetails.child1Age : TripDetails.child2Age;
+
       childrenFields.push(
-        <div key={i} className="w-full flex flex-col gap-[1.6rem] mt-8 ">
+        <div key={i} className="w-full flex flex-col gap-[1.6rem] mt-8">
           <label
             htmlFor={`child-name-${i}`}
             className="text-[1.6rem] flex flex-col gap-[0.4rem] font-[500]"
           >
             Child {i + 1}'s Name
             <Input
+              id={`child-name-${i}`}
               type="text"
+              name={`child${i + 1}Name`}
+              value={name || ""}
+              onChange={(e) => handleChildChange(i, "Name", e.target.value)}
               placeholder="Enter child's name"
               className="p-[0.8rem] rounded-[1rem] font-[400] border"
             />
@@ -64,12 +157,15 @@ console.log(TripDetails," original data alabi")
           >
             Child {i + 1}'s Age
             <Input
+              id={`child-age-${i}`}
               type="text"
+              name={`child${i + 1}Age`}
+              value={age || ""}
+              onChange={(e) => handleChildChange(i, "Age", e.target.value)}
               placeholder="Enter child's age"
               className="p-[0.8rem] rounded-[1rem] font-[400] border"
             />
           </label>
-  
         </div>
       );
     }
@@ -78,50 +174,67 @@ console.log(TripDetails," original data alabi")
   };
 
   const renderBeneficiaryForms = () => {
-    const beneficiaryForms = [];
 
-    for (let i = 0; i < numberOfBeneficiaries + 1; i++) {
-      beneficiaryForms.push(
-        <div key={i} className="w-full flex flex-col gap-[1.6rem] mt-8">
-          <label
-            htmlFor={`beneficiary-name-${i}`}
-            className="text-[1.6rem] flex flex-col gap-[0.4rem] font-[500]"
-          >
-            Beneficiary {i + 1}'s Name
-            <Input
-              type="text"
-              placeholder={`Enter Beneficiary ${i + 1}'s name`}
-              className="p-[0.8rem] rounded-[1rem] font-[400] border"
-            />
-          </label>
-          <label
-            htmlFor={`beneficiary-phone-${i}`}
-            className="text-[1.6rem] flex flex-col gap-[0.4rem] font-[500]"
-          >
-            Beneficiary {i + 1}'s Phone Number
-            <Input
-              type="text"
-              placeholder={`Enter Beneficiary ${i + 1}'s phone number`}
-              className="p-[0.8rem] rounded-[1rem] font-[400] border"
-            />
-          </label>
-          <label
-            htmlFor={`beneficiary-email-${i}`}
-            className="text-[1.6rem] flex flex-col gap-[0.4rem] font-[500]"
-          >
-            Beneficiary {i + 1}'s Email
-            <Input
-              type="text"
-              placeholder={`Enter Beneficiary ${i + 1}'s email`}
-              className="p-[0.8rem] rounded-[1rem] font-[400] border"
-            />
-          </label>
 
+    return (
+      TripDetails.beneficiaries?.map((beneficiary:any, index:number) => (
+        <div key={index} className="w-full flex flex-col gap-[1.6rem] mt-8">
+          <label
+            htmlFor={`beneficiary-name-${index}`}
+            className="text-[1.6rem] flex flex-col gap-[0.4rem] font-[500]"
+          >
+            Beneficiary {index + 1}'s Name
+            <Input
+              id={`beneficiary-name-${index}`}
+              type="text"
+              value={beneficiary.name}
+              onChange={(e) =>
+                handleBeneficiaryChange(index, "name", e.target.value)
+              }
+              placeholder={`Enter Beneficiary ${index + 1}'s name`}
+              className="p-[0.8rem] rounded-[1rem] font-[400] border"
+            />
+          </label>
+          <label
+            htmlFor={`beneficiary-phone-${index}`}
+            className="text-[1.6rem] flex flex-col gap-[0.4rem] font-[500]"
+          >
+            Beneficiary {index + 1}'s Phone Number
+            <Input
+              id={`beneficiary-phone-${index}`}
+              type="text"
+              value={beneficiary.phoneNumber}
+              onChange={(e) =>
+                handleBeneficiaryChange(index, "phoneNumber", e.target.value)
+              }
+              placeholder={`Enter Beneficiary ${index + 1}'s phone number`}
+              className="p-[0.8rem] rounded-[1rem] font-[400] border"
+            />
+          </label>
+          <label
+            htmlFor={`beneficiary-email-${index}`}
+            className="text-[1.6rem] flex flex-col gap-[0.4rem] font-[500]"
+          >
+            Beneficiary {index + 1}'s Email
+            <Input
+              id={`beneficiary-email-${index}`}
+              type="email"
+              value={beneficiary.email}
+              onChange={(e) =>
+                handleBeneficiaryChange(index, "email", e.target.value)
+              }
+              placeholder={`Enter Beneficiary ${index + 1}'s email`}
+              className="p-[0.8rem] rounded-[1rem] font-[400] border"
+            />
+          </label>
         </div>
-      );
-    }
+      )) || null
+    );
 
-    return beneficiaryForms;
+
+
+
+
   };
 
   return (

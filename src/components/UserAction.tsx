@@ -9,6 +9,7 @@ interface ModalProps {
   onPrimaryAction?: () => void;
   onSecondaryAction?: () => void;
   loading?: boolean;
+
 }
 
 const UserAction: React.FC<ModalProps> = ({

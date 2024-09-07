@@ -1,8 +1,42 @@
 import MainLayout from "@layouts/MainLayout";
 import { Link } from "react-router-dom";
 import bg from "../../../public/svgs/bgimagetrip.svg";
+import useStore from "../../store";
+import dayjs from "dayjs";
 
-const BookingStatus = () => {
+// Define the correct type for `ticket`
+interface Ticket {
+  departureTerminal: {
+    terminalName: string;
+  };
+  arrivalTerminal: {
+    terminalName: string;
+  };
+  totalTripCost: number;
+  availableTrip?: {
+    departureDateTime?: string;
+  };
+  ticketPaymentStatus: string;
+}
+
+// Define `bookingStatus` type
+interface BookingStatus {
+  ticket: Ticket | null;
+}
+
+const BookingStatus: React.FC = () => {
+  const { bookingStatus } = useStore((state) => ({
+    bookingStatus: state.bookingStatus as BookingStatus, // Ensure the correct type
+  }));
+  console.log("bookingStatus", bookingStatus);
+
+  const departureDateTime =
+    bookingStatus?.ticket?.availableTrip?.departureDateTime;
+
+  const formattedDate = departureDateTime
+    ? dayjs(departureDateTime).format("DD/MM/YYYY hh:mm A")
+    : "N/A";
+
   return (
     <MainLayout>
       <div className=" bg-[#e6e6e6] pb-20 relative">
@@ -33,30 +67,39 @@ const BookingStatus = () => {
               <p className="text-[1.4rem] md:text-[1.8rem] ">
                 Departure Terminal
               </p>
-              <p className="text-[1.4rem] md:text-[1.8rem] font-[600]">Ogun</p>
+              <p className="text-[1.4rem] md:text-[1.8rem] font-[600]">
+                {bookingStatus?.ticket?.departureTerminal?.terminalName ||
+                  "N/A"}
+              </p>
             </div>
             <div className="flex justify-between">
               <p className="text-[1.4rem] md:text-[1.8rem] ">
                 Arrival Terminal
               </p>
-              <p className="text-[1.4rem] md:text-[1.8rem] font-[600]">Osun</p>
+              <p className="text-[1.4rem] md:text-[1.8rem] font-[600]">
+                {bookingStatus?.ticket?.arrivalTerminal.terminalName || "N/A"}
+              </p>
             </div>
             <div className="flex justify-between">
               <p className="text-[1.4rem] md:text-[1.8rem] ">Ticket Price</p>
               <p className="text-[1.4rem] md:text-[1.8rem] font-[600]">
-                ₦18,200
+                ₦
+                {bookingStatus?.ticket?.totalTripCost.toLocaleString() || "N/A"}
               </p>
             </div>
             <div className="flex justify-between">
               <p className="text-[1.4rem] md:text-[1.8rem] ">Departure Date</p>
               <p className="text-[1.4rem] md:text-[1.8rem] font-[600]">
-                30/04/24 12:00am
+                {formattedDate || "N/A"}
               </p>
             </div>
             <hr className="my-4" />
             <div className="flex justify-between">
               <p className="text-[1.4rem] md:text-[1.8rem] ">Booking Status</p>
-              <p className="text-[1.4rem] md:text-[1.8rem] font-[600]">Valid</p>
+              <p className="text-[1.4rem] capitalize md:text-[1.8rem] font-[600]">
+                {" "}
+                {bookingStatus?.ticket?.ticketPaymentStatus || "N/A"}
+              </p>
             </div>
           </div>
         </div>
