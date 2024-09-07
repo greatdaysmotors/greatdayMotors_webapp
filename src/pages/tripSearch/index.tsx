@@ -150,6 +150,12 @@ const TripSearch = () => {
     setOpenPayment(true);
   };
 
+  // const [ticketRefId, setTicketRefId] = useState("");
+  // console.log("ticketRefId", ticketRefId);
+
+  const T_UID = useStore((state) => state.ticketUID);
+  console.log("T_UID", T_UID);
+
   const renderStep = (step: number) => {
     // Determine the adjusted step when step 2 is hidden
     const adjustedStep =
@@ -196,10 +202,13 @@ const TripSearch = () => {
       case 4:
         return (
           <PaymentStep
-            currentStep={currentStep}
+            aTrip={aTrip}
+            numberOfAdults={numberOfAdults}
             handleStepCompletion={handleStepCompletion}
             openPayment={openPayment}
             setOpenPayment={setOpenPayment}
+            title={null} 
+            refId={T_UID}
           />
         );
       default:
@@ -428,6 +437,7 @@ const TripSearch = () => {
           )}
         </div>
       </div>
+
       <Modal
         className="px-2 md:px-28 lg:px-20 "
         centered
@@ -466,15 +476,15 @@ const TripSearch = () => {
                 <img src={steering} alt="car steering image" />
                 <div
                   className={`relative ${
-                    !seats[0].clickable ? "pointer-events-none" : ""
+                    !seats[0]?.clickable ? "pointer-events-none" : ""
                   } cursor-pointer`}
                   onClick={() =>
-                    seats[0].clickable && handleSeatClick(seats[0].id)
+                    seats[0]?.clickable && handleSeatClick(seats[0]?.id)
                   }
                 >
-                  <FaUser size={35} color={seats[0].color} />
+                  <FaUser size={35} color={seats[0]?.color} />
                   <span className="text-white text-[1.4rem] absolute top-[80%] left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                    {seats[0].id}
+                    {seats[0]?.id}
                   </span>
                 </div>
               </div>

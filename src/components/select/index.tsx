@@ -22,9 +22,11 @@ const Select: React.FC<SelectProps> = ({
 }) => {
   return (
     <select
+    
       value={value}
       onChange={onChange}
       className={`p-[0.8rem] font-[400] border outline-none rounded-[1rem] bg-[#fff] text-[#000] ${className} w-full`}
+
     >
       <option value="" disabled>
         {placeholder}

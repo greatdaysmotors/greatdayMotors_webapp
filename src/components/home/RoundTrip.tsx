@@ -20,6 +20,17 @@ const RoundTrip: React.FC = () => {
     (state: storeState) => state.set_trip_data
   );
 
+
+
+  const set_trip_details = use_round_trip(
+    (state: storeState) => state.set_round_trip_post_data
+  );
+  const trip_details = use_round_trip(
+    (state: storeState) => state.round_trip_post_data
+  );
+
+
+
   function disabledDate(current: Dayjs) {
     // Disable dates before today or after 1 month from today
     const today = dayjs();
@@ -96,7 +107,7 @@ const RoundTrip: React.FC = () => {
     // other properties...
   }
 
-  const [userToken, setUserToken] = useState<string | null>(null);
+  // const [userToken, setUserToken] = useState<string | null>(null);
   const [departure_terminal_options, set_departure_terminal_options] = useState<
     { value: string; label: string }[]
   >([]);
@@ -105,7 +116,8 @@ const RoundTrip: React.FC = () => {
   >([]);
 
   const { data, error, isLoading } = useQuery({
-    queryKey: ["fetchAllTerminals", userToken],
+    queryKey: ["fetchAllTerminals"],
+    // queryKey: ["fetchAllTerminals", userToken],
     queryFn: () => fetchTerminals(),
     // enabled: !!userToken,
   });
@@ -119,22 +131,23 @@ const RoundTrip: React.FC = () => {
     );
   }, [departure_terminal, arrival_terminal, departure_date, arrival_date]);
 
-  useEffect(() => {
-    const theUserToken = sessionStorage.getItem("authToken")
-      ? sessionStorage.getItem("authToken")
-      : localStorage.getItem("authToken");
-    if (theUserToken) {
-      console.log(theUserToken, "from uncle");
-      setUserToken(theUserToken);
-    } else {
-      console.error("No auth token found in sessionStorage.");
-    }
-  }, []);
+  // useEffect(() => {
+  //   const theUserToken = sessionStorage.getItem("authToken")
+  //     ? sessionStorage.getItem("authToken")
+  //     : localStorage.getItem("authToken");
+  //   if (theUserToken) {
+  //     console.log(theUserToken, "from uncle");
+  //     setUserToken(theUserToken);
+  //   } else {
+  //     console.error("No auth token found in sessionStorage.");
+  //   }
+  // }, []);
 
   //############ FETCH TERMINALS START HERE
 
   useEffect(() => {
-    if (data) {
+    if (data ) {
+    
       const formatedTerminalList = data.terminals as Terminal[];
 
       // options for the departure dropdown
@@ -151,31 +164,33 @@ const RoundTrip: React.FC = () => {
           value: terminal._id,
           label: terminal.terminalName,
         }));
+      
       set_arrival_terminal_options(filteredOptions);
     }
+
   }, [data, departure_terminal]);
 
-  useEffect(() => {
-    if (data) {
-      const formatedTerminalList = data.result as Terminal[];
 
-      // options for the departure dropdown
-      const newOptions = formatedTerminalList?.map((terminal) => ({
-        value: terminal._id,
-        label: terminal.terminalName,
-      }));
-      set_arrival_terminal_options(newOptions);
+  //   if (data) {
+  //     const formatedTerminalList = data.result as Terminal[];
 
-      // Filter the arrival options based on the selected departure terminal
-      const filteredOptions = formatedTerminalList
-        ?.filter((terminal) => terminal._id !== arrival_terminal)
-        ?.map((terminal) => ({
-          value: terminal._id,
-          label: terminal.terminalName,
-        }));
-      set_departure_terminal_options(filteredOptions);
-    }
-  }, [data, arrival_terminal]);
+  //     // options for the departure dropdown
+  //     const newOptions = formatedTerminalList?.map((terminal) => ({
+  //       value: terminal._id,
+  //       label: terminal.terminalName,
+  //     }));
+  //     set_arrival_terminal_options(newOptions);
+
+  //     // Filter the arrival options based on the selected departure terminal
+  //     const filteredOptions = formatedTerminalList
+  //       ?.filter((terminal) => terminal._id !== arrival_terminal)
+  //       ?.map((terminal) => ({
+  //         value: terminal._id,
+  //         label: terminal.terminalName,
+  //       }));
+  //     set_departure_terminal_options(filteredOptions);
+  //   }
+  // }, [data, arrival_terminal]);
 
   // // FETCH TERMINALS ENDS HERE  ##################
   const fetchTerminals = async () => {
@@ -209,12 +224,7 @@ const RoundTrip: React.FC = () => {
 
   // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-  const set_trip_details = use_round_trip(
-    (state: storeState) => state.set_round_trip_post_data
-  );
-  const trip_details = use_round_trip(
-    (state: storeState) => state.round_trip_post_data
-  );
+
 
   // TRIP SEARCH FUNCTION STARTS HERE
   const HandleTripSearch = () => {
@@ -247,6 +257,7 @@ const RoundTrip: React.FC = () => {
           value={departure_terminal}
           onChange={handleSelectChange}
           placeholder="Departure Terminal"
+
         />
       </label>
       <label

@@ -1,7 +1,7 @@
 import { Alert, Button, Input, Spin } from "antd";
 import useStore from "../../store";
 import { TripData } from "../../types/Trip";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useUserProfile } from "@hooks/useUserProfile";
 import useAuthToken from "@hooks/useAuthToken";
 
@@ -27,7 +27,7 @@ export const PersonalInfoStep: React.FC<InfoStepProps> = ({
 
   const tripDetails = useStore((state) => state.tripDetails);
   console.log("tripDetails", tripDetails);
-  
+
   const setTripDetails = useStore((state) => state.setTripDetails);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export const PersonalInfoStep: React.FC<InfoStepProps> = ({
       const timer = setTimeout(() => setShowSpinner(false), 300);
       return () => clearTimeout(timer);
     }
-  }, [isLoading])
+  }, [isLoading]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -70,6 +70,25 @@ export const PersonalInfoStep: React.FC<InfoStepProps> = ({
       sendEmailToNextOfKin: e.target.checked,
     });
   };
+
+  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
+
+  // Define isFormValid using useCallback
+  const isFormValid = useCallback((): boolean => {
+    return (
+      Boolean(tripDetails.fullName) &&
+      Boolean(tripDetails.email) &&
+      Boolean(tripDetails.phoneNumber) &&
+      Boolean(tripDetails.nextOfKinName) &&
+      Boolean(tripDetails.nextOfKinEmail) &&
+      Boolean(tripDetails.nextOfKinPhoneNumber)
+    );
+  }, [tripDetails]);
+
+  // useEffect with the dependency on isFormValid
+  useEffect(() => {
+    setIsButtonEnabled(isFormValid());
+  }, [tripDetails, isFormValid]);
 
   return (
     <form className="flex flex-col mt-3">
@@ -213,13 +232,6 @@ export const PersonalInfoStep: React.FC<InfoStepProps> = ({
       <hr className="my-[1.6rem]" />
       <div className="mt-4 flex flex-col justify-end items-end">
         <div className="flex flex-col gap-1">
-          {numberOfAdults && numberOfAdults > 0 && (
-            <p className="text-[1.4rem] md:text-[1.8rem]  font-[500]">
-              Adult Fare: ₦
-              {aTrip && (aTrip.tripCost * numberOfAdults).toLocaleString()}
-            </p>
-          )}
-
           {numberOfAdults && (
             <p className="text-[1.4rem] md:text-[1.8rem]  font-[500]">
               Total Fare: ₦
@@ -233,6 +245,7 @@ export const PersonalInfoStep: React.FC<InfoStepProps> = ({
               type="primary"
               onClick={handleStepCompletion}
               className={`px-10 py-4 md:py-8 bg-primaryColor text-white rounded-[1rem] `}
+              disabled={!isButtonEnabled}
             >
               Continue
             </Button>

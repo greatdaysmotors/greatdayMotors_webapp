@@ -1,0 +1,27 @@
+@import "../../variables.scss";
+
+
+.add-button-container{
+    width: fit-content;
+    height: 48px;
+    background-color:$primary-color;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+    border-radius: 10px;
+    cursor: pointer;
+
+    .abc-sub-c{
+        display:flex;
+        align-items: center;
+        width: fit-content;
+
+        .add-text{
+            color: $white-color;
+            font-size: 16px;
+            font-weight: $medium;
+            margin-left: 15px;
+        }
+    }
+}

@@ -53,3 +53,16 @@ body {
   overflow-y: auto;
 }
 
+.custom-modal2 .ant-modal-content {
+  height: 20rem; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+}
+
+/* .custom-modal2 .ant-modal-body {
+  height: calc(50rem - 55px - 53px); 
+  overflow-y: auto;
+} */
+
