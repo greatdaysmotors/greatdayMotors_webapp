@@ -13,13 +13,13 @@ interface InfoStepProps {
 }
 
 interface personal_info_form_type extends FormData {
-name:string,
-email:string,
-phone_number:string,
+  name: string;
+  email: string;
+  phone_number: string;
   next_of_kin_email: string;
-next_of_kin_name: string;
-next_of_kin_phone_number: string;
-send_next_kin_email: boolean;
+  next_of_kin_name: string;
+  next_of_kin_phone_number: string;
+  send_next_kin_email: boolean;
 }
 
 export const Two_way_personal_info: React.FC<InfoStepProps> = ({
@@ -42,30 +42,27 @@ export const Two_way_personal_info: React.FC<InfoStepProps> = ({
     (state) => state.set_round_trip_post_data
   );
 
-
-
-const handle_step_one=(values:personal_info_form_type)=>{
-
-  setTripDetails({
-    ...tripDetails,
-    fullName:values.name,
-    email:values.email,
-    phoneNumber:values.phone_number,
-    totalTripCost: the_trip_cost * numberOfAdults,
-    nextOfKinName: values.next_of_kin_name,
-    nextOfKinPhoneNumber: values.next_of_kin_phone_number,
-    nextOfKinEmail: values.next_of_kin_email,
-    sendEmailToNextOfKin:values.send_next_kin_email === false ? "no":"yes",
-  });
-  handleStepCompletion()
-}
+  const handle_step_one = (values: personal_info_form_type) => {
+    setTripDetails({
+      ...tripDetails,
+      fullName: values.name,
+      email: values.email,
+      phoneNumber: values.phone_number,
+      totalTripCost: the_trip_cost * numberOfAdults,
+      nextOfKinName: values.next_of_kin_name,
+      nextOfKinPhoneNumber: values.next_of_kin_phone_number,
+      nextOfKinEmail: values.next_of_kin_email,
+      sendEmailToNextOfKin: values.send_next_kin_email === false ? "no" : "yes",
+    });
+    handleStepCompletion();
+  };
   return (
     <Form
       className="flex flex-col mt-3"
       initialValues={{
         name: userDetails?.fullName,
         email: userDetails?.email,
-        send_next_kin_email:false
+        send_next_kin_email: false,
       }}
       onFinish={handle_step_one}
     >
@@ -91,11 +88,11 @@ const handle_step_one=(values:personal_info_form_type)=>{
                 },
                 {
                   pattern: /^[A-Za-z\s]+$/,
-                  message: 'Name can only contain letters and spaces!',
+                  message: "Name can only contain letters and spaces!",
                 },
                 {
                   min: 2,
-                  message: 'Name must be at least 2 characters long!',
+                  message: "Name must be at least 2 characters long!",
                 },
               ]}
             >
@@ -121,8 +118,8 @@ const handle_step_one=(values:personal_info_form_type)=>{
                   message: "Please input your email!",
                 },
                 {
-                  type: 'email',
-                  message: 'Please enter a valid email!',
+                  type: "email",
+                  message: "Please enter a valid email!",
                 },
               ]}
             >
@@ -148,8 +145,8 @@ const handle_step_one=(values:personal_info_form_type)=>{
                   message: "Please input your phone number!",
                 },
                 {
-                  pattern: /^(08|09|07)\d{9}$/, 
-                  message: 'Please enter a valid phone number!',
+                  pattern: /^(08|09|07)\d{9}$/,
+                  message: "Please enter a valid phone number!",
                 },
               ]}
             >
@@ -184,11 +181,11 @@ const handle_step_one=(values:personal_info_form_type)=>{
                 },
                 {
                   pattern: /^[A-Za-z\s]+$/,
-                  message: 'Name can only contain letters and spaces!',
+                  message: "Name can only contain letters and spaces!",
                 },
                 {
                   min: 2,
-                  message: 'Name must be at least 2 characters long!',
+                  message: "Name must be at least 2 characters long!",
                 },
               ]}
             >
@@ -214,8 +211,8 @@ const handle_step_one=(values:personal_info_form_type)=>{
                   message: "Please input next of kin's email!",
                 },
                 {
-                  type: 'email',
-                  message: 'Please enter a valid email!',
+                  type: "email",
+                  message: "Please enter a valid email!",
                 },
               ]}
             >
@@ -241,13 +238,13 @@ const handle_step_one=(values:personal_info_form_type)=>{
                   message: "Please input next of kin's phone number!",
                 },
                 {
-                  pattern: /^(08|09|07)\d{9}$/, 
-                  message: 'Please enter a valid phone number!',
+                  pattern: /^(08|09|07)\d{9}$/,
+                  message: "Please enter a valid phone number!",
                 },
               ]}
             >
               <Input
-              max={11}
+                max={11}
                 type="text"
                 placeholder="Enter phone number"
                 className="p-[0.8rem] rounded-[1rem] font-[400] border"
@@ -262,32 +259,31 @@ const handle_step_one=(values:personal_info_form_type)=>{
         notification about the trip
       </p>
 
-      <div className="flex  mt-3 gap-2 ">
+      <div className="flex  mt-3 gap-2  ">
         <Form.Item
           name="send_next_kin_email"
-          label={
-            <div className="text-[1.4rem] md:text-[1.8rem]  leading-[1.5rem] w-full">
-              I want my next-of-kin to recieve an email about the trip
-            </div>
-          }
-          labelCol={{ span: 24 }}
+          valuePropName="checked"
           wrapperCol={{ span: 24 }}
-          valuePropName="checked" 
         >
-          <Checkbox />
+          <div className="flex items-center gap-2">
+            <Checkbox />
+            <span className="text-[1.4rem] md:text-[1.8rem] leading-[1.5rem]">
+              I want my next-of-kin to receive an email about the trip
+            </span>
+          </div>
         </Form.Item>
       </div>
 
       <hr className="my-[1.6rem]" />
       <div className="mt-4 flex flex-col justify-end items-end">
         <div className="flex flex-col gap-1">
-          {numberOfAdults && numberOfAdults > 0 && (
+          {/* {numberOfAdults && numberOfAdults > 0 && (
             <p className="text-[1.4rem] md:text-[1.8rem]  font-[500]">
               Adult Fare: ₦
               {the_trip_cost &&
                 (the_trip_cost * numberOfAdults).toLocaleString()}
             </p>
-          )}
+          )} */}
 
           {/* <p className="text-[1.4rem] md:text-[1.8rem]  font-[500]">
             Child Fare: ₦9,100

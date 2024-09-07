@@ -5,14 +5,25 @@ import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosResponse } from "axios";
 import { BASE_URL } from "@api/index";
 import toast, { Toaster } from 'react-hot-toast';
+import { useNavigate } from "react-router-dom";
+import { delete_account_type } from "../types/Trip";
 
 
 const DeleteAccount: React.FC = () => {
 
 
- 
 
 
+  const handleLogout = () => {
+
+    localStorage.removeItem("authToken");
+    sessionStorage.removeItem("authToken");
+    localStorage.removeItem("userDetails");
+    sessionStorage.removeItem("userDetails");
+
+      navigate("/");
+
+  };
   
  
   
@@ -29,13 +40,13 @@ const DeleteAccount: React.FC = () => {
   
   // const { mutate, isError, isPending } = useMutation<
   const { mutate, isPending } = useMutation<
-  AxiosResponse<any> , // Success type
+  AxiosResponse<delete_account_type> , // Success type
   Error // Error type
   // delete_type // Payload type
   >({
   // mutationFn: (payload: delete_type) =>
   mutationFn: () =>
-    axios.delete<any>(
+    axios.delete<delete_account_type>(
       `${BASE_URL}/v1/passenger/passengers/account`,
       // payload,
       {
@@ -46,7 +57,11 @@ const DeleteAccount: React.FC = () => {
     ),
   onSuccess: (response) => {
     console.log("onSuccess_response_deleted", response);
-    toast(response.data.message)
+    if(response){
+      toast(response.data.message)
+      handleLogout()
+      
+    }
     
   
   
@@ -63,7 +78,7 @@ const DeleteAccount: React.FC = () => {
   
   
   
-
+const navigate = useNavigate()
 
 
 
@@ -74,14 +89,12 @@ const DeleteAccount: React.FC = () => {
 
   
   const handleDelete = () => {
-    // Your delete logic here
-    console.log("Account deleted");
+
     mutate()
   };
 
   const handleCancel = () => {
-    // Your cancel logic here
-    console.log("Delete action cancelled");
+    navigate(-1)
   };
   return (
 <>
