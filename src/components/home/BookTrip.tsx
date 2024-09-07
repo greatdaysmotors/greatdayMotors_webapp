@@ -2,7 +2,7 @@ import Input from "@components/input";
 import { Button, Radio, Spin, Tabs } from "antd";
 import { RadioChangeEvent } from "antd/lib/radio";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { use_round_trip } from "../../store/round_trip";
 import { storeState } from "../../types/Trip";
 import OneWayTrip from "./OneWayTrip";
@@ -13,7 +13,6 @@ import useAuthToken from "@hooks/useAuthToken";
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
 import useStore from "../../store";
 
-// Define the types for the booking status and its ticket
 interface Ticket {
   departureTerminal: {
     terminalName: string;
@@ -27,18 +26,15 @@ interface Ticket {
   };
   ticketPaymentStatus: string;
 }
-
 interface BookingStatus {
   ticket: Ticket | null;
 }
-
-// Define `BookTripProps` interface
 interface BookTripProps {
   className?: string;
 }
 
 const BookTrip: React.FC<BookTripProps> = ({ className }) => {
-  // const T_UID = useStore((state) => state.ticketUID);
+  const navigate = useNavigate();
   const userToken = useAuthToken();
 
   const is_round_trip_tab_active = use_round_trip(
@@ -47,16 +43,22 @@ const BookTrip: React.FC<BookTripProps> = ({ className }) => {
 
   const [selectedTab, setSelectedTab] = useState<string>("bookTrip");
   const [referenceId, setReferenceId] = useState<string>("");
+  const [nullTicket, setNullTicket] = useState<boolean>(false);
   const { bookingStatus, setBookingStatus } = useStore((state) => ({
     bookingStatus: state.bookingStatus,
     setBookingStatus: state.setBookingStatus,
   }));
-  // State to store booking status
+
+
   console.log("bookingStatus", bookingStatus);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null); // For error messages
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Mutation to fetch booking status
-  const { mutate, isPending, isError }: UseMutationResult<BookingStatus, Error, string> = useMutation({
+  const {
+    mutate,
+    isPending,
+    isError,
+  }: UseMutationResult<BookingStatus, Error, string> = useMutation({
     mutationFn: async (referenceId: string) => {
       const response = await fetch(
         `${BASE_URL}/v1/passenger/booking-status/${referenceId}`,
@@ -80,12 +82,17 @@ const BookTrip: React.FC<BookTripProps> = ({ className }) => {
       return response.json();
     },
     onSuccess: (data) => {
-      setBookingStatus(data); // Set the booking status data
-      setErrorMessage(null); // Clear any previous errors
+      if (data.ticket === null) {
+        setNullTicket(true);
+      } else {
+        setBookingStatus(data);
+        navigate("/booking-status");
+        setErrorMessage(null);
+      }
     },
     onError: (error: Error) => {
-      setErrorMessage(error.message); // Set the error message
-      setBookingStatus({ ticket: null }); // Clear previous booking status
+      setErrorMessage(error.message); 
+      setBookingStatus({ ticket: null });
     },
   });
 
@@ -94,13 +101,8 @@ const BookTrip: React.FC<BookTripProps> = ({ className }) => {
   };
 
   const handleSearch = () => {
-    if (!referenceId) {
-      alert("Please enter a Reference ID");
-      return;
-    }
-
-    // Trigger mutation to fetch booking status
     mutate(referenceId);
+    setNullTicket(false);
   };
   return (
     <div
@@ -171,17 +173,15 @@ const BookTrip: React.FC<BookTripProps> = ({ className }) => {
               />
             </label>
 
-            <Link to="/booking-status">
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="p-[2rem] font-[400] mt-[2rem] md:mt-[32px] text-[1.6rem] rounded-[10px] w-full"
-                onClick={handleSearch}
-                loading={isPending} // Show loading state while fetching
-              >
-                Search
-              </Button>
-            </Link>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="p-[2rem] font-[400] mt-[2rem] md:mt-[32px] text-[1.6rem] rounded-[10px] w-full"
+              onClick={handleSearch}
+              loading={isPending} // Show loading state while fetching
+            >
+              Search
+            </Button>
 
             {/* Display error message */}
             {isError && errorMessage && (
@@ -191,7 +191,7 @@ const BookTrip: React.FC<BookTripProps> = ({ className }) => {
             )}
 
             {/* Display booking status if successful */}
-            {bookingStatus && bookingStatus.ticket == null && (
+            {nullTicket && (
               <div className="mt-4 ">
                 <p className="font-[600] text-red-500">
                   Please, enter correct reference ID
@@ -200,11 +200,11 @@ const BookTrip: React.FC<BookTripProps> = ({ className }) => {
             )}
 
             {/* Loading spinner */}
-            {isPending && (
+            {/* {isPending && (
               <div className="flex justify-center mt-4">
                 <Spin />
               </div>
-            )}
+            )} */}
           </form>
         </Tabs>
       )}
