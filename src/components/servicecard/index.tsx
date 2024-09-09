@@ -8,6 +8,16 @@ const SupportCard = ({
   iconStyles = {},
   titleStyles = {},
   phoneNumberStyles = {},
+  onClick,
+}: {
+  icon?: React.ComponentType<{ size: number; color: string }>;
+  title?: string;
+  phoneNumber?: string;
+  cardStyles?: React.CSSProperties;
+  iconStyles?: React.CSSProperties;
+  titleStyles?: React.CSSProperties;
+  phoneNumberStyles?: React.CSSProperties;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
 }) => {
   return (
     <div
@@ -16,6 +26,7 @@ const SupportCard = ({
         ...cardStyles,
       }}
       className="mt-[2.4rem] p-[2.4rem] rounded-[1rem] flex items-start justify-start md:w-[35rem] md:mx-auto gap-[0.8rem] cursor-pointer"
+      onClick={onClick} // Ensure this is a valid function or undefined
     >
       <div
         className="p-4 rounded-full flex justify-center items-center bg-[#2F2FC830]"

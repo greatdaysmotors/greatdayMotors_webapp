@@ -6,6 +6,22 @@ import { CiMail } from "react-icons/ci";
 import { TbBrandWhatsapp } from "react-icons/tb";
 
 const ResheduleTicket = () => {
+  const handleCallSupport = () => {
+    window.open("tel:09036600374");
+  };
+
+  const handleEmailSupport = () => {
+    window.open("mailto:greatdaymotors@gmail.com");
+  };
+
+  const handleWhatsAppSupport = () => {
+    const whatsappNumber = "+2349036600374";
+    const message = "Hello! I'd like to Re-shedule a Ticket";
+    const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+      message
+    )}`;
+    window.open(whatsappLink, "_blank");
+  };
   return (
     <MainLayout>
       <div className="bg-[#e6e6e6] pb-16">
@@ -37,7 +53,9 @@ const ResheduleTicket = () => {
               iconStyles={{ backgroundColor: "#e0e0e0" }}
               titleStyles={{ color: "#333" }}
               phoneNumberStyles={{ color: "#666" }}
+              onClick={handleCallSupport} // Pass the phone support handler
             />
+
             <SupportCard
               title="Email Customer Support"
               phoneNumber="greatdaymotors@gmail.com"
@@ -45,7 +63,9 @@ const ResheduleTicket = () => {
               iconStyles={{ backgroundColor: "#e0e0e0" }}
               titleStyles={{ color: "#333" }}
               phoneNumberStyles={{ color: "#666" }}
+              onClick={handleEmailSupport} // Pass the email support handler
             />
+
             <SupportCard
               title="Chat With Customer Support"
               phoneNumber="09036600374"
@@ -53,6 +73,7 @@ const ResheduleTicket = () => {
               iconStyles={{ backgroundColor: "#e0e0e0" }}
               titleStyles={{ color: "#333" }}
               phoneNumberStyles={{ color: "#666" }}
+              onClick={handleWhatsAppSupport} // Pass the WhatsApp support handler
             />
           </div>
         </div>
