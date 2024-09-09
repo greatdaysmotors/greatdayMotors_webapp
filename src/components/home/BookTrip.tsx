@@ -1,7 +1,7 @@
 import Input from "@components/input";
 import { Button, Radio, Spin, Tabs } from "antd";
 import { RadioChangeEvent } from "antd/lib/radio";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { use_round_trip } from "../../store/round_trip";
 import { storeState } from "../../types/Trip";
@@ -44,12 +44,12 @@ const BookTrip: React.FC<BookTripProps> = ({ className }) => {
   const [selectedTab, setSelectedTab] = useState<string>("bookTrip");
   const [referenceId, setReferenceId] = useState<string>("");
   const [nullTicket, setNullTicket] = useState<boolean>(false);
-  const { bookingStatus, setBookingStatus } = useStore((state) => ({
+  const { setBookingStatus } = useStore((state) => ({
     bookingStatus: state.bookingStatus,
     setBookingStatus: state.setBookingStatus,
   }));
 
-  console.log("bookingStatus", bookingStatus);
+  // console.log("bookingStatus", bookingStatus);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Mutation to fetch booking status
@@ -73,7 +73,9 @@ const BookTrip: React.FC<BookTripProps> = ({ className }) => {
       if (!response.ok) {
         const errorData = await response.json();
         console.log("errorData", errorData);
-        throw new Error(errorData.errorMessage || "Failed to fetch booking status!");
+        throw new Error(
+          errorData.errorMessage || "Failed to fetch booking status!"
+        );
       }
 
       console.log("BookTripstatus", response);
@@ -108,9 +110,22 @@ const BookTrip: React.FC<BookTripProps> = ({ className }) => {
     mutate(referenceId);
     setNullTicket(false);
   };
-  
+
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash === "#book-trip") {
+      setSelectedTab("checkBookingStatus");
+      setTimeout(() => {
+        document
+          .getElementById("book-trip-tab")
+          ?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
+  }, []);
+
   return (
     <div
+      id="book-trip-tab"
       className={`bg-[#fff] w-full rounded-t-[4rem] py-[2.5rem] px-[2.5rem] -mt-[4rem] md:w-[514px] md:mx-auto lg:mt-2 md:py-[4rem] ${className}`}
     >
       <Radio.Group
@@ -199,7 +214,7 @@ const BookTrip: React.FC<BookTripProps> = ({ className }) => {
             {nullTicket && (
               <div className="mt-4 ">
                 <p className="font-[600] text-red-500">
-                  Please, enter correct reference ID
+                  No information for this ID
                 </p>
               </div>
             )}

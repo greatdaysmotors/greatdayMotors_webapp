@@ -43,7 +43,7 @@ const RoundTrip: React.FC = () => {
   // NUMBER OF ADULTS
   const [number_of_adults, set_number_of_adults] = useState<number>(1);
   // NUMBER OF CHILDREN
-  const [number_of_children, set_number_of_children] = useState<number>(1);
+  const [number_of_children, set_number_of_children] = useState<number>(0);
 
   const handleQuantityChange1 = (value: number | null) => {
     if (value !== null) {

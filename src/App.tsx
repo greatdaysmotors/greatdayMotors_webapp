@@ -2,7 +2,7 @@ import { Toaster } from "react-hot-toast";
 import AppTheme from "./AppTheme";
 import AppRouter from "./routes";
 
-function App() {
+const App: React.FC = () => {
   return (
     <AppTheme>
       <Toaster
@@ -30,6 +30,6 @@ function App() {
       <AppRouter />
     </AppTheme>
   );
-}
+};
 
 export default App;

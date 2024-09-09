@@ -4,6 +4,7 @@ import BookTrip from "./BookTrip";
 const HeroSection = () => {
   return (
     <div
+      id="hero"
       className="bg-cover bg-center  bg-no-repeat flex flex-col items-center justify-center   lg:px-[4.4rem] lg:py-20"
       style={{ backgroundImage: `url(${bgImage})` }}
     >

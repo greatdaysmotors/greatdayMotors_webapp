@@ -2,10 +2,15 @@ import PrimaryBtn from "@components/button/PrimaryBtn";
 import Input from "@components/input";
 import Container from "@layouts/Container";
 import MainLayout from "@layouts/MainLayout";
+import { useEffect } from "react";
 import { CiMail } from "react-icons/ci";
 import { FiPhone } from "react-icons/fi";
 
 const ContactUs = () => {
+  useEffect(() => {
+    // Scroll to the top of the page when the component mounts
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
   return (
     <MainLayout>
       <Container>
