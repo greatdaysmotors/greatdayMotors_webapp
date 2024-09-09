@@ -30,10 +30,11 @@ const SelectTrip: React.FC<SelectTripProps> = ({
   const formattedTime = dayjs(departureTime).utc().format("h:mm a");
   return (
     <div
+      onClick={onSelectSeat}
       style={{
         boxShadow: "0px 0px 10px 0px #22222240",
       }}
-      className="px-[0.6rem] py-[1.2rem] md:py-[3rem] md:px-[2rem] lg:py-[3.5rem] lg:px-[3.5rem] rounded-[1rem] flex items-start lg:items-center"
+      className="px-[0.6rem] py-[1.2rem] md:py-[3rem] md:px-[2rem] lg:py-[3.5rem] lg:px-[3.5rem] rounded-[1rem] flex items-start lg:items-center cursor-pointer"
     >
       <div className="w-[40%] flex justify-center">
         <img

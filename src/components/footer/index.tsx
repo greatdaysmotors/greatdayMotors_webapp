@@ -1,6 +1,6 @@
 import { AiOutlineYoutube } from "react-icons/ai";
 import { FaXTwitter } from "react-icons/fa6";
-import { FiFacebook, FiLinkedin } from "react-icons/fi";
+import { FiFacebook, FiInstagram } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../../public/svgs/gd_logo.svg";
 
@@ -158,7 +158,7 @@ const Footer = () => {
             <FiFacebook size={20} color="#fff" />
           </div>
           <div className="h-[3.5rem] w-[3.5rem] border-[0.1rem] rounded-full border-[#fff] flex items-center justify-center cursor-pointer">
-            <FiLinkedin size={20} color="#fff" />
+            <FiInstagram size={20} color="#fff" />
           </div>
           <div className="h-[3.5rem] w-[3.5rem] border-[0.1rem] rounded-full border-[#fff] flex items-center justify-center cursor-pointer">
             <FaXTwitter size={20} color="#fff" />
