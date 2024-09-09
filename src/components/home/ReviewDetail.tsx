@@ -201,11 +201,16 @@ export const ReviewDetailsStep: React.FC<InfoStepProps> = ({
 
   const HandlePayStack = () => {
     if (!userToken) {
-      navigate("/login", { state: { from: location.pathname } });
+      // Save the current location and redirect to login
+      navigate("/login", {
+        state: {
+          from: location.pathname,
+          tripDetails,
+          modalOpen: true,
+        },
+      });
     } else {
       mutate(tripDetails);
-      //  handleStepCompletion();
-      // showPaymentModal();
     }
   };
 
