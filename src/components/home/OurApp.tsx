@@ -1,6 +1,6 @@
 import playstoreimage from "../../../public/pngs/playstore.png";
 import appleimage from "../../../public/pngs/apple.png";
-import appimages from "../../../public/pngs/app_img.png";
+import appimages from "../../../public/appimage.svg";
 import Container from "@layouts/Container";
 
 const OurApp = () => {
@@ -27,7 +27,7 @@ const OurApp = () => {
             </div>
           </div>
           <div className="mt-[3.4rem] flex justify-center lg:h-[50rem] ">
-            <img src={appimages} alt="app images" className="" />
+            <img src={appimages} alt="app images"  className="w-auto max-w-full h-auto object-contain"/>
           </div>
         </div>
       </Container>

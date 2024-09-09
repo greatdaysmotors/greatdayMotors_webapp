@@ -1,5 +1,7 @@
 import Container from "@layouts/Container";
-import offerimg1 from "../../../public/pngs/offer_img.png";
+import book from "../../../public/book.svg";
+import hire from "../../../public/hire.svg";
+import reshedule from "../../../public/reshedule.svg";
 import OfferCard from "./OfferCard";
 
 const WhatWeOffer = () => {
@@ -16,19 +18,19 @@ const WhatWeOffer = () => {
           <div className="flex scroll-container overflow-scroll w-full gap-[1rem] lg:gap-[4rem]">
             <OfferCard
               link="/book-ticket"
-              offerimg={offerimg1}
+              offerimg={book}
               title="Book Ticket"
               description="Enjoy the Convenience of Booking Your Ticket with Ease and Comfort, Right from Your Own Home"
             />
             <OfferCard
               link="/hire-service"
-              offerimg={offerimg1}
+              offerimg={hire}
               title="Hire Service"
               description=" Enjoy the Convenience of Booking Your Ticket with Ease and Comfort, Right from Your Own Home"
             />
             <OfferCard
               link="/reshedule-ticket"
-              offerimg={offerimg1}
+              offerimg={reshedule}
               title="Reshedule Ticket"
               description=" Enjoy the Convenience of Booking Your Ticket with Ease and Comfort, Right from Your Own Home"
             />
