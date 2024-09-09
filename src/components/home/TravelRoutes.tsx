@@ -1,18 +1,17 @@
 import Container from "@layouts/Container";
-import routesimage from "../../../public/pngs/travel_img1.png";
-import routesimag2 from "../../../public/pngs/traveiimg2.png";
+import route from "../../../public/route1.svg";
+import routeimage from "../../../public/route2.svg";
 
-// Define the routes with random start and end points
 const routePairs = [
-  { id: 1, src: routesimage, alt: "travel route image", start: "Okota", end: "Benin" },
-  { id: 2, src: routesimag2, alt: "travel route image", start: "Owerri", end: "Portharcourt" },
-  { id: 3, src: routesimage, alt: "travel route image", start: "Sapele", end: "Warri" },
-  { id: 4, src: routesimag2, alt: "travel route image", start: "Ughelli", end: "Onitsha" },
-  { id: 5, src: routesimag2, alt: "travel route image", start: "Asaba", end: "Portharcourt" },
-  { id: 6, src: routesimage, alt: "travel route image", start: "Onitsha", end: "Benin" },
-  { id: 7, src: routesimag2, alt: "travel route image", start: "Warri", end: "Owerri" },
-  { id: 8, src: routesimage, alt: "travel route image", start: "Portharcourt", end: "Sapele" },
-  { id: 9, src: routesimage, alt: "travel route image", start: "Benin", end: "Okota" }
+  { id: 1, src: route, alt: "travel route image", start: "Okota", end: "Benin" },
+  { id: 2, src: routeimage, alt: "travel route image", start: "Owerri", end: "Portharcourt" },
+  { id: 3, src: route, alt: "travel route image", start: "Sapele", end: "Warri" },
+  { id: 4, src: route, alt: "travel route image", start: "Ughelli", end: "Onitsha" },
+  { id: 5, src: routeimage, alt: "travel route image", start: "Asaba", end: "Portharcourt" },
+  { id: 6, src: route, alt: "travel route image", start: "Onitsha", end: "Benin" },
+  { id: 7, src: routeimage, alt: "travel route image", start: "Warri", end: "Owerri" },
+  { id: 8, src: route, alt: "travel route image", start: "Portharcourt", end: "Sapele" },
+  { id: 9, src: routeimage, alt: "travel route image", start: "Benin", end: "Okota" }
 ];
 
 const TravelRoutes = () => {

@@ -61,6 +61,11 @@ body {
 
 }
 
+/* In your CSS file */
+.custom-spin .ant-spin-dot {
+  color: white;
+}
+
 /* .custom-modal2 .ant-modal-body {
   height: calc(50rem - 55px - 53px); 
   overflow-y: auto;
