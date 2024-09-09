@@ -130,7 +130,13 @@ export const Two_way_review_details: React.FC<InfoStepProps> = ({
 
   const HandlePayStack = () => {
     if (!userToken) {
-      navigate("/login", { state: { from: location.pathname } });
+      navigate("/login", {
+        state: {
+          from: location.pathname,
+          tripDetails,
+          modalOpen: true,
+        },
+      });
     } else {
       mutate(tripDetails);
       console.log(tripDetails);

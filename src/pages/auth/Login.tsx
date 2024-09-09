@@ -44,6 +44,7 @@ const Login = () => {
     onSuccess: (data) => {
       const { token, userDetails } = data;
 
+      // Store token and user details either in localStorage or sessionStorage
       if (rememberMe) {
         localStorage.setItem("authToken", token);
         localStorage.setItem("userDetails", JSON.stringify(userDetails));
@@ -53,14 +54,21 @@ const Login = () => {
       }
 
       setSuccessMessage("Login successful!");
-
       form.resetFields();
-      // Redirect to the original destination or to the homepage
-      const redirectTo = location.state?.from?.pathname || "/";
+
+      // Retrieve the path to redirect to, saved trip details, and modal state from location.state
+      const redirectTo = location.state?.from || "/"; // Default to home if no previous path
+      const savedTripDetails = location.state?.tripDetails; // Retrieve trip details if present
+      const modalOpen = location.state?.modalOpen; // Check if the modal was open before login
+
+      // After login, navigate back to the page where the user was, passing saved state
       setTimeout(() => {
-        navigate(redirectTo);
+        navigate(redirectTo, {
+          state: { tripDetails: savedTripDetails, modalOpen },
+        });
       }, 2000);
     },
+
     onError: (error) => {
       setErrorMessage(error.message);
     },
