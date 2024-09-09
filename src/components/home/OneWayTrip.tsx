@@ -53,7 +53,7 @@ const OneWayTrip: React.FC = () => {
 
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
   const [quantity1, setQuantity1] = useState<number>(1);
-  const [quantity2, setQuantity2] = useState<number>(1);
+  const [quantity2, setQuantity2] = useState<number>(0);
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedIndex = event.target.selectedIndex;
@@ -115,7 +115,7 @@ const OneWayTrip: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    console.log("data", data);
+    // console.log("data", data);
     if (data) {
       const formatedTerminalList = data.terminals as Terminal[];
 

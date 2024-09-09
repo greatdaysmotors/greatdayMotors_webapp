@@ -1,10 +1,27 @@
 import { AiOutlineYoutube } from "react-icons/ai";
 import { FaXTwitter } from "react-icons/fa6";
 import { FiFacebook, FiLinkedin } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../../public/svgs/gd_logo.svg";
 
 const Footer = () => {
+  const navigate = useNavigate();
+
+  const handleCheckBookingStatus = () => {
+    // Scroll to the top of the page
+    document
+      .getElementById("book-trip-tab")
+      ?.scrollIntoView({ behavior: "smooth" });
+
+    // Navigate to the BookTrip component if necessary
+    navigate("/#book-trip");
+  };
+
+  const handleVision = () => {
+    // Navigate to the About Us page
+    navigate("/about-us", { state: { scrollTo: "vision" } });
+  };
+
   return (
     <div className="bg-brandDark ">
       <div className="px-[2.4rem] lg:px-[4.4rem] py-[1.4rem] lg:py-[4.8rem] md:flex md:gap-[3rem]  lg:gap-[5rem]">
@@ -34,16 +51,28 @@ const Footer = () => {
               Quick Links
             </p>
             <ul className="flex flex-col gap-[0.8rem]">
-              <li className="text-[1.2rem] lg:text-[1.4rem]  font-[500] text-[#fff] cursor-pointer">
+              <Link
+                to="/book-ticket"
+                className="text-[1.2rem] lg:text-[1.4rem]  font-[500] text-[#fff] cursor-pointer"
+              >
                 Book Ticket
-              </li>
-              <li className="text-[1.2rem] lg:text-[1.4rem]  font-[500] text-[#fff] cursor-pointer">
+              </Link>
+              <Link
+                to="/hire-service"
+                className="text-[1.2rem] lg:text-[1.4rem]  font-[500] text-[#fff] cursor-pointer"
+              >
                 Hire Service
-              </li>
-              <li className="text-[1.2rem] lg:text-[1.4rem]  font-[500] text-[#fff] cursor-pointer">
+              </Link>
+              <Link
+                to="/reshedule-ticket"
+                className="text-[1.2rem] lg:text-[1.4rem]  font-[500] text-[#fff] cursor-pointer"
+              >
                 Reshedule Ticket
-              </li>
-              <li className="text-[1.2rem] lg:text-[1.4rem]  font-[500] text-[#fff] cursor-pointer">
+              </Link>
+              <li
+                onClick={handleCheckBookingStatus}
+                className="text-[1.2rem] lg:text-[1.4rem]  font-[500] text-[#fff] cursor-pointer"
+              >
                 Check Booking Status
               </li>
             </ul>
@@ -72,12 +101,12 @@ const Footer = () => {
               >
                 About Us
               </Link>
-              <Link
-                to="#"
+              <li
+                onClick={handleVision}
                 className="text-[1.2rem] lg:text-[1.4rem]  font-[500] text-[#fff] cursor-pointer"
               >
                 Our Vision
-              </Link>
+              </li>
               <Link
                 to="/contact-us"
                 className="text-[1.2rem] lg:text-[1.4rem]  font-[500] text-[#fff] cursor-pointer"

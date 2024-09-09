@@ -6,10 +6,10 @@ const useAuthToken = () => {
   useEffect(() => {
     const theUserToken =
       sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
-      console.log("theUserToken", theUserToken);
+      // console.log("theUserToken", theUserToken);
       
     if (theUserToken) {
-      console.log(theUserToken, "from useAuthToken hook");
+      // console.log(theUserToken, "from useAuthToken hook");
       setUserToken(theUserToken);
     } else {
       console.error("No auth token found in sessionStorage or localStorage.");
