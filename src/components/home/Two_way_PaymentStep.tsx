@@ -366,22 +366,36 @@ export const Two_way_PaymentStep: React.FC<InfoStepProps> = ({
             <h2 className="text-[1.4rem] md:text-[1.6rem] font-[700] mt-[2rem]">
               Children
             </h2>
-            <div className="flex justify-between">
-              <p className="text-[1.4rem] md:text-[1.6rem]">Child 1 Name</p>
-              <p className="text-[1.4rem] md:text-[1.6rem] font-[600] capitalize">
-                {`${tripDetails.child1Name || "Nil"} | ${
-                  tripDetails.child1Age || "Nil"
-                }`}
+            {trip_data.number_of_children === 0 ? (
+              <p className="text-[1.4rem] md:text-[1.6rem]">
+                No children added
               </p>
-            </div>
-            <div className="flex justify-between">
-              <p className="text-[1.4rem] md:text-[1.6rem]">Child 2 Name</p>
-              <p className="text-[1.4rem] md:text-[1.6rem] font-[600] capitalize">
-                {`${tripDetails.child2Name || "Nil"} | ${
-                  tripDetails.child2Age || "Nil"
-                } `}
-              </p>
-            </div>
+            ) : (
+              <>
+                <div className="flex justify-between">
+                  <p className="text-[1.4rem] md:text-[1.6rem]">Child 1 Name</p>
+
+                  <p className="text-[1.4rem] md:text-[1.6rem] font-[600] capitalize">
+                    {`${tripDetails.child1Name || "Nil"} | ${
+                      tripDetails.child1Age || "Nil"
+                    }`}
+                  </p>
+                </div>
+                <div className="flex justify-between">
+                  <p className="text-[1.4rem] md:text-[1.6rem]">Child 2 Name</p>
+
+                  {trip_data.number_of_children === 1 ? (
+                    "No child"
+                  ) : (
+                    <p className="text-[1.4rem] md:text-[1.6rem] font-[600] capitalize">
+                      {`${tripDetails.child2Name || "Nil"} | ${
+                        tripDetails.child2Age || "Nil"
+                      } `}
+                    </p>
+                  )}
+                </div>
+              </>
+            )}
           </div>
           <hr className="my-[1.6rem]" />
           <div className="mt-4 flex flex-col justify-start items-start">
