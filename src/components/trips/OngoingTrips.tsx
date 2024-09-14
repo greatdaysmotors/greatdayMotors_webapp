@@ -90,6 +90,7 @@ const OngoingTrips = () => {
             route={`${trip.departureTerminal.terminalName} ==> ${trip.arrivalTerminal.terminalName}`}
             time={formatDDate(trip.availableTrip.departureDateTime)}
             price={`₦${trip.totalTripCost.toLocaleString()}`}
+            tripStatus={trip.availableTrip.tripStatus} 
           />
         ))
       ) : (

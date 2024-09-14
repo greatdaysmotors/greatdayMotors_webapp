@@ -1,6 +1,9 @@
 import { Button, Checkbox, Form, Input } from "antd";
 import { use_round_trip } from "../../store/round_trip";
 import FormItem from "antd/es/form/FormItem";
+import useAuthToken from "@hooks/useAuthToken";
+import { useUserProfile } from "@hooks/useUserProfile";
+import { useEffect } from "react";
 // import { InfoStepProps } from "../../types/InfoTypes";
 
 interface InfoStepProps {
@@ -42,17 +45,43 @@ export const Two_way_personal_info: React.FC<InfoStepProps> = ({
     (state) => state.set_round_trip_post_data
   );
 
+
+
+
+
+
+
+
+  const userToken = useAuthToken();
+
+  const { data, error, isLoading } = useUserProfile(userToken);
+
+
+useEffect(()=>{
+  if(data && !error && !isLoading){
+    setTripDetails({
+      ...tripDetails,
+      phoneNumber: data?.userProfile?.phoneNumber || "",
+      nextOfKinName: data?.userProfile?.nokFullName || "",
+      nextOfKinPhoneNumber: data.userProfile?.nokPhoneNumber || "",
+      nextOfKinEmail:  data.userProfile?.nokEmail || "",
+
+    });
+  }
+},[data, isLoading, error])
+
+
   const handle_step_one = (values: personal_info_form_type) => {
     setTripDetails({
       ...tripDetails,
-      fullName: values.name,
-      email: values.email,
-      phoneNumber: values.phone_number,
+      fullName: values?.name || "",
+      email: values?.email || "",
+      phoneNumber: values?.phone_number || "",
       totalTripCost: the_trip_cost * numberOfAdults,
-      nextOfKinName: values.next_of_kin_name,
-      nextOfKinPhoneNumber: values.next_of_kin_phone_number,
-      nextOfKinEmail: values.next_of_kin_email,
-      sendEmailToNextOfKin: values.send_next_kin_email === false ? "no" : "yes",
+      nextOfKinName: values?.next_of_kin_name || "",
+      nextOfKinPhoneNumber: values?.next_of_kin_phone_number || "",
+      nextOfKinEmail: values?.next_of_kin_email || "",
+      sendEmailToNextOfKin: values?.send_next_kin_email === false ? "no" : "yes",
     });
     handleStepCompletion();
   };
@@ -62,7 +91,11 @@ export const Two_way_personal_info: React.FC<InfoStepProps> = ({
       initialValues={{
         name: userDetails?.fullName,
         email: userDetails?.email,
+        phone_number: tripDetails?.phoneNumber,
         send_next_kin_email: false,
+        next_of_kin_name:tripDetails?.nextOfKinName,
+        next_of_kin_email:tripDetails?.nextOfKinEmail,
+        next_of_kin_phone_number:tripDetails?.nextOfKinPhoneNumber
       }}
       onFinish={handle_step_one}
     >

@@ -1,16 +1,17 @@
+import { BASE_URL } from "@api/index";
+import useAuthToken from "@hooks/useAuthToken";
+import { useMutation } from "@tanstack/react-query";
 import { Alert, Button, Modal, Spin } from "antd";
+import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { CiLocationOn } from "react-icons/ci";
+import { IoIosCloseCircleOutline } from "react-icons/io";
 import { IoShieldCheckmarkOutline } from "react-icons/io5";
 import { MdClose } from "react-icons/md";
 import { TbDotsVertical } from "react-icons/tb";
+import { useLocation, useNavigate } from "react-router-dom";
 import useStore, { TripDetails } from "../../store";
 import { TripData } from "../../types/Trip";
-import useAuthToken from "@hooks/useAuthToken";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
-import axios, { AxiosResponse } from "axios";
-import { BASE_URL } from "@api/index";
 // import { PaymentStep } from "./PaymentStep";
 
 interface InfoStepProps {
@@ -218,10 +219,6 @@ export const ReviewDetailsStep: React.FC<InfoStepProps> = ({
     setOpenReview(false);
   };
 
-  const handlePaymentModalCancel = () => {
-    setCancelPaymentModal(false);
-  };
-
   console.log("isError", isError);
 
   const handleHome = () => {
@@ -233,34 +230,23 @@ export const ReviewDetailsStep: React.FC<InfoStepProps> = ({
     <div>
       {cancelPaymentModal ? (
         <Modal
-          className="custom-modal2"
-          open={cancelPaymentModal}
-          onCancel={() => setCancelPaymentModal(false)}
-          closable={false}
+          title={""}
+          visible={cancelPaymentModal}
+          onCancel={handleHome}
+          footer={null}
           centered
-          footer={[
-            <Button
-              key="ok"
-              type="primary"
-              onClick={handleHome}
-              className="px-10 py-8 text-[1.6rem] bg-primaryColor text-white rounded-[1rem] relative"
-            >
-              Home
-            </Button>,
-          ]}
+          className="feedbacksuccess-modal"
         >
-          <MdClose
-            className="absolute top-4 right-1 cursor-pointer"
-            size={30}
-            onClick={handlePaymentModalCancel}
-          />
-          <div className="flex flex-col justify-center gap-4 items-center ">
-            <h4 className="text-[1.8rem] md:text-[2.5rem] leading-[35px] font-[700] text-center ">
-              Payment has been cancelled!
-            </h4>
-            <p className="text-[1.6rem] md:text-[2rem] font-[500] text-center">
-              Thank you for choosing Greatday Motors.
-            </p>
+          <div className="flex flex-col justify-center items-center w-full md:w-[45rem]">
+            <IoIosCloseCircleOutline size={100} color="#FF0000" />
+            <div className="flex flex-col">
+              <h2 className="text-[2rem] lg:text-[20px] font-[700]  text-center text-brandBlack">
+                Payment has been cancelled!
+              </h2>
+              <h4 className="text-[18px] lg:w-[32rem] lg:mx-auto font-[400]   text-center text-brandBlack">
+                Thank you for choosing Greatday Motors.
+              </h4>
+            </div>
           </div>
         </Modal>
       ) : (

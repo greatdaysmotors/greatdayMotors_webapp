@@ -35,7 +35,7 @@ export const Two_way_PaymentStep: React.FC<InfoStepProps> = ({
 
   title,
   //   showPaymentModal,
-  numberOfChildren,
+  // numberOfChildren,
   openPayment,
   setOpenPayment,
   // numberOfBeneficiaries,
@@ -203,10 +203,23 @@ export const Two_way_PaymentStep: React.FC<InfoStepProps> = ({
                 Round trip
               </p>
               <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[1.8rem] font-[500] text-right">
-                {numberOfAdults || "Nil"} Adult
+              {trip_data.number_of_adults === 0 ? (
+                          "No adult"
+                        ) : trip_data.number_of_adults === 1 ? (
+                          <>{trip_data.number_of_adults} Adult</>
+                        ) : (
+                          <>{trip_data.number_of_adults} Adults</>
+                        )}
               </p>
               <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[1.8rem] font-[500] text-right">
-                {numberOfChildren || "Nil"} Child
+             
+              {trip_data.number_of_children === 0 ? (
+                          "No child"
+                        ) : trip_data.number_of_children === 1 ? (
+                          <>{trip_data.number_of_children} Child</>
+                        ) : (
+                          <>{trip_data.number_of_children} CHildren</>
+                        )}
               </p>
               <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[1.8rem] font-[500] text-right">
                 {trip_data.departure_date || "Nil"}
@@ -366,49 +379,44 @@ export const Two_way_PaymentStep: React.FC<InfoStepProps> = ({
             <h2 className="text-[1.4rem] md:text-[1.6rem] font-[700] mt-[2rem]">
               Children
             </h2>
-            {trip_data.number_of_children === 0 ? (
-              <p className="text-[1.4rem] md:text-[1.6rem]">
-                No children added
-              </p>
-            ) : (
-              <>
-                <div className="flex justify-between">
-                  <p className="text-[1.4rem] md:text-[1.6rem]">Child 1 Name</p>
+            {
+            trip_data.number_of_children === 0 ? "No children added":
+        <>
+        <div className="flex justify-between">
+          <p className="text-[1.4rem] md:text-[1.6rem]">Child 1 Name</p>
 
-                  <p className="text-[1.4rem] md:text-[1.6rem] font-[600] capitalize">
-                    {`${tripDetails.child1Name || "Nil"} | ${
-                      tripDetails.child1Age || "Nil"
-                    }`}
-                  </p>
-                </div>
-                <div className="flex justify-between">
-                  <p className="text-[1.4rem] md:text-[1.6rem]">Child 2 Name</p>
 
-                  {trip_data.number_of_children === 1 ? (
-                    "No child"
-                  ) : (
-                    <p className="text-[1.4rem] md:text-[1.6rem] font-[600] capitalize">
+          
+          <p className="text-[1.4rem] md:text-[1.6rem] font-[600] capitalize">
+            {`${tripDetails.child1Name || "Nil"} | ${
+              tripDetails.child1Age || "Nil"
+            }`}
+          </p>
+        </div>
+        <div className="flex justify-between">
+          <p className="text-[1.4rem] md:text-[1.6rem]">Child 2 Name</p>
+
+
+          {trip_data.number_of_children === 1 ? (
+                        "No child"
+                      ) : <p className="text-[1.4rem] md:text-[1.6rem] font-[600] capitalize">
                       {`${tripDetails.child2Name || "Nil"} | ${
                         tripDetails.child2Age || "Nil"
                       } `}
-                    </p>
-                  )}
-                </div>
-              </>
-            )}
+                    </p>}
+
+
+
+        </div>
+        </>
+                      
+          }
+  
           </div>
           <hr className="my-[1.6rem]" />
           <div className="mt-4 flex flex-col justify-start items-start">
             <div className="flex flex-col gap-1">
-              {/* <p className="text-[1.4rem] md:text-[1.6rem] font-[500]">
-                Adult Fare: ₦
-                {(the_trip_cost * numberOfAdults)
-                  .toLocaleString()
-                  .toLocaleString() || "Nil"}
-              </p> */}
-              {/* <p className="text-[1.4rem] md:text-[1.6rem] font-[500]">
-            Child Fare: ₦9,100
-          </p> */}
+       
               <p className="text-[1.4rem] md:text-[1.6rem] font-[500]">
                 Total Fare: ₦
                 {(the_trip_cost * numberOfAdults)

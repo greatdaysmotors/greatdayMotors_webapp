@@ -6,31 +6,8 @@ import axios from "axios";
 import directionicon from "../../../public/pngs/drn.svg";
 import Trip from "./Trip";
 import { Spin } from "antd";
-interface DepartureTerminal {
-  terminalName: string;
-  terminalAddress: string;
-  terminalLGA: string;
-  terminalState: string;
-}
-interface AvailableTrip {
-  departureDateTime: string;
-  tripCost: number;
-  tripStatus: string;
-  seatsAvailable: number;
-  driver: string;
-  vehicle: string;
-}
-interface TripData {
-  _id: string;
-  fullName: string;
-  departureTerminal: DepartureTerminal;
-  arrivalTerminal: DepartureTerminal;
-  availableTrip: AvailableTrip;
-  returnTrip: AvailableTrip;
-  departureSeatNumbers: number[];
-  returnSeatNumbers: number[];
-  totalTripCost: number;
-}
+import useStore from "../../store";
+import { TripData } from "../../types/Trip";
 
 interface TripsResponse {
   trips: TripData[];
@@ -51,16 +28,14 @@ const CompletedTrips = () => {
         }
       );
 
-      console.error("trips data", response);
-
       if (response.status !== 200) {
-        throw new Error("Failed to fetch upcoming trips");
+        throw new Error("Failed to fetch completed trips");
       }
 
       return response.data;
     } catch (error) {
-      console.error("Error fetching upcoming trips:", error);
-      throw new Error("Error fetching upcoming trips");
+      console.error("Error fetching completed trips:", error);
+      throw new Error("Error fetching completed trips");
     }
   };
 
@@ -75,6 +50,11 @@ const CompletedTrips = () => {
   });
 
   const trips = (data as TripsResponse)?.trips || [];
+  const setSelectedTrip = useStore((state) => state.setSelectedTrip);
+
+  const handleTripSelect = (trip: TripData) => {
+    setSelectedTrip(trip);
+  };
 
   if (isPending)
     return (
@@ -90,11 +70,13 @@ const CompletedTrips = () => {
         trips.map((trip) => (
           <Trip
             key={trip._id}
+            onClick={() => handleTripSelect(trip)}
             imageSrc={directionicon}
             altText={"direction icon"}
             route={`${trip.departureTerminal.terminalName} ==> ${trip.arrivalTerminal.terminalName}`}
             time={formatDDate(trip.availableTrip.departureDateTime)}
             price={`₦${trip.totalTripCost.toLocaleString()}`}
+            tripStatus={trip.availableTrip.tripStatus ?? "Unknown"}
           />
         ))
       ) : (
