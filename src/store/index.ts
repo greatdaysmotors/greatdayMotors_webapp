@@ -51,6 +51,8 @@ interface StoreState {
   setTicketUID: (ticketUID: string) => void; // Method to update ticketUID
   bookingStatus: { ticket: string | null } | null; // Add bookingStatus
   setBookingStatus: (status: { ticket: string | null }) => void; // Method to set bookingStatus
+  selectedTrip: TripData | null;
+  setSelectedTrip: (trip: TripData) => void;
 }
 
 const useStore = create<StoreState>()(
@@ -115,6 +117,8 @@ const useStore = create<StoreState>()(
       setTicketUID: (ticketUID) => set({ ticketUID }), // Method to set ticketUID
       bookingStatus: null, // Initialize bookingStatus
       setBookingStatus: (status) => set({ bookingStatus: status }),
+      selectedTrip: null,
+      setSelectedTrip: (trip: TripData) => set({ selectedTrip: trip }),
     }),
     {
       name: "trip-store", // unique name for the storage key

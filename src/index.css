@@ -71,3 +71,20 @@ body {
   overflow-y: auto;
 } */
 
+.review-modal .ant-modal-body {
+  padding: 4rem 0; 
+}
+
+.review-modal .ant-modal-header {
+  padding: 1.5rem 2rem; 
+}
+
+.feedbacksuccess-modal .ant-modal-body {
+  padding: 8rem 0; 
+}
+
+.feedbacksuccess-modal .ant-modal-header {
+  padding: 1.5rem 2rem; 
+}
+
+

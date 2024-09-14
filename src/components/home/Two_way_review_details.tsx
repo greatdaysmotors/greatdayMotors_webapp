@@ -46,7 +46,7 @@ export const Two_way_review_details: React.FC<InfoStepProps> = ({
   openReview,
   setOpenReview,
   showPaymentModal,
-  numberOfChildren,
+  // numberOfChildren,
   the_trip_cost,
   numberOfAdults,
   departure_trip_cost,
@@ -313,10 +313,25 @@ export const Two_way_review_details: React.FC<InfoStepProps> = ({
               Round trip
             </p>
             <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[1.8rem] font-[500] text-right">
-              {numberOfAdults || "Nil"} Adult
+            {trip_data.number_of_adults === 0 ? (
+                          "No adult"
+                        ) : trip_data.number_of_adults === 1 ? (
+                          <>{trip_data.number_of_adults} Adult</>
+                        ) : (
+                          <>{trip_data.number_of_adults} Adults</>
+                        )}
             </p>
             <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[1.8rem] font-[500] text-right">
-              {numberOfChildren || "Nil"} Child
+           
+
+
+              {trip_data.number_of_children === 0 ? (
+                          "No child"
+                        ) : trip_data.number_of_children === 1 ? (
+                          <>{trip_data.number_of_children} Child</>
+                        ) : (
+                          <>{trip_data.number_of_children} CHildren</>
+                        )}
             </p>
             <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[1.8rem] font-[500] text-right">
               {trip_data.departure_date || "Nil"}
@@ -464,22 +479,39 @@ export const Two_way_review_details: React.FC<InfoStepProps> = ({
           <h2 className="text-[1.4rem] md:text-[1.6rem] font-[700] mt-[2rem]">
             Children
           </h2>
-          <div className="flex justify-between">
-            <p className="text-[1.4rem] md:text-[1.6rem]">Child 1 Name</p>
-            <p className="text-[1.4rem] md:text-[1.6rem] font-[600] capitalize">
-              {`${tripDetails.child1Name || "Nil"} | ${
-                tripDetails.child1Age || "Nil"
-              }`}
-            </p>
-          </div>
-          <div className="flex justify-between">
-            <p className="text-[1.4rem] md:text-[1.6rem]">Child 2 Name</p>
-            <p className="text-[1.4rem] md:text-[1.6rem] font-[600] capitalize">
-              {`${tripDetails.child2Name || "Nil"} | ${
-                tripDetails.child2Age || "Nil"
-              } `}
-            </p>
-          </div>
+          {
+            trip_data.number_of_children === 0 ? "No children added":
+        <>
+        <div className="flex justify-between">
+          <p className="text-[1.4rem] md:text-[1.6rem]">Child 1 Name</p>
+
+
+          
+          <p className="text-[1.4rem] md:text-[1.6rem] font-[600] capitalize">
+            {`${tripDetails.child1Name || "Nil"} | ${
+              tripDetails.child1Age || "Nil"
+            }`}
+          </p>
+        </div>
+        <div className="flex justify-between">
+          <p className="text-[1.4rem] md:text-[1.6rem]">Child 2 Name</p>
+
+
+          {trip_data.number_of_children === 1 ? (
+                        "No child"
+                      ) : <p className="text-[1.4rem] md:text-[1.6rem] font-[600] capitalize">
+                      {`${tripDetails.child2Name || "Nil"} | ${
+                        tripDetails.child2Age || "Nil"
+                      } `}
+                    </p>}
+
+
+
+        </div>
+        </>
+                      
+          }
+  
         </div>
         <hr className="my-[1.6rem]" />
         <div className="mt-4 flex flex-col justify-start items-start">

@@ -28,7 +28,6 @@ import { Two_way_personal_info } from "@components/home/Two_way_personal_info";
 import { Two_way_review_details } from "@components/home/Two_way_review_details";
 import { Two_way_PaymentStep } from "@components/home/Two_way_PaymentStep";
 
-
 const RoundTripSearch = () => {
   const navigate = useNavigate();
 
@@ -165,10 +164,6 @@ const RoundTripSearch = () => {
     set_return_trip_modal_open(false);
   };
 
-
-
-
-
   const [currentStep, setCurrentStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
 
@@ -248,21 +243,20 @@ const RoundTripSearch = () => {
       case 4:
         return (
           <Two_way_PaymentStep
-          currentStep={currentStep}
-          showPaymentModal={showPaymentModal}
-          numberOfBeneficiaries={trip_data.number_of_adults}
-          numberOfChildren={trip_data.number_of_children}
-          numberOfAdults={trip_data.number_of_adults}
-          the_trip_cost={return_trip_cost + departure_trip_cost}
-          departure_trip_cost={departure_trip_cost}
-          return_trip_cost={return_trip_cost}
+            currentStep={currentStep}
+            showPaymentModal={showPaymentModal}
+            numberOfBeneficiaries={trip_data.number_of_adults}
+            numberOfChildren={trip_data.number_of_children}
+            numberOfAdults={trip_data.number_of_adults}
+            the_trip_cost={return_trip_cost + departure_trip_cost}
+            departure_trip_cost={departure_trip_cost}
+            return_trip_cost={return_trip_cost}
             openPayment={openPayment}
             setOpenPayment={setOpenPayment}
-           
             title={null}
           />
         );
-   
+
       default:
         return null;
     }
@@ -446,106 +440,7 @@ const RoundTripSearch = () => {
                 )}
 
                 <hr className="my-[2rem]" />
-                {details ? (
-                  <div className="flex flex-col gap-[1.6rem]">
-                    <h4 className="text-[1.4rem] md:text-[1.8rem] lg:text-[2.2rem] font-[700]">
-                      Hello,
-                      <br />
-                      We just need to know a few more information about you
-                    </h4>
-                    <div className="flex items-start justify-between md:mt-[3.2rem]">
-                      {[1, 2, 3, 4].map((step: number) => (
-                        <React.Fragment key={step}>
-                          {step !== 1 && (
-                            <div
-                              className={`border-t-2 ${
-                                currentStep === step
-                                  ? "border-primaryColor"
-                                  : "border-[#999999]"
-                              } border-primaryColor flex-1 mt-[0.8rem] md:mt-[1.6rem]`}
-                            ></div>
-                          )}
-                          <div className="flex flex-col items-center justify-center gap-1 w-[10%]">
-                            {completedSteps.includes(step) ? (
-                              <>
-                                {" "}
-                                <MdCheckCircle
-                                  size={20}
-                                  color="#2F2FC8"
-                                  className="flex md:hidden"
-                                />
-                                <MdCheckCircle
-                                  size={45}
-                                  color="#2F2FC8"
-                                  className="hidden md:flex"
-                                />
-                              </>
-                            ) : (
-                              <div
-                                className={`w-[2rem] h-[2rem] md:w-[3.6rem] md:h-[3.6rem] rounded-full  border  ${
-                                  currentStep === step
-                                    ? "border-primaryColor text-primaryColor "
-                                    : "border-[#999999] text-[#999999]"
-                                } flex justify-center items-center text-[1.2rem] cursor-pointer`}
-                              >
-                                {step}
-                              </div>
-                            )}
-                            <p className="text-[1rem] text-center">
-                              {step === 1 && (
-                                <span
-                                  className={`${
-                                    currentStep === 1
-                                      ? "text-primaryColor"
-                                      : "text-[#999999]"
-                                  } text-[1rem] md:text-[1.6rem] font-[500]`}
-                                >
-                                  Personal Information
-                                </span>
-                              )}
-                              {step === 2 && (
-                                <span
-                                  className={`${
-                                    currentStep === 2
-                                      ? "text-primaryColor"
-                                      : "text-[#999999]"
-                                  } text-[1rem] md:text-[1.6rem] font-[500]`}
-                                >
-                                  Beneficiary Information
-                                </span>
-                              )}
-                              {step === 3 && (
-                                <span
-                                  onClick={showReviewModal}
-                                  className={`${
-                                    currentStep === 3
-                                      ? "text-primaryColor"
-                                      : "text-[#999999]"
-                                  } text-[1rem] md:text-[1.6rem] font-[500] cursor-pointer`}
-                                >
-                                  Review Details
-                                </span>
-                              )}
-                              {step === 4 && (
-                                <span
-                                  onClick={showPaymentModal}
-                                  className={`${
-                                    currentStep === 4
-                                      ? "text-primaryColor"
-                                      : "text-[#999999]"
-                                  } text-[1rem] md:text-[1.6rem] font-[500] cursor-pointer`}
-                                >
-                                  Payment
-                                </span>
-                              )}
-                            </p>
-                          </div>
-                        </React.Fragment>
-                      ))}
-                    </div>
-                    <div className="mt-4">{renderStep(currentStep)}</div>
-                  </div>
-                ) : (
+        
                   <div className="flex flex-col gap-[1.6rem]">
                     <h4 className="text-[1.4rem] md:text-[1.8rem] lg:text-[2.2rem] font-[700]">
                       Select Trip (Departure)
@@ -568,285 +463,279 @@ const RoundTripSearch = () => {
                                     key={index}
                                     imageSrc={car}
                                     altText={"car image"}
-                                    route={`${item.from.terminalName} ==> ${item.to.terminalName}`}
-                                    carModel={item.vehicle.vehicleName}
-                                    seatsAvailable={item.seatsAvailable}
-                                    departureTime={item.departureDateTime}
-                                    price={item.tripCost}
+                                    route={`${item?.from?.terminalName} ==> ${item?.to?.terminalName}`}
+                                    carModel={item?.vehicle?.vehicleName}
+                                    seatsAvailable={item?.seatsAvailable}
+                                    departureTime={item?.departureDateTime}
+                                    price={item?.tripCost}
                                     onSelectSeat={() =>
-                                      showModal(item._id, item.tripCost, item)
+                                      showModal(item?._id, item?.tripCost, item)
                                     }
                                   />
 
-                                  {/* CUSTOMER SEATS SELECTION UI>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */}
+                                {/* CUSTOMER SEATS SELECTION UI>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */}
 
-                                  {departure_trip_id === item._id ? (
-                                    <Modal
-                                      className="px-2 md:px-28 lg:px-20 "
-                                      centered
-                                      open={open}
-                                      closable={false}
-                                      title={null}
-                                      onOk={() =>
-                                        set_show_return_trips((value) => !value)
-                                      }
-                                      onCancel={handleCancel}
-                                      footer={[
-                                        <div className="md:py-16">
-                                          <div className="text-[2rem] text-center w-full mb-4 font-[700]">
-                                            Select Seat(Departure)
+                                {departure_trip_id === item._id ? (
+                                  <Modal
+                                    className="px-2 md:px-28 lg:px-20 "
+                                    centered
+                                    open={open}
+                                    closable={false}
+                                    title={null}
+                                    onOk={() =>
+                                      set_show_return_trips((value) => !value)
+                                    }
+                                    onCancel={handleCancel}
+                                    footer={[
+                                      <div className="md:py-16">
+                                        <div className="text-[2rem] text-center w-full mb-4 font-[700]">
+                                          Select Seat(Departure)
+                                        </div>
+                                        <div className="flex items-center w-full justify-between md:mt-[4rem]">
+                                          <div className="flex items-center gap-2">
+                                            <div className="w-[1rem] h-[1rem] lg:w-[1.5rem] lg:h-[1.5rem] rounded-full bg-textGray"></div>
+                                            <p className="text-[1.2rem] md:text-[1.4rem] lg:text-[1.6rem]">
+                                              Booked Seat
+                                            </p>
                                           </div>
-                                          <div className="flex items-center w-full justify-between md:mt-[4rem]">
-                                            <div className="flex items-center gap-2">
-                                              <div className="w-[1rem] h-[1rem] lg:w-[1.5rem] lg:h-[1.5rem] rounded-full bg-textGray"></div>
-                                              <p className="text-[1.2rem] md:text-[1.4rem] lg:text-[1.6rem]">
-                                                Booked Seat
-                                              </p>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                              <div className="w-[1rem] h-[1rem] lg:w-[1.5rem] lg:h-[1.5rem] rounded-full bg-primaryColor"></div>
-                                              <p className="text-[1.2rem] md:text-[1.4rem] lg:text-[1.6rem]">
-                                                Selected Seat
-                                              </p>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                              <div className="w-[1rem] h-[1rem] lg:w-[1.5rem] lg:h-[1.5rem] rounded-full bg-textDeepGray"></div>
-                                              <p className="text-[1.2rem] md:text-[1.4rem] lg:text-[1.6rem]">
-                                                Available Seat
-                                              </p>
-                                            </div>
+                                          <div className="flex items-center gap-2">
+                                            <div className="w-[1rem] h-[1rem] lg:w-[1.5rem] lg:h-[1.5rem] rounded-full bg-primaryColor"></div>
+                                            <p className="text-[1.2rem] md:text-[1.4rem] lg:text-[1.6rem]">
+                                              Selected Seat
+                                            </p>
                                           </div>
+                                          <div className="flex items-center gap-2">
+                                            <div className="w-[1rem] h-[1rem] lg:w-[1.5rem] lg:h-[1.5rem] rounded-full bg-textDeepGray"></div>
+                                            <p className="text-[1.2rem] md:text-[1.4rem] lg:text-[1.6rem]">
+                                              Available Seat
+                                            </p>
+                                          </div>
+                                        </div>
 
-                                          <div className="flex flex-col items-center justify-between mt-[2.4rem]">
-                                            <div className="flex w-full items-center justify-between px-10">
-                                              <img
-                                                src={steering}
-                                                alt="car steering image"
-                                              />
-                                              {seat_clicked === true &&
-                                              all_selected_array.includes(
-                                                item.seatsAndStatus[0]
-                                                  .seatNumber
-                                              ) ? (
-                                                <div
-                                                  key={index.toString()}
-                                                  className={`relative mt-[2.4rem] ${
-                                                    item.seatsAndStatus[0]
-                                                      .seatStatus ===
-                                                    "available"
-                                                      ? "cursor-pointer"
-                                                      : "pointer-events-none"
-                                                  } `}
-                                                  onClick={() => {
+                                        <div className="flex flex-col items-center justify-between mt-[2.4rem]">
+                                          <div className="flex w-full items-center justify-between px-10">
+                                            <img
+                                              src={steering}
+                                              alt="car steering image"
+                                            />
+                                            {seat_clicked === true &&
+                                            all_selected_array.includes(
+                                              item.seatsAndStatus[0].seatNumber
+                                            ) ? (
+                                              <div
+                                                key={index.toString()}
+                                                className={`relative mt-[2.4rem] ${
+                                                  item.seatsAndStatus[0]
+                                                    .seatStatus === "available"
+                                                    ? "cursor-pointer"
+                                                    : "pointer-events-none"
+                                                } `}
+                                                onClick={() => {
+                                                  if (
+                                                    trip_data.number_of_adults
+                                                  ) {
                                                     if (
-                                                      trip_data.number_of_adults
+                                                      all_selected_array.length <
+                                                        trip_data.number_of_adults ||
+                                                      all_selected_array.includes(
+                                                        item.seatsAndStatus[0]
+                                                          .seatNumber
+                                                      )
                                                     ) {
-                                                      if (
-                                                        all_selected_array.length <
-                                                          trip_data.number_of_adults ||
-                                                        all_selected_array.includes(
-                                                          item.seatsAndStatus[0]
-                                                            .seatNumber
-                                                        )
-                                                      ) {
-                                                        run_seat_clicked(
-                                                          item.seatsAndStatus[0]
-                                                            .seatNumber
-                                                        );
-                                                      }
+                                                      run_seat_clicked(
+                                                        item.seatsAndStatus[0]
+                                                          .seatNumber
+                                                      );
                                                     }
-                                                  }}
-                                                >
-                                                  <FaUser
-                                                    size={35}
-                                                    color="#2f2fc8"
-                                                  />
-                                                  <span className="text-white text-[1.4rem] absolute top-[80%] left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                                                    {
-                                                      item.seatsAndStatus[0]
-                                                        .seatNumber
-                                                    }
-                                                  </span>
-                                                </div>
-                                              ) : (
-                                                <div
-                                                  key={index.toString()}
-                                                  className={`relative mt-[2.4rem] ${
+                                                  }
+                                                }}
+                                              >
+                                                <FaUser
+                                                  size={35}
+                                                  color="#2f2fc8"
+                                                />
+                                                <span className="text-white text-[1.4rem] absolute top-[80%] left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                                  {
                                                     item.seatsAndStatus[0]
-                                                      .seatStatus ===
-                                                    "available"
-                                                      ? "cursor-pointer"
-                                                      : "pointer-events-none"
-                                                  } `}
-                                                  onClick={() => {
+                                                      .seatNumber
+                                                  }
+                                                </span>
+                                              </div>
+                                            ) : (
+                                              <div
+                                                key={index.toString()}
+                                                className={`relative mt-[2.4rem] ${
+                                                  item.seatsAndStatus[0]
+                                                    .seatStatus === "available"
+                                                    ? "cursor-pointer"
+                                                    : "pointer-events-none"
+                                                } `}
+                                                onClick={() => {
+                                                  if (
+                                                    trip_data.number_of_adults
+                                                  ) {
                                                     if (
-                                                      trip_data.number_of_adults
+                                                      all_selected_array.length <
+                                                        trip_data.number_of_adults ||
+                                                      all_selected_array.includes(
+                                                        item.seatsAndStatus[0]
+                                                          .seatNumber
+                                                      )
                                                     ) {
+                                                      run_seat_clicked(
+                                                        item.seatsAndStatus[0]
+                                                          .seatNumber
+                                                      );
+                                                    }
+                                                  }
+                                                }}
+                                              >
+                                                <FaUser
+                                                  size={35}
+                                                  color={getSeatColor(
+                                                    item.seatsAndStatus[0]
+                                                      .seatStatus
+                                                  )}
+                                                />
+                                                <span className="text-white text-[1.4rem] absolute top-[80%] left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                                  {
+                                                    item.seatsAndStatus[0]
+                                                      .seatNumber
+                                                  }
+                                                </span>
+                                              </div>
+                                            )}
+                                          </div>
+                                          <div className="flex flex-wrap gap-10 justify-center">
+                                            {item.seatsAndStatus
+                                              .slice(1)
+                                              .map((seat: art_seats, index) =>
+                                                seat_clicked === true &&
+                                                all_selected_array.includes(
+                                                  seat.seatNumber
+                                                ) ? (
+                                                  <div
+                                                    key={index.toString()}
+                                                    className={`relative mt-[2.4rem] ${
+                                                      seat.seatStatus ===
+                                                      "available"
+                                                        ? "cursor-pointer"
+                                                        : "pointer-events-none"
+                                                    } `}
+                                                    onClick={() => {
                                                       if (
-                                                        all_selected_array.length <
-                                                          trip_data.number_of_adults ||
-                                                        all_selected_array.includes(
-                                                          item.seatsAndStatus[0]
-                                                            .seatNumber
-                                                        )
+                                                        trip_data.number_of_adults
                                                       ) {
-                                                        run_seat_clicked(
-                                                          item.seatsAndStatus[0]
-                                                            .seatNumber
-                                                        );
+                                                        if (
+                                                          all_selected_array.length <
+                                                            trip_data.number_of_adults ||
+                                                          all_selected_array.includes(
+                                                            seat.seatNumber
+                                                          )
+                                                        ) {
+                                                          run_seat_clicked(
+                                                            seat.seatNumber
+                                                          );
+                                                        }
                                                       }
-                                                    }
-                                                  }}
-                                                >
-                                                  <FaUser
-                                                    size={35}
-                                                    color={getSeatColor(
-                                                      item.seatsAndStatus[0]
-                                                        .seatStatus
-                                                    )}
-                                                  />
-                                                  <span className="text-white text-[1.4rem] absolute top-[80%] left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                                                    {
-                                                      item.seatsAndStatus[0]
-                                                        .seatNumber
-                                                    }
-                                                  </span>
-                                                </div>
+                                                    }}
+                                                  >
+                                                    <FaUser
+                                                      size={35}
+                                                      color="#2f2fc8"
+                                                    />
+                                                    <span className="text-white text-[1.4rem] absolute top-[80%] left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                                      {seat.seatNumber}
+                                                    </span>
+                                                  </div>
+                                                ) : (
+                                                  <div
+                                                    key={index.toString()}
+                                                    className={`relative mt-[2.4rem] ${
+                                                      seat.seatStatus ===
+                                                      "available"
+                                                        ? "cursor-pointer"
+                                                        : "pointer-events-none"
+                                                    } `}
+                                                    onClick={() => {
+                                                      if (
+                                                        trip_data.number_of_adults
+                                                      ) {
+                                                        if (
+                                                          all_selected_array.length <
+                                                            trip_data.number_of_adults ||
+                                                          all_selected_array.includes(
+                                                            seat.seatNumber
+                                                          )
+                                                        ) {
+                                                          run_seat_clicked(
+                                                            seat.seatNumber
+                                                          );
+                                                        }
+                                                      }
+                                                    }}
+                                                  >
+                                                    <FaUser
+                                                      size={35}
+                                                      color={getSeatColor(
+                                                        seat.seatStatus
+                                                      )}
+                                                    />
+                                                    <span className="text-white text-[1.4rem] absolute top-[80%] left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                                      {seat.seatNumber}
+                                                    </span>
+                                                  </div>
+                                                )
                                               )}
-                                            </div>
-                                            <div className="flex flex-wrap gap-10 justify-center">
-                                              {item.seatsAndStatus
-                                                .slice(1)
-                                                .map((seat: art_seats, index) =>
-                                                  seat_clicked === true &&
-                                                  all_selected_array.includes(
-                                                    seat.seatNumber
-                                                  ) ? (
-                                                    <div
-                                                      key={index.toString()}
-                                                      className={`relative mt-[2.4rem] ${
-                                                        seat.seatStatus ===
-                                                        "available"
-                                                          ? "cursor-pointer"
-                                                          : "pointer-events-none"
-                                                      } `}
-                                                      onClick={() => {
-                                                        if (
-                                                          trip_data.number_of_adults
-                                                        ) {
-                                                          if (
-                                                            all_selected_array.length <
-                                                              trip_data.number_of_adults ||
-                                                            all_selected_array.includes(
-                                                              seat.seatNumber
-                                                            )
-                                                          ) {
-                                                            run_seat_clicked(
-                                                              seat.seatNumber
-                                                            );
-                                                          }
-                                                        }
-                                                      }}
-                                                    >
-                                                      <FaUser
-                                                        size={35}
-                                                        color="#2f2fc8"
-                                                      />
-                                                      <span className="text-white text-[1.4rem] absolute top-[80%] left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                                                        {seat.seatNumber}
-                                                      </span>
-                                                    </div>
-                                                  ) : (
-                                                    <div
-                                                      key={index.toString()}
-                                                      className={`relative mt-[2.4rem] ${
-                                                        seat.seatStatus ===
-                                                        "available"
-                                                          ? "cursor-pointer"
-                                                          : "pointer-events-none"
-                                                      } `}
-                                                      onClick={() => {
-                                                        if (
-                                                          trip_data.number_of_adults
-                                                        ) {
-                                                          if (
-                                                            all_selected_array.length <
-                                                              trip_data.number_of_adults ||
-                                                            all_selected_array.includes(
-                                                              seat.seatNumber
-                                                            )
-                                                          ) {
-                                                            run_seat_clicked(
-                                                              seat.seatNumber
-                                                            );
-                                                          }
-                                                        }
-                                                      }}
-                                                    >
-                                                      <FaUser
-                                                        size={35}
-                                                        color={getSeatColor(
-                                                          seat.seatStatus
-                                                        )}
-                                                      />
-                                                      <span className="text-white text-[1.4rem] absolute top-[80%] left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                                                        {seat.seatNumber}
-                                                      </span>
-                                                    </div>
-                                                  )
-                                                )}
-                                            </div>
                                           </div>
+                                        </div>
 
-                                          <Button
-                                            key="submit"
-                                            type="primary"
-                                            loading={loading}
-                                            onClick={() => {
-                                              // handleCancel()
-                                              set_show_return_trips(
-                                                (value) => !value
-                                              );
-                                            }}
-                                            className={`w-full mt-10 h-[4.8rem] text-[1.2rem] lg:text-[1.6rem] font-[500] rounded-[1rem] 
+                                        <Button
+                                          key="submit"
+                                          type="primary"
+                                          loading={loading}
+                                          onClick={() => {
+                                            // handleCancel()
+                                            set_show_return_trips(
+                                              (value) => !value
+                                            );
+                                          }}
+                                          className={`w-full mt-10 h-[4.8rem] text-[1.2rem] lg:text-[1.6rem] font-[500] rounded-[1rem] 
       ${
         all_selected_array.length === trip_data.number_of_adults
           ? "bg-primaryColor text-[#fff]"
           : "bg-gray-400 text-[#fff] cursor-not-allowed"
       }
           `}
-                                            disabled={
-                                              all_selected_array.length <
-                                              trip_data.number_of_adults
-                                            }
-                                          >
-                                            Continue
-                                          </Button>
-                                        </div>,
-                                      ]}
-                                    >
-                                      <MdClose
-                                        className="absolute top-4 right-4 md:right-10 cursor-pointer"
-                                        size={30}
-                                        onClick={handleCancel}
-                                      />
-                                    </Modal>
-                                  ) : (
-                                    ""
-                                  )}
-                                  {/* CUSTOMER SEATS SELECTION UI>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */}
-                                </div>
-                              )
-                            )}
-                        </>
-                      ) : (
-                        <div>
-                          There was an error: {(error as Error).message}
-                        </div>
-                      )}
-                    </div>
+                                          disabled={
+                                            all_selected_array.length <
+                                            trip_data.number_of_adults
+                                          }
+                                        >
+                                          Continue
+                                        </Button>
+                                      </div>,
+                                    ]}
+                                  >
+                                    <MdClose
+                                      className="absolute top-4 right-4 md:right-10 cursor-pointer"
+                                      size={30}
+                                      onClick={handleCancel}
+                                    />
+                                  </Modal>
+                                ) : (
+                                  ""
+                                )}
+                                {/* CUSTOMER SEATS SELECTION UI>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */}
+                              </div>
+                            )
+                          )}
+                      </>
+                    ) : (
+                      <div>There was an error: {(error as Error).message}</div>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
             ) : (
               <div className="bg-[#fff] px-[1.5rem] md:px-[3rem] lg:px-[4rem] pt-[0.5rem] md:pt-[2rem]  pb-10 md:py-28 rounded-[1rem] ">
@@ -913,94 +802,106 @@ const RoundTripSearch = () => {
                       We just need to know a few more information about you
                     </h4>
                     <div className="flex items-start justify-between md:mt-[3.2rem]">
-                      {[1, 2, 3, 4].map((step: number) => (
-                        <React.Fragment key={step}>
-                          {step !== 1 && (
-                            <div
-                              className={`border-t-2 ${
-                                currentStep === step
-                                  ? "border-primaryColor"
-                                  : "border-[#999999]"
-                              } border-primaryColor flex-1 mt-[0.8rem] md:mt-[1.6rem]`}
-                            ></div>
-                          )}
-                          <div className="flex flex-col items-center justify-center gap-1 w-[10%]">
-                            {completedSteps.includes(step) ? (
-                              <>
-                                {" "}
-                                <MdCheckCircle
-                                  size={20}
-                                  color="#2F2FC8"
-                                  className="flex md:hidden"
-                                />
-                                <MdCheckCircle
-                                  size={45}
-                                  color="#2F2FC8"
-                                  className="hidden md:flex"
-                                />
-                              </>
-                            ) : (
+                      {[1, 2, 3, 4]
+                        .filter((step) => {
+                          // Exclude step 2 when there are no beneficiaries and no children
+                          if (
+                            trip_data.number_of_adults === 1 &&
+                            trip_data.number_of_children === 0 &&
+                            step === 2
+                          ) {
+                            return false;
+                          }
+                          return true;
+                        })
+                        .map((filteredStep, index) => (
+                          <React.Fragment key={filteredStep}>
+                            {index !== 0 && (
                               <div
-                                className={`w-[2rem] h-[2rem] md:w-[3.6rem] md:h-[3.6rem] rounded-full  border  ${
-                                  currentStep === step
-                                    ? "border-primaryColor text-primaryColor "
-                                    : "border-[#999999] text-[#999999]"
-                                } flex justify-center items-center text-[1.2rem] cursor-pointer`}
-                              >
-                                {step}
-                              </div>
+                                className={`border-t-2 ${
+                                  currentStep === filteredStep
+                                    ? "border-primaryColor"
+                                    : "border-[#999999]"
+                                } border-primaryColor flex-1 mt-[0.8rem] md:mt-[1.6rem]`}
+                              ></div>
                             )}
-                            <p className="text-[1rem] text-center">
-                              {step === 1 && (
-                                <span
-                                  className={`${
-                                    currentStep === 1
-                                      ? "text-primaryColor"
-                                      : "text-[#999999]"
-                                  } text-[1rem] md:text-[1.6rem] font-[500]`}
+                            <div className="flex flex-col items-center justify-center gap-1 w-[10%]">
+                              {completedSteps.includes(filteredStep) ? (
+                                <>
+                                  {" "}
+                                  <MdCheckCircle
+                                    size={20}
+                                    color="#2F2FC8"
+                                    className="flex md:hidden"
+                                  />
+                                  <MdCheckCircle
+                                    size={45}
+                                    color="#2F2FC8"
+                                    className="hidden md:flex"
+                                  />
+                                </>
+                              ) : (
+                                <div
+                                  className={`w-[2rem] h-[2rem] md:w-[3.6rem] md:h-[3.6rem] rounded-full  border  ${
+                                    currentStep === filteredStep
+                                      ? "border-primaryColor text-primaryColor "
+                                      : "border-[#999999] text-[#999999]"
+                                  } flex justify-center items-center text-[1.2rem] cursor-pointer`}
                                 >
-                                  Personal Information
-                                </span>
+                                  {index + 1}
+                                </div>
                               )}
-                              {step === 2 && (
-                                <span
-                                  className={`${
-                                    currentStep === 2
-                                      ? "text-primaryColor"
-                                      : "text-[#999999]"
-                                  } text-[1rem] md:text-[1.6rem] font-[500]`}
-                                >
-                                  Beneficiary Information
-                                </span>
-                              )}
-                              {step === 3 && (
-                                <span
-                                  onClick={showReviewModal}
-                                  className={`${
-                                    currentStep === 3
-                                      ? "text-primaryColor"
-                                      : "text-[#999999]"
-                                  } text-[1rem] md:text-[1.6rem] font-[500] cursor-pointer`}
-                                >
-                                  Review Details
-                                </span>
-                              )}
-                              {step === 4 && (
-                                <span
-                                  onClick={showPaymentModal}
-                                  className={`${
-                                    currentStep === 4
-                                      ? "text-primaryColor"
-                                      : "text-[#999999]"
-                                  } text-[1rem] md:text-[1.6rem] font-[500] cursor-pointer`}
-                                >
-                                  Payment
-                                </span>
-                              )}
-                            </p>
-                          </div>
-                        </React.Fragment>
-                      ))}
+                              <p className="text-[1rem] text-center">
+                                {filteredStep === 1 && (
+                                  <span
+                                    className={`${
+                                      currentStep === filteredStep
+                                        ? "text-primaryColor"
+                                        : "text-[#999999]"
+                                    } text-[1rem] md:text-[1.6rem] font-[500]`}
+                                  >
+                                    Personal Information
+                                  </span>
+                                )}
+                                {filteredStep === 2 && (
+                                  <span
+                                    className={`${
+                                      currentStep === filteredStep
+                                        ? "text-primaryColor"
+                                        : "text-[#999999]"
+                                    } text-[1rem] md:text-[1.6rem] font-[500]`}
+                                  >
+                                    Beneficiary Information
+                                  </span>
+                                )}
+                                {filteredStep === 3 && (
+                                  <span
+                                    onClick={showReviewModal}
+                                    className={`${
+                                      currentStep === filteredStep
+                                        ? "text-primaryColor"
+                                        : "text-[#999999]"
+                                    } text-[1rem] md:text-[1.6rem] font-[500] cursor-pointer`}
+                                  >
+                                    Review Details
+                                  </span>
+                                )}
+                                {filteredStep === 4 && (
+                                  <span
+                                    onClick={showPaymentModal}
+                                    className={`${
+                                      currentStep === filteredStep
+                                        ? "text-primaryColor"
+                                        : "text-[#999999]"
+                                    } text-[1rem] md:text-[1.6rem] font-[500] cursor-pointer`}
+                                  >
+                                    Payment
+                                  </span>
+                                )}
+                              </p>
+                            </div>
+                          </React.Fragment>
+                        ))}
                     </div>
                     <div className="mt-4">{renderStep(currentStep)}</div>
                   </div>
@@ -1027,15 +928,15 @@ const RoundTripSearch = () => {
                                     key={index}
                                     imageSrc={car}
                                     altText={"car image"}
-                                    route={`${item.from.terminalName} ==> ${item.to.terminalName}`}
-                                    carModel={item.vehicle.vehicleName}
-                                    seatsAvailable={item.seatsAvailable}
-                                    departureTime={item.departureDateTime}
-                                    price={item.tripCost}
+                                    route={`${item?.from?.terminalName} ==> ${item?.to?.terminalName}`}
+                                    carModel={item?.vehicle?.vehicleName}
+                                    seatsAvailable={item?.seatsAvailable}
+                                    departureTime={item?.departureDateTime}
+                                    price={item?.tripCost}
                                     onSelectSeat={() =>
                                       show_return_trip_modal(
-                                        item._id,
-                                        item.tripCost,
+                                        item?._id,
+                                        item?.tripCost,
                                         item
                                       )
                                     }
