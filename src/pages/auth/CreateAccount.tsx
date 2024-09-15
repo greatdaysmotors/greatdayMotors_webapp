@@ -134,7 +134,7 @@ const CreateAccount = () => {
               <Button
                 type="primary"
                 htmlType="submit"
-               className="bg-primaryColor py-[2rem] text-white w-full rounded-[1rem] duration-500 mt-[2rem]"
+                className="bg-primaryColor py-[2rem] text-white w-full rounded-[1rem] duration-500 mt-[2rem]"
                 loading={isPending}
               >
                 Create Account
