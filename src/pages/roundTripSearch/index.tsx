@@ -29,6 +29,10 @@ import { Two_way_review_details } from "@components/home/Two_way_review_details"
 import { Two_way_PaymentStep } from "@components/home/Two_way_PaymentStep";
 
 const RoundTripSearch = () => {
+  const userDetailsString =
+    localStorage.getItem("userDetails") ||
+    sessionStorage.getItem("userDetails");
+  const userDetails = userDetailsString ? JSON.parse(userDetailsString) : null;
   const navigate = useNavigate();
 
   const handleBackClick = () => {
@@ -102,6 +106,11 @@ const RoundTripSearch = () => {
       }
     }
   }, [data]);
+
+  useEffect(() => {
+    // Scroll to top when component mounts
+    window.scrollTo(0, 0);
+  }, []);
 
   // GETTING "TERMINAL FROM DB TO SET TERMINAL ID TO TERMINAL" NAME ENDS HERE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -440,38 +449,38 @@ const RoundTripSearch = () => {
                 )}
 
                 <hr className="my-[2rem]" />
-        
-                  <div className="flex flex-col gap-[1.6rem]">
-                    <h4 className="text-[1.4rem] md:text-[1.8rem] lg:text-[2.2rem] font-[700]">
-                      Select Trip (Departure)
-                    </h4>
-                    <div className="flex flex-col gap-[1.6rem] lg:gap-[3.2rem]">
-                      {available_trip_loading ? (
-                        <div className="w-full flex justify-center mt-8">
-                          <Spin />
-                        </div>
-                      ) : available_trip_data ? (
-                        <>
-                          {tripData &&
-                            tripData.availableTrips.map(
-                              (
-                                item: availTrips_returnTrips_type,
-                                index: number
-                              ) => (
-                                <div key={index.toString()}>
-                                  <SelectTrip
-                                    key={index}
-                                    imageSrc={car}
-                                    altText={"car image"}
-                                    route={`${item?.from?.terminalName} ==> ${item?.to?.terminalName}`}
-                                    carModel={item?.vehicle?.vehicleName}
-                                    seatsAvailable={item?.seatsAvailable}
-                                    departureTime={item?.departureDateTime}
-                                    price={item?.tripCost}
-                                    onSelectSeat={() =>
-                                      showModal(item?._id, item?.tripCost, item)
-                                    }
-                                  />
+
+                <div className="flex flex-col gap-[1.6rem]">
+                  <h4 className="text-[1.4rem] md:text-[1.8rem] lg:text-[2.2rem] font-[700]">
+                    Select Trip (Departure)
+                  </h4>
+                  <div className="flex flex-col gap-[1.6rem] lg:gap-[3.2rem]">
+                    {available_trip_loading ? (
+                      <div className="w-full flex justify-center mt-8">
+                        <Spin />
+                      </div>
+                    ) : available_trip_data ? (
+                      <>
+                        {tripData &&
+                          tripData.availableTrips.map(
+                            (
+                              item: availTrips_returnTrips_type,
+                              index: number
+                            ) => (
+                              <div key={index.toString()}>
+                                <SelectTrip
+                                  key={index}
+                                  imageSrc={car}
+                                  altText={"car image"}
+                                  route={`${item?.from?.terminalName} ==> ${item?.to?.terminalName}`}
+                                  carModel={item?.vehicle?.vehicleName}
+                                  seatsAvailable={item?.seatsAvailable}
+                                  departureTime={item?.departureDateTime}
+                                  price={item?.tripCost}
+                                  onSelectSeat={() =>
+                                    showModal(item?._id, item?.tripCost, item)
+                                  }
+                                />
 
                                 {/* CUSTOMER SEATS SELECTION UI>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */}
 
@@ -797,7 +806,7 @@ const RoundTripSearch = () => {
                 {details ? (
                   <div className="flex flex-col gap-[1.6rem]">
                     <h4 className="text-[1.4rem] md:text-[1.8rem] lg:text-[2.2rem] font-[700]">
-                      Hello,
+                      Dear {userDetails && userDetails.fullName},
                       <br />
                       We just need to know a few more information about you
                     </h4>

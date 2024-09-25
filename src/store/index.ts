@@ -26,7 +26,7 @@ export interface TripDetails {
   nextOfKinPhoneNumber?: string;
   nextOfKinEmail?: string;
   beneficiaries?: Beneficiary[]; // Updated to be an array
-  sendEmailToNextOfKin?: boolean;
+  sendEmailToNextOfKin?: string;
   totalTripCost?: number;
 }
 
@@ -109,7 +109,7 @@ const useStore = create<StoreState>()(
         nextOfKinPhoneNumber: "",
         nextOfKinEmail: "",
         beneficiaries: [], // Initialize as an empty array
-        sendEmailToNextOfKin: false,
+        sendEmailToNextOfKin: "no",
         totalTripCost: 0,
       },
       setTripDetails: (details) => set({ tripDetails: details }),

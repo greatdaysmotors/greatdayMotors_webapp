@@ -2,7 +2,7 @@ import { BASE_URL } from "@api/index";
 import useAuthToken from "@hooks/useAuthToken";
 import { useMutation } from "@tanstack/react-query";
 import { Alert, Button, Modal, Spin } from "antd";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { CiLocationOn } from "react-icons/ci";
 import { IoIosCloseCircleOutline } from "react-icons/io";
@@ -13,6 +13,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import useStore, { TripDetails } from "../../store";
 import { TripData } from "../../types/Trip";
 // import { PaymentStep } from "./PaymentStep";
+
+interface ErrorResponse {
+  message: string;
+}
 
 interface InfoStepProps {
   handleStepCompletion: () => void;
@@ -99,6 +103,8 @@ export const ReviewDetailsStep: React.FC<InfoStepProps> = ({
 
   const [loading, setLoading] = useState(false);
   const [cancelPaymentModal, setCancelPaymentModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<Error | null>(null);
+  console.log("errorMessage", errorMessage);
 
   const handleOk = () => {
     setLoading(true);
@@ -150,6 +156,7 @@ export const ReviewDetailsStep: React.FC<InfoStepProps> = ({
       // navigate(`/payment-success/${response.data.message}`);
     },
     onError: (error) => {
+      setErrorMessage(error);
       console.error("Error confirming payment:", error);
     },
   });
@@ -226,6 +233,10 @@ export const ReviewDetailsStep: React.FC<InfoStepProps> = ({
     setCancelPaymentModal(false); // Close the modal
   };
 
+  const errorMessageText =
+    (errorMessage as AxiosError<ErrorResponse>)?.response?.data?.message ||
+    "An Error Occurred";
+
   return (
     <div>
       {cancelPaymentModal ? (
@@ -275,10 +286,7 @@ export const ReviewDetailsStep: React.FC<InfoStepProps> = ({
                 (cp_error && (
                   <Alert
                     message="Error Message"
-                    description={`${
-                      "An error occurred"
-                      // err.response.data?.errorMessage || "An Error Occurred"
-                    }`}
+                    description={errorMessageText}
                     type="error"
                     showIcon
                     className="mt-2"
