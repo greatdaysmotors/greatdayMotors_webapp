@@ -45,31 +45,21 @@ export const Two_way_personal_info: React.FC<InfoStepProps> = ({
     (state) => state.set_round_trip_post_data
   );
 
-
-
-
-
-
-
-
   const userToken = useAuthToken();
 
   const { data, error, isLoading } = useUserProfile(userToken);
 
-
-useEffect(()=>{
-  if(data && !error && !isLoading){
-    setTripDetails({
-      ...tripDetails,
-      phoneNumber: data?.userProfile?.phoneNumber || "",
-      nextOfKinName: data?.userProfile?.nokFullName || "",
-      nextOfKinPhoneNumber: data.userProfile?.nokPhoneNumber || "",
-      nextOfKinEmail:  data.userProfile?.nokEmail || "",
-
-    });
-  }
-},[data, isLoading, error])
-
+  useEffect(() => {
+    if (data && !error && !isLoading) {
+      setTripDetails({
+        ...tripDetails,
+        phoneNumber: data?.userProfile?.phoneNumber || "",
+        nextOfKinName: data?.userProfile?.nokFullName || "",
+        nextOfKinPhoneNumber: data.userProfile?.nokPhoneNumber || "",
+        nextOfKinEmail: data.userProfile?.nokEmail || "",
+      });
+    }
+  }, [data, isLoading, error]);
 
   const handle_step_one = (values: personal_info_form_type) => {
     setTripDetails({
@@ -81,10 +71,12 @@ useEffect(()=>{
       nextOfKinName: values?.next_of_kin_name || "",
       nextOfKinPhoneNumber: values?.next_of_kin_phone_number || "",
       nextOfKinEmail: values?.next_of_kin_email || "",
-      sendEmailToNextOfKin: values?.send_next_kin_email === false ? "no" : "yes",
+      sendEmailToNextOfKin:
+        values?.send_next_kin_email === false ? "no" : "yes",
     });
     handleStepCompletion();
   };
+  
   return (
     <Form
       className="flex flex-col mt-3"
@@ -93,9 +85,9 @@ useEffect(()=>{
         email: userDetails?.email,
         phone_number: tripDetails?.phoneNumber,
         send_next_kin_email: false,
-        next_of_kin_name:tripDetails?.nextOfKinName,
-        next_of_kin_email:tripDetails?.nextOfKinEmail,
-        next_of_kin_phone_number:tripDetails?.nextOfKinPhoneNumber
+        next_of_kin_name: tripDetails?.nextOfKinName,
+        next_of_kin_email: tripDetails?.nextOfKinEmail,
+        next_of_kin_phone_number: tripDetails?.nextOfKinPhoneNumber,
       }}
       onFinish={handle_step_one}
     >
@@ -338,7 +330,7 @@ useEffect(()=>{
                 htmlType="submit"
                 key="submit"
                 type="primary"
-                className={`px-10 py-4 md:py-8 bg-primaryColor text-white rounded-[1rem] `}
+                className={`px-10 py-4 md:py-8 bg-primaryColor text-white rounded-[1rem] w-full`}
               >
                 Continue
               </Button>

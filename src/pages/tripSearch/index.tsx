@@ -9,7 +9,7 @@ import notfound from "../../../public/pngs/not-found-img.png";
 import bg from "../../../public/svgs/bgimagetrip.svg";
 import steering from "../../../public/pngs/steering.png";
 import React, { useEffect, useState } from "react";
-import { Button, Modal } from "antd";
+import { Button, Modal, Spin } from "antd";
 import { MdCheckCircle, MdClose } from "react-icons/md";
 import { FaUser } from "react-icons/fa6";
 import { PersonalInfoStep } from "../../components/home/PersonalInfo";
@@ -19,6 +19,7 @@ import { PaymentStep } from "@components/home/PaymentStep";
 import useStore from "../../store";
 import { TripData } from "../../types/Trip";
 import { Seat } from "../../types/Seat";
+import { useTripContext } from "../../context";
 
 const initialSeats = [
   { id: 1, color: "#666666", clickable: true },
@@ -36,6 +37,7 @@ const initialSeats = [
 ];
 
 const TripSearch = () => {
+  const { isPending } = useTripContext();
   const userDetailsString =
     localStorage.getItem("userDetails") ||
     sessionStorage.getItem("userDetails");
@@ -106,6 +108,11 @@ const TripSearch = () => {
     setSelectedSeats(selectedSeat);
   }, [seats]);
 
+  useEffect(() => {
+    // Scroll to top when component mounts
+    window.scrollTo(0, 0);
+  }, []); 
+
   const handleSeatClick = (id: number) => {
     const clickedSeat = seats.find((seat) => seat.id === id);
 
@@ -154,7 +161,7 @@ const TripSearch = () => {
   // console.log("ticketRefId", ticketRefId);
 
   const T_UID = useStore((state) => state.ticketUID);
-  console.log("T_UID", T_UID);
+  // console.log("T_UID", T_UID);
 
   const renderStep = (step: number) => {
     // Determine the adjusted step when step 2 is hidden
@@ -171,7 +178,7 @@ const TripSearch = () => {
             handleStepCompletion={handleStepCompletion}
             numberOfBeneficiaries={numberOfBeneficiaries}
             numberOfAdults={numberOfAdults}
-            numberOfChildren={numberOfChildren}
+            // numberOfChildren={numberOfChildren}
             aTrip={aTrip}
           />
         );
@@ -207,7 +214,7 @@ const TripSearch = () => {
             handleStepCompletion={handleStepCompletion}
             openPayment={openPayment}
             setOpenPayment={setOpenPayment}
-            title={null} 
+            title={null}
             refId={T_UID}
           />
         );
@@ -247,7 +254,11 @@ const TripSearch = () => {
             Back
           </Link>
 
-          {trips && trips.length > 0 ? (
+          {isPending ? (
+            <div className="flex justify-center items-center h-[30rem]">
+              <Spin />
+            </div>
+          ) : trips && trips.length > 0 ? (
             <div className="bg-[#fff] px-[1.5rem] md:px-[3rem] lg:px-[4rem] pt-[0.5rem] md:pt-[2rem]  pb-10 md:py-28 rounded-[1rem] ">
               <div className="mt-[1rem] flex justify-between gap-[0.8rem] bg-[#fff] lg:mt-[4rem]">
                 <div className="flex flex-col gap-[0.8rem]">

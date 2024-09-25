@@ -1,17 +1,28 @@
-import { Alert, Button, Input, Spin } from "antd";
+import { Alert, Button, Checkbox, Form, Input } from "antd";
 import useStore from "../../store";
 import { TripData } from "../../types/Trip";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useUserProfile } from "@hooks/useUserProfile";
 import useAuthToken from "@hooks/useAuthToken";
+import FormItem from "antd/es/form/FormItem";
 
 interface InfoStepProps {
   handleStepCompletion: () => void;
   currentStep: number;
   numberOfBeneficiaries?: number;
   numberOfAdults?: number;
-  numberOfChildren?: number;
+  // numberOfChildren?: number;
   aTrip?: TripData | null;
+}
+
+interface personal_info_form_type extends FormData {
+  name: string;
+  email: string;
+  phone_number: string;
+  next_of_kin_email: string;
+  next_of_kin_name: string;
+  next_of_kin_phone_number: string;
+  send_next_kin_email: boolean;
 }
 
 export const PersonalInfoStep: React.FC<InfoStepProps> = ({
@@ -22,8 +33,14 @@ export const PersonalInfoStep: React.FC<InfoStepProps> = ({
 }) => {
   const userToken = useAuthToken();
 
+  const userDetailsString =
+    localStorage.getItem("userDetails") ||
+    sessionStorage.getItem("userDetails");
+  const userDetails = userDetailsString ? JSON.parse(userDetailsString) : null;
+  console.log("userDetails", userDetails);
+
   const { data, error, isLoading } = useUserProfile(userToken);
-  const [showSpinner, setShowSpinner] = useState(false);
+  // const [showSpinner, setShowSpinner] = useState(false);
 
   const tripDetails = useStore((state) => state.tripDetails);
   console.log("tripDetails", tripDetails);
@@ -41,57 +58,87 @@ export const PersonalInfoStep: React.FC<InfoStepProps> = ({
         nextOfKinName: data.userProfile?.nokFullName || "",
         nextOfKinPhoneNumber: data.userProfile?.nokPhoneNumber || "",
         nextOfKinEmail: data.userProfile?.nokEmail || "",
-        sendEmailToNextOfKin: false,
+        sendEmailToNextOfKin: "no",
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [aTrip, data, isLoading, error]);
 
-  useEffect(() => {
-    if (isLoading) {
-      setShowSpinner(true);
-    } else {
-      const timer = setTimeout(() => setShowSpinner(false), 300);
-      return () => clearTimeout(timer);
-    }
-  }, [isLoading]);
+  // useEffect(() => {
+  //   if (isLoading) {
+  //     setShowSpinner(true);
+  //   } else {
+  //     const timer = setTimeout(() => setShowSpinner(false), 300);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [isLoading]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setTripDetails({
-      ...tripDetails,
-      [name]: value,
-    });
-  };
+  // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const { name, value } = e.target;
+  //   setTripDetails({
+  //     ...tripDetails,
+  //     [name]: value,
+  //   });
+  // };
 
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTripDetails({
-      ...tripDetails,
-      sendEmailToNextOfKin: e.target.checked,
-    });
-  };
+  // const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setTripDetails({
+  //     ...tripDetails,
+  //     sendEmailToNextOfKin: e.target.checked,
+  //   });
+  // };
 
-  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
+  // const [isButtonEnabled, setIsButtonEnabled] = useState(false);
 
   // Define isFormValid using useCallback
-  const isFormValid = useCallback((): boolean => {
-    return (
-      Boolean(tripDetails.fullName) &&
-      Boolean(tripDetails.email) &&
-      Boolean(tripDetails.phoneNumber) &&
-      Boolean(tripDetails.nextOfKinName) &&
-      Boolean(tripDetails.nextOfKinEmail) &&
-      Boolean(tripDetails.nextOfKinPhoneNumber)
-    );
-  }, [tripDetails]);
+  // const isFormValid = useCallback((): boolean => {
+  //   return (
+  //     Boolean(tripDetails.fullName) &&
+  //     Boolean(tripDetails.email) &&
+  //     Boolean(tripDetails.phoneNumber) &&
+  //     Boolean(tripDetails.nextOfKinName) &&
+  //     Boolean(tripDetails.nextOfKinEmail) &&
+  //     Boolean(tripDetails.nextOfKinPhoneNumber)
+  //   );
+  // }, [tripDetails]);
+
+  const handle_step_one = (values: personal_info_form_type) => {
+    if (aTrip) {
+      setTripDetails({
+        ...tripDetails,
+        totalTripCost: aTrip.tripCost,
+        fullName: values?.name || "",
+        email: values?.email || "",
+        phoneNumber: values?.phone_number || "",
+        nextOfKinName: values?.next_of_kin_name || "",
+        nextOfKinPhoneNumber: values?.next_of_kin_phone_number || "",
+        nextOfKinEmail: values?.next_of_kin_email || "",
+        sendEmailToNextOfKin:
+          values?.send_next_kin_email === false ? "no" : "yes",
+      });
+    }
+    handleStepCompletion();
+  };
 
   // useEffect with the dependency on isFormValid
-  useEffect(() => {
-    setIsButtonEnabled(isFormValid());
-  }, [tripDetails, isFormValid]);
+  // useEffect(() => {
+  //   setIsButtonEnabled(isFormValid());
+  // }, [tripDetails, isFormValid]);
 
   return (
-    <form className="flex flex-col mt-3">
+    <Form
+      className="flex flex-col mt-3"
+      initialValues={{
+        name: userDetails?.fullName,
+        email: userDetails?.email,
+        phone_number: tripDetails?.phoneNumber,
+        send_next_kin_email: false,
+        next_of_kin_name: tripDetails?.nextOfKinName,
+        next_of_kin_email: tripDetails?.nextOfKinEmail,
+        next_of_kin_phone_number: tripDetails?.nextOfKinPhoneNumber,
+      }}
+      onFinish={handle_step_one}
+    >
       {error && (
         <Alert
           message="Error"
@@ -107,52 +154,90 @@ export const PersonalInfoStep: React.FC<InfoStepProps> = ({
             Personal Information
           </h2>
           <div className="w-full flex flex-col gap-[1.6rem]">
-            <label
-              htmlFor="fullName"
-              className="text-[1.6rem] flex flex-col gap-[0.4rem] font-[500]"
+            <FormItem
+              name="name"
+              label={
+                <div className="text-[1.6rem] flex flex-col gap-[0.4rem] font-[500]">
+                  Passenger’s Name
+                </div>
+              }
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your name!",
+                },
+                {
+                  pattern: /^[A-Za-z\s]+$/,
+                  message: "Name can only contain letters and spaces!",
+                },
+                {
+                  min: 2,
+                  message: "Name must be at least 2 characters long!",
+                },
+              ]}
             >
-              Passenger’s Name
               <Input
                 type="text"
-                name="fullName"
                 placeholder="Enter your name"
-                value={tripDetails.fullName}
-                onChange={handleInputChange}
                 className="p-[0.8rem] rounded-[1rem] font-[400] border"
-                suffix={showSpinner ? <Spin size="small" /> : null}
               />
-            </label>
-            <label
-              htmlFor="email"
-              className="text-[1.6rem] flex flex-col gap-[0.4rem] font-[500]"
+            </FormItem>
+            <FormItem
+              name="email"
+              label={
+                <div className="text-[1.6rem] flex flex-col gap-[0.4rem] font-[500]">
+                  Passenger’s Email
+                </div>
+              }
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your email!",
+                },
+                {
+                  type: "email",
+                  message: "Please enter a valid email!",
+                },
+              ]}
             >
-              Passenger’s Email
               <Input
                 type="text"
-                name="email"
                 placeholder="Enter your email"
-                value={tripDetails.email}
-                onChange={handleInputChange}
                 className="p-[0.8rem] rounded-[1rem] font-[400] border"
-                suffix={showSpinner ? <Spin size="small" /> : null}
               />
-            </label>
+            </FormItem>
 
-            <label
-              htmlFor="phoneNumber"
-              className="text-[1.6rem] flex flex-col gap-[0.4rem] font-[500]"
+            <FormItem
+              name="phone_number"
+              label={
+                <div className="text-[1.6rem] flex flex-col gap-[0.4rem] font-[500]">
+                  Passenger’s Phone Number
+                </div>
+              }
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your phone number!",
+                },
+                {
+                  pattern: /^(08|09|07)\d{9}$/,
+                  message: "Please enter a valid phone number!",
+                },
+              ]}
             >
-              Passenger’s Phone Number
               <Input
                 type="text"
-                name="phoneNumber"
+                max={11}
                 placeholder="Enter your phone number"
-                value={tripDetails.phoneNumber}
-                onChange={handleInputChange}
                 className="p-[0.8rem] rounded-[1rem] font-[400] border"
-                suffix={showSpinner ? <Spin size="small" /> : null}
               />
-            </label>
+            </FormItem>
           </div>
         </div>
 
@@ -161,53 +246,91 @@ export const PersonalInfoStep: React.FC<InfoStepProps> = ({
             Next-of-Kin Information
           </h2>
           <div className="w-full flex flex-col gap-[1.6rem]">
-            <label
-              htmlFor="nextOfKinName"
-              className="text-[1.6rem] flex flex-col gap-[0.4rem] font-[500]"
+            <FormItem
+              name="next_of_kin_name"
+              label={
+                <div className="text-[1.6rem] flex flex-col gap-[0.4rem] font-[500]">
+                  Next-of-Kin's Name
+                </div>
+              }
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
+              rules={[
+                {
+                  required: true,
+                  message: "Please input next of kin's name!",
+                },
+                {
+                  pattern: /^[A-Za-z\s]+$/,
+                  message: "Name can only contain letters and spaces!",
+                },
+                {
+                  min: 2,
+                  message: "Name must be at least 2 characters long!",
+                },
+              ]}
             >
-              Next-of-Kin's Name
               <Input
                 type="text"
-                name="nextOfKinName"
-                placeholder="Enter their name"
-                value={tripDetails.nextOfKinName}
-                onChange={handleInputChange}
-                suffix={showSpinner ? <Spin size="small" /> : null}
+                placeholder="Enter name"
                 className="p-[0.8rem] rounded-[1rem] font-[400] border"
               />
-            </label>
+            </FormItem>
 
-            <label
-              htmlFor="nextOfKinEmail"
-              className="text-[1.6rem] flex flex-col gap-[0.4rem] font-[500]"
+            <FormItem
+              name="next_of_kin_email"
+              label={
+                <div className="text-[1.6rem] flex flex-col gap-[0.4rem] font-[500]">
+                  Next-of-Kin's Email
+                </div>
+              }
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
+              rules={[
+                {
+                  required: true,
+                  message: "Please input next of kin's email!",
+                },
+                {
+                  type: "email",
+                  message: "Please enter a valid email!",
+                },
+              ]}
             >
-              Next-of-Kin's Email
               <Input
                 type="text"
-                name="nextOfKinEmail"
-                placeholder="Enter their email"
-                value={tripDetails.nextOfKinEmail}
-                onChange={handleInputChange}
-                suffix={showSpinner ? <Spin size="small" /> : null}
+                placeholder="Enter email"
                 className="p-[0.8rem] rounded-[1rem] font-[400] border"
               />
-            </label>
+            </FormItem>
 
-            <label
-              htmlFor="nextOfKinPhoneNumber"
-              className="text-[1.6rem] flex flex-col gap-[0.4rem] font-[500]"
+            <FormItem
+              name="next_of_kin_phone_number"
+              label={
+                <div className="text-[1.6rem] flex flex-col gap-[0.4rem] font-[500]">
+                  Next-of-Kin's Phone Number
+                </div>
+              }
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
+              rules={[
+                {
+                  required: true,
+                  message: "Please input next of kin's phone number!",
+                },
+                {
+                  pattern: /^(08|09|07)\d{9}$/,
+                  message: "Please enter a valid phone number!",
+                },
+              ]}
             >
-              Next-of-Kin's Phone Number
               <Input
+                max={11}
                 type="text"
-                name="nextOfKinPhoneNumber"
-                placeholder="Enter their phone number"
-                value={tripDetails.nextOfKinPhoneNumber}
-                onChange={handleInputChange}
-                suffix={showSpinner ? <Spin size="small" /> : null}
+                placeholder="Enter phone number"
                 className="p-[0.8rem] rounded-[1rem] font-[400] border"
               />
-            </label>
+            </FormItem>
           </div>
         </div>
       </div>
@@ -218,15 +341,18 @@ export const PersonalInfoStep: React.FC<InfoStepProps> = ({
       </p>
 
       <div className="flex  mt-3 gap-2 ">
-        <Input
-          type="checkbox"
-          className="rounded-[1rem] border w-[2rem]"
-          checked={tripDetails.sendEmailToNextOfKin}
-          onChange={handleCheckboxChange}
-        />
-        <span className="text-[1.4rem] md:text-[1.8rem]  leading-[1.5rem] w-full">
-          I want my next-of-kin to receive an email about the trip.
-        </span>
+        <Form.Item
+          name="send_next_kin_email"
+          valuePropName="checked"
+          wrapperCol={{ span: 24 }}
+        >
+          <div className="flex items-center gap-2">
+            <Checkbox />
+            <span className="text-[1.4rem] md:text-[1.8rem] leading-[1.5rem]">
+              I want my next-of-kin to receive an email about the trip
+            </span>
+          </div>
+        </Form.Item>
       </div>
 
       <hr className="my-[1.6rem]" />
@@ -240,18 +366,21 @@ export const PersonalInfoStep: React.FC<InfoStepProps> = ({
           )}
 
           {currentStep <= 4 && (
-            <Button
-              key="submit"
-              type="primary"
-              onClick={handleStepCompletion}
-              className={`px-10 py-4 md:py-8 bg-primaryColor text-white rounded-[1rem] `}
-              disabled={!isButtonEnabled}
+            <Form.Item
+            // valuePropName="checked"
             >
-              Continue
-            </Button>
+              <Button
+                htmlType="submit"
+                key="submit"
+                type="primary"
+                className={`px-10 py-4 md:py-8 bg-primaryColor text-white rounded-[1rem] w-full`}
+              >
+                Continue
+              </Button>
+            </Form.Item>
           )}
         </div>
       </div>
-    </form>
+    </Form>
   );
 };

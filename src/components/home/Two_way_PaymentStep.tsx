@@ -10,6 +10,7 @@ import useAuthToken from "../../hooks/useAuthToken";
 import { use_round_trip } from "../../store/round_trip";
 import { BASE_URL } from "@api/index";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 interface InfoStepProps {
   //   handleStepCompletion: () => void;
@@ -46,6 +47,7 @@ export const Two_way_PaymentStep: React.FC<InfoStepProps> = ({
   departure_trip_cost,
   return_trip_cost,
 }) => {
+  const nav = useNavigate();
   const the_paymentRef = use_round_trip((state) => state.payment_ref_id);
   const [paymentRef, set_paymentRef] = useState<string>("");
   useEffect(() => {
@@ -146,6 +148,10 @@ export const Two_way_PaymentStep: React.FC<InfoStepProps> = ({
     window.print();
   };
 
+  const GoHome = () => {
+    nav("/");
+  };
+
   return (
     <div>
       {viewDetails ? (
@@ -203,23 +209,22 @@ export const Two_way_PaymentStep: React.FC<InfoStepProps> = ({
                 Round trip
               </p>
               <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[1.8rem] font-[500] text-right">
-              {trip_data.number_of_adults === 0 ? (
-                          "No adult"
-                        ) : trip_data.number_of_adults === 1 ? (
-                          <>{trip_data.number_of_adults} Adult</>
-                        ) : (
-                          <>{trip_data.number_of_adults} Adults</>
-                        )}
+                {trip_data.number_of_adults === 0 ? (
+                  "No adult"
+                ) : trip_data.number_of_adults === 1 ? (
+                  <>{trip_data.number_of_adults} Adult</>
+                ) : (
+                  <>{trip_data.number_of_adults} Adults</>
+                )}
               </p>
               <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[1.8rem] font-[500] text-right">
-             
-              {trip_data.number_of_children === 0 ? (
-                          "No child"
-                        ) : trip_data.number_of_children === 1 ? (
-                          <>{trip_data.number_of_children} Child</>
-                        ) : (
-                          <>{trip_data.number_of_children} CHildren</>
-                        )}
+                {trip_data.number_of_children === 0 ? (
+                  "No child"
+                ) : trip_data.number_of_children === 1 ? (
+                  <>{trip_data.number_of_children} Child</>
+                ) : (
+                  <>{trip_data.number_of_children} CHildren</>
+                )}
               </p>
               <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[1.8rem] font-[500] text-right">
                 {trip_data.departure_date || "Nil"}
@@ -379,44 +384,38 @@ export const Two_way_PaymentStep: React.FC<InfoStepProps> = ({
             <h2 className="text-[1.4rem] md:text-[1.6rem] font-[700] mt-[2rem]">
               Children
             </h2>
-            {
-            trip_data.number_of_children === 0 ? "No children added":
-        <>
-        <div className="flex justify-between">
-          <p className="text-[1.4rem] md:text-[1.6rem]">Child 1 Name</p>
+            {trip_data.number_of_children === 0 ? (
+              "No children added"
+            ) : (
+              <>
+                <div className="flex justify-between">
+                  <p className="text-[1.4rem] md:text-[1.6rem]">Child 1 Name</p>
 
+                  <p className="text-[1.4rem] md:text-[1.6rem] font-[600] capitalize">
+                    {`${tripDetails.child1Name || "Nil"} | ${
+                      tripDetails.child1Age || "Nil"
+                    }`}
+                  </p>
+                </div>
+                <div className="flex justify-between">
+                  <p className="text-[1.4rem] md:text-[1.6rem]">Child 2 Name</p>
 
-          
-          <p className="text-[1.4rem] md:text-[1.6rem] font-[600] capitalize">
-            {`${tripDetails.child1Name || "Nil"} | ${
-              tripDetails.child1Age || "Nil"
-            }`}
-          </p>
-        </div>
-        <div className="flex justify-between">
-          <p className="text-[1.4rem] md:text-[1.6rem]">Child 2 Name</p>
-
-
-          {trip_data.number_of_children === 1 ? (
-                        "No child"
-                      ) : <p className="text-[1.4rem] md:text-[1.6rem] font-[600] capitalize">
+                  {trip_data.number_of_children === 1 ? (
+                    "No child"
+                  ) : (
+                    <p className="text-[1.4rem] md:text-[1.6rem] font-[600] capitalize">
                       {`${tripDetails.child2Name || "Nil"} | ${
                         tripDetails.child2Age || "Nil"
                       } `}
-                    </p>}
-
-
-
-        </div>
-        </>
-                      
-          }
-  
+                    </p>
+                  )}
+                </div>
+              </>
+            )}
           </div>
           <hr className="my-[1.6rem]" />
           <div className="mt-4 flex flex-col justify-start items-start">
             <div className="flex flex-col gap-1">
-       
               <p className="text-[1.4rem] md:text-[1.6rem] font-[500]">
                 Total Fare: ₦
                 {(the_trip_cost * numberOfAdults)
@@ -461,14 +460,25 @@ export const Two_way_PaymentStep: React.FC<InfoStepProps> = ({
                     Ref ID: {paymentRef}
                   </h4>
                 )}
-                <Button
-                  key="submit"
-                  type="primary"
-                  onClick={HandleViewDetails}
-                  className={`px-10 mt-4 py-8 bg-primaryColor text-white rounded-[1rem] w-full`}
-                >
-                  View Trip Details
-                </Button>
+
+                <div className="flex flex-col gap-4">
+                  <Button
+                    key="submit"
+                    type="primary"
+                    onClick={HandleViewDetails}
+                    className={`px-10 mt-4 py-8 bg-primaryColor text-white rounded-[1rem] w-full`}
+                  >
+                    View Trip Details
+                  </Button>
+                  <Button
+                    key="submit"
+                    type="primary"
+                    onClick={GoHome}
+                    className={`px-10 mt-4 py-8 bg-white text-black rounded-[1rem] w-full`}
+                  >
+                    Back to Home
+                  </Button>
+                </div>
               </div>
             )
           }

@@ -13,6 +13,7 @@ import useStore from "../../store";
 import { storeState, TripData } from "../../types/Trip";
 import toast from "react-hot-toast";
 import { use_round_trip } from "../../store/round_trip";
+import { useTripContext } from "../../context";
 
 interface Terminal {
   terminalName: string;
@@ -26,6 +27,8 @@ const OneWayTrip: React.FC = () => {
   );
 
   const nav = useNavigate();
+
+  const { setIsPending } = useTripContext();
 
   const addTrip = useStore((state) => state.addTrip);
   const resetTrips = useStore((state) => state.resetTrips);
@@ -155,6 +158,8 @@ const OneWayTrip: React.FC = () => {
     return response.json();
   };
 
+  // const [isLoading, setIsLoading] = useState(true);
+
   const {
     mutate,
     // isError,
@@ -188,10 +193,15 @@ const OneWayTrip: React.FC = () => {
       return response.json();
     },
     onSuccess: (data) => {
+      setIsPending(false);
       data.trips.forEach((trip: TripData) => addTrip(trip));
     },
     onError: (error) => {
+      setIsPending(false);
       console.error("Error:", error.message);
+    },
+    onMutate: () => {
+      setIsPending(true); // Set isPending to true
     },
   });
 
@@ -224,7 +234,7 @@ const OneWayTrip: React.FC = () => {
       nextOfKinName: "",
       nextOfKinPhoneNumber: "",
       nextOfKinEmail: "",
-      sendEmailToNextOfKin: false,
+      sendEmailToNextOfKin: "",
       totalTripCost: 0,
     });
 

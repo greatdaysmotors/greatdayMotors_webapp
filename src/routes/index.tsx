@@ -28,6 +28,7 @@ const PrivacyPolicy = lazy(() => import("@pages/privacy"));
 const LogOut = lazy(() => import("@pages/logout"));
 
 const AppRouter = () => {
+
   return (
     <BrowserRouter>
       <Routes>

@@ -67,6 +67,10 @@ export const PaymentStep: React.FC<PaymentStepProps> = ({
     nav("/");
   };
 
+  const GoHome = () => {
+    nav("/");
+  };
+
   return (
     <div>
       {viewDetails ? (
@@ -363,14 +367,24 @@ export const PaymentStep: React.FC<PaymentStepProps> = ({
                     Ref ID: {refId}
                   </h4>
                 )}
-                <Button
-                  key="submit"
-                  type="primary"
-                  onClick={HandleViewDetails}
-                  className={`px-10 mt-4 py-8 bg-primaryColor text-white rounded-[1rem] w-full`}
-                >
-                  View Trip Details
-                </Button>
+                <div className="flex flex-col gap-4">
+                  <Button
+                    key="submit"
+                    type="primary"
+                    onClick={HandleViewDetails}
+                    className={`px-10 mt-4 py-8 bg-primaryColor text-white rounded-[1rem] w-full`}
+                  >
+                    View Trip Details
+                  </Button>
+                  <Button
+                    key="submit"
+                    type="primary"
+                    onClick={GoHome}
+                    className={`px-10 mt-4 py-8 bg-white text-black rounded-[1rem] w-full`}
+                  >
+                    Back to Home
+                  </Button>
+                </div>
               </div>
             )
           }

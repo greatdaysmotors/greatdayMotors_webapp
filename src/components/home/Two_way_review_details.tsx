@@ -8,7 +8,7 @@ import {
   terminal_v2,
 } from "../../types/Trip";
 import { Alert, Button, Modal, Spin } from "antd";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { CiLocationOn } from "react-icons/ci";
 import { IoShieldCheckmarkOutline } from "react-icons/io5";
@@ -19,6 +19,10 @@ import { use_round_trip } from "../../store/round_trip";
 import { usePaystackPayment } from "react-paystack";
 
 // import { InfoStepProps } from "../../types/InfoTypes";
+
+interface ErrorResponse {
+  message: string;
+}
 
 interface InfoStepProps {
   handleStepCompletion: () => void;
@@ -64,6 +68,9 @@ export const Two_way_review_details: React.FC<InfoStepProps> = ({
   );
   const setPaymentRef = use_round_trip((state) => state.set_payment_ref_id);
   const paymentRef = use_round_trip((state) => state.payment_ref_id);
+
+  const [errorMessage, setErrorMessage] = useState<Error | null>(null);
+  console.log("errorMessage", errorMessage);
 
   useEffect(() => {
     setTripDetails({
@@ -151,7 +158,6 @@ export const Two_way_review_details: React.FC<InfoStepProps> = ({
 
   // console.log("isError", isError);
   const trip_data = use_round_trip((state: storeState) => state.trip_data);
-
   const [terminal_a, set_terminal_a] = useState("");
   const [terminal_b, set_terminal_b] = useState("");
 
@@ -235,9 +241,14 @@ export const Two_way_review_details: React.FC<InfoStepProps> = ({
     },
     onError: (error) => {
       // setErr(error);
+      setErrorMessage(error);
       console.error("Error confirming ticket:", error);
     },
   });
+
+  const errorMessageText =
+    (errorMessage as AxiosError<ErrorResponse>)?.response?.data?.message ||
+    "An Error Occurred";
 
   return (
     <div>
@@ -270,13 +281,11 @@ export const Two_way_review_details: React.FC<InfoStepProps> = ({
                 </Button>
               </>
             )}
+
             {isError && (
               <Alert
                 message="Error Message"
-                description={`${
-                  "An error occurred"
-                  // err.response.data?.errorMessage || "An Error Occurred"
-                }`}
+                description={errorMessageText}
                 type="error"
                 showIcon
                 className="mt-2"
@@ -313,25 +322,22 @@ export const Two_way_review_details: React.FC<InfoStepProps> = ({
               Round trip
             </p>
             <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[1.8rem] font-[500] text-right">
-            {trip_data.number_of_adults === 0 ? (
-                          "No adult"
-                        ) : trip_data.number_of_adults === 1 ? (
-                          <>{trip_data.number_of_adults} Adult</>
-                        ) : (
-                          <>{trip_data.number_of_adults} Adults</>
-                        )}
+              {trip_data.number_of_adults === 0 ? (
+                "No adult"
+              ) : trip_data.number_of_adults === 1 ? (
+                <>{trip_data.number_of_adults} Adult</>
+              ) : (
+                <>{trip_data.number_of_adults} Adults</>
+              )}
             </p>
             <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[1.8rem] font-[500] text-right">
-           
-
-
               {trip_data.number_of_children === 0 ? (
-                          "No child"
-                        ) : trip_data.number_of_children === 1 ? (
-                          <>{trip_data.number_of_children} Child</>
-                        ) : (
-                          <>{trip_data.number_of_children} CHildren</>
-                        )}
+                "No child"
+              ) : trip_data.number_of_children === 1 ? (
+                <>{trip_data.number_of_children} Child</>
+              ) : (
+                <>{trip_data.number_of_children} CHildren</>
+              )}
             </p>
             <p className="text-[1.2rem] md:text-[1.6rem] lg:text-[1.8rem] font-[500] text-right">
               {trip_data.departure_date || "Nil"}
@@ -479,39 +485,34 @@ export const Two_way_review_details: React.FC<InfoStepProps> = ({
           <h2 className="text-[1.4rem] md:text-[1.6rem] font-[700] mt-[2rem]">
             Children
           </h2>
-          {
-            trip_data.number_of_children === 0 ? "No children added":
-        <>
-        <div className="flex justify-between">
-          <p className="text-[1.4rem] md:text-[1.6rem]">Child 1 Name</p>
+          {trip_data.number_of_children === 0 ? (
+            "No children added"
+          ) : (
+            <>
+              <div className="flex justify-between">
+                <p className="text-[1.4rem] md:text-[1.6rem]">Child 1 Name</p>
 
+                <p className="text-[1.4rem] md:text-[1.6rem] font-[600] capitalize">
+                  {`${tripDetails.child1Name || "Nil"} | ${
+                    tripDetails.child1Age || "Nil"
+                  }`}
+                </p>
+              </div>
+              <div className="flex justify-between">
+                <p className="text-[1.4rem] md:text-[1.6rem]">Child 2 Name</p>
 
-          
-          <p className="text-[1.4rem] md:text-[1.6rem] font-[600] capitalize">
-            {`${tripDetails.child1Name || "Nil"} | ${
-              tripDetails.child1Age || "Nil"
-            }`}
-          </p>
-        </div>
-        <div className="flex justify-between">
-          <p className="text-[1.4rem] md:text-[1.6rem]">Child 2 Name</p>
-
-
-          {trip_data.number_of_children === 1 ? (
-                        "No child"
-                      ) : <p className="text-[1.4rem] md:text-[1.6rem] font-[600] capitalize">
-                      {`${tripDetails.child2Name || "Nil"} | ${
-                        tripDetails.child2Age || "Nil"
-                      } `}
-                    </p>}
-
-
-
-        </div>
-        </>
-                      
-          }
-  
+                {trip_data.number_of_children === 1 ? (
+                  "No child"
+                ) : (
+                  <p className="text-[1.4rem] md:text-[1.6rem] font-[600] capitalize">
+                    {`${tripDetails.child2Name || "Nil"} | ${
+                      tripDetails.child2Age || "Nil"
+                    } `}
+                  </p>
+                )}
+              </div>
+            </>
+          )}
         </div>
         <hr className="my-[1.6rem]" />
         <div className="mt-4 flex flex-col justify-start items-start">

@@ -133,7 +133,7 @@ export interface round_trip_post_data_type {
   nextOfKinPhoneNumber: string | undefined;
   nextOfKinEmail: string | undefined;
   beneficiaries: beneficiaries[];
-  sendEmailToNextOfKin: "no" | "yes";
+  sendEmailToNextOfKin: string;
   totalTripCost: number;
 }
 
