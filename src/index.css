@@ -87,4 +87,12 @@ body {
   padding: 1.5rem 2rem; 
 }
 
+.failedfeedback-modal .ant-modal-body {
+  padding: 8rem 0; 
+}
+
+.failedfeedback-modal .ant-modal-header {
+  padding: 1.5rem 2rem; 
+}
+
 
