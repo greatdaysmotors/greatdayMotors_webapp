@@ -7,6 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { BASE_URL } from "@api/index";
 import axios from "axios";
 import useAuthToken from "@hooks/useAuthToken";
+import { IoIosCloseCircleOutline } from "react-icons/io";
 
 type TripProps = {
   imageSrc?: string;
@@ -29,12 +30,13 @@ const Trip: React.FC<TripProps> = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [rating, setRating] = useState(0);
   const [feedback, setFeedback] = useState("");
-  // const [feedbackSuccess, setFeedbackSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const selectedTrip = useStore((state) => state.selectedTrip);
-  console.log("selectedTrip", selectedTrip);
+  // console.log("selectedTrip", selectedTrip);
 
   const userToken = useAuthToken();
 
@@ -44,6 +46,10 @@ const Trip: React.FC<TripProps> = ({
 
   const handleCancel = () => {
     setIsModalOpen(false);
+  };
+
+  const handleErrorModalCancel = () => {
+    setIsErrorModalOpen(false);
   };
 
   const reviewMutation = useMutation({
@@ -73,6 +79,17 @@ const Trip: React.FC<TripProps> = ({
     },
     onError: (error) => {
       console.error("Error submitting review:", error);
+      if (axios.isAxiosError(error)) {
+        // Safely access the response property
+        setErrorMessage(
+          error.response?.data?.message ||
+            "An error occurred while submitting the review."
+        );
+      } else {
+        // Handle other non-Axios errors
+        setErrorMessage("An unexpected error occurred.");
+      }
+      setIsErrorModalOpen(true);
     },
   });
 
@@ -80,7 +97,7 @@ const Trip: React.FC<TripProps> = ({
     if (rating > 0 && feedback.trim()) {
       if (selectedTrip?._id) {
         reviewMutation.mutate({
-          trip: selectedTrip._id,
+          trip: selectedTrip?.availableTrip?._id,
           review: feedback,
           starRating: rating,
         });
@@ -133,8 +150,6 @@ const Trip: React.FC<TripProps> = ({
           {price}
         </h6>
 
-        {/* isOngoing */}
-
         {tripStatus === "completed" ? (
           <button
             onClick={showModal}
@@ -148,6 +163,7 @@ const Trip: React.FC<TripProps> = ({
           </button>
         ) : null}
 
+        {/* Write Review Modal */}
         <Modal
           title={""}
           visible={isModalOpen}
@@ -205,9 +221,10 @@ const Trip: React.FC<TripProps> = ({
           </div>
         </Modal>
 
+        {/* Success Modal */}
         <Modal
           title={""}
-          visible={isReviewModalOpen}
+          open={isReviewModalOpen}
           onCancel={handleReviewCancel}
           footer={null}
           centered
@@ -222,6 +239,26 @@ const Trip: React.FC<TripProps> = ({
               <h4 className="text-[18px] lg:w-[32rem] lg:mx-auto font-[400]   text-center text-brandBlack">
                 Thank you for your time
               </h4>
+            </div>
+          </div>
+        </Modal>
+
+        {/* Error Modal */}
+        <Modal
+          title=""
+          open={isErrorModalOpen}
+          onCancel={handleErrorModalCancel}
+          footer={null}
+          centered
+          className="failedfeedback-modal"
+        >
+          <div className="flex flex-col justify-center items-center w-full md:w-[45rem]">
+            <IoIosCloseCircleOutline size={100} color="#0A8917" />
+            <div className="flex flex-col">
+              <h2 className="text-[2rem] lg:text-[20px] font-[700]  text-center text-brandBlack">
+                Review Failed!
+              </h2>
+              <p className="text-[14px] lg:text-[16px]">{errorMessage}</p>
             </div>
           </div>
         </Modal>

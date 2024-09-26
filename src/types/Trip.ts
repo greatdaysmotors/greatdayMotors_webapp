@@ -13,6 +13,7 @@ interface ArrivalTerminal {
 }
 
 interface AvailableTrip {
+  _id: string;
   departureDateTime: string;
   tripCost: number;
   tripStatus: string;
